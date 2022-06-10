@@ -107,7 +107,8 @@ public class CarInfoFragment extends Fragment {
             RegisterActivity.userModel.carType = carType ;
             RegisterActivity.userModel.carColor = carColor ;
             RegisterActivity.userModel.numberCar = carNumber ;
-            startActivity(new Intent(getActivity(), VerifyPhoneActivity.class));
+            getFragmentManager().beginTransaction().replace(R.id.frameLayout,new DocumentFragment())
+                    .commit();
         }
     }
 }

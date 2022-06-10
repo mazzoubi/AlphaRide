@@ -106,7 +106,8 @@ public class VerifyPhoneActivity extends AppCompatActivity {
                             activities.add(RegisterActivity.activity);
                             UserViewModel vm = ViewModelProviders.of(VerifyPhoneActivity.this)
                                     .get(UserViewModel.class);
-                            vm.addUser(VerifyPhoneActivity.this,RegisterActivity.userModel,intent,activities);
+                            vm.addUser(VerifyPhoneActivity.this,RegisterActivity.userModel
+                                    ,RegisterActivity.driverRequestAccountModel,intent,activities);
 
 
                         } else {

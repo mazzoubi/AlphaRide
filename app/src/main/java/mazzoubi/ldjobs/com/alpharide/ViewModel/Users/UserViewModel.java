@@ -17,13 +17,27 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import mazzoubi.ldjobs.com.alpharide.Data.Users.DriverRequestAccountModel;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.UserInfo_sharedPreference;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.UserModel;
 import mazzoubi.ldjobs.com.alpharide.ViewModel.Main.DashboardActivity;
 
 public class UserViewModel extends ViewModel {
     private static final String userCollection = "Users" ;
-    public void addUser(Activity c , UserModel user, Intent intent, ArrayList<Activity> activities){
+    public void addUser(Activity c , UserModel user, DriverRequestAccountModel dd,
+                        Intent intent, ArrayList<Activity> activities){
+
+        dd.idUser=user.uid;
+        dd.fullName=user.fullName;
+        dd.colorCar = user.carColor;
+        dd.modelCar = user.carModel;
+        dd.typeCar = user.carType;
+        dd.numberCar = user.numberCar;
+        dd.email = user.email;
+        dd.phoneNumber = user.phoneNumber;
+        addDriverRequest(c,dd);
+
+
         UserInfo_sharedPreference.setInfo(c,user);
         Map<String,Object> map = new HashMap<>();
         map.put("emailVerified" , user.emailVerified );
@@ -62,6 +76,29 @@ public class UserViewModel extends ViewModel {
                         c.finish();
                     }
                 });
+    }
+
+    public void addDriverRequest(Activity c, DriverRequestAccountModel dd){
+        Map<String,Object> map = new HashMap<>();
+        map.put("colorCar",dd.colorCar );
+        map.put("driverLicense",dd.driverLicense );
+        map.put("drivingLicense",dd.drivingLicense );
+        map.put("email",dd.email );
+        map.put("frontCar",dd.frontCar );
+        map.put("fullName",dd.fullName );
+        map.put("idUser",dd.idUser );
+        map.put("modelCar",dd.modelCar );
+        map.put("numberCar",dd.numberCar );
+        map.put("phoneNumber",dd.phoneNumber );
+        map.put("typeCar",dd.typeCar );
+
+        FirebaseFirestore.getInstance().collection("DriverRequestsAccount")
+                .document(dd.idUser).set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+            }
+        });
     }
 
     public void login(Activity c , String phone,String password){
