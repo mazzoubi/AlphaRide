@@ -266,7 +266,7 @@ public class DocumentFragment extends Fragment {
 
         int camera = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA);
         int store1 = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
-        int store2 = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+   //     int store2 = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
         ArrayList<String> listPermissionsNeeded = new ArrayList<>();
         if (camera != PackageManager.PERMISSION_GRANTED){
             listPermissionsNeeded.add(Manifest.permission.CAMERA);
@@ -278,13 +278,9 @@ public class DocumentFragment extends Fragment {
             ActivityCompat.requestPermissions(getActivity(),listPermissionsNeeded.toArray
                     (new String[listPermissionsNeeded.size()]), 2); }
 
-        if (store2 != PackageManager.PERMISSION_GRANTED){
-            listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            ActivityCompat.requestPermissions(getActivity(),listPermissionsNeeded.toArray
-                    (new String[listPermissionsNeeded.size()]), 3); }
-        else{
+
             startActivityForResult(cameraIntent, requestCode);
-        }
+
 
     }
 
