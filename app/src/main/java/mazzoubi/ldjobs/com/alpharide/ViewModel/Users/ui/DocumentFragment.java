@@ -282,6 +282,7 @@ public class DocumentFragment extends Fragment {
             startActivityForResult(cameraIntent, requestCode);
 
 
+
     }
 
     @Override
