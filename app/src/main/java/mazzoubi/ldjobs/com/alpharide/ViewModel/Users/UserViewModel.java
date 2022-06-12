@@ -57,6 +57,7 @@ public class UserViewModel extends ViewModel {
         map.put("stateAccount", user.stateAccount );
         map.put("typeUser", user.typeUser );
         map.put("password", user.password );
+//        map.put("tripid", tams );
 
         map.put("balance",user.balance );
         map.put("countRating",user.countRating );
@@ -83,6 +84,9 @@ public class UserViewModel extends ViewModel {
         map.put("colorCar",dd.colorCar );
         map.put("driverLicense",dd.driverLicense );
         map.put("drivingLicense",dd.drivingLicense );
+        map.put("yourPhoto","");
+        map.put("endCar","");
+        map.put("insideCar","");
         map.put("email",dd.email );
         map.put("frontCar",dd.frontCar );
         map.put("fullName",dd.fullName );
