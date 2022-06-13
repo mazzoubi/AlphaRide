@@ -13,19 +13,19 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
-        android:theme="@style/Theme.AlphaRide">
+        android:theme="@style/AppTheme">
         <activity
             android:name=".ViewModel.Main.DashboardActivity"
-            android:exported="true" />
-        <activity
-            android:name=".ViewModel.Users.ui.VerifyPhoneActivity"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name=".ViewModel.Users.ui.LoginActivity"
-            android:exported="true" />
+            android:exported="false" />
+        <activity
+            android:name=".ViewModel.Users.ui.VerifyPhoneActivity"
+            android:exported="false" />
         <activity
             android:name=".ViewModel.Users.ui.RegisterActivity"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
