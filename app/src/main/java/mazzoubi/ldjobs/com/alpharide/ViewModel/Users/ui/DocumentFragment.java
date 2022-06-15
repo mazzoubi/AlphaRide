@@ -278,11 +278,7 @@ public class DocumentFragment extends Fragment {
             ActivityCompat.requestPermissions(getActivity(),listPermissionsNeeded.toArray
                     (new String[listPermissionsNeeded.size()]), 2); }
 
-
             startActivityForResult(cameraIntent, requestCode);
-
-
-
 
     }
 
