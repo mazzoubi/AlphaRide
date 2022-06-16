@@ -25,14 +25,6 @@ public class LoginActivity extends AppCompatActivity {
         edtPassword = findViewById(R.id.edtPassword);
         edtPhone = findViewById(R.id.edtPhone);
 
-        if (UserInfo_sharedPreference.getUser(LoginActivity.this).uid.isEmpty()||
-                UserInfo_sharedPreference.getUser(LoginActivity.this).uid==null){
-
-        }else {
-            startActivity(new Intent(getApplicationContext(), DashboardActivity.class));
-            finish();
-        }
-
     }
 
     public void onClickLogin(View view) {
@@ -48,7 +40,4 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    public void onClickRegister(View view) {
-        startActivity(new Intent(getApplicationContext(),RegisterActivity.class));
-    }
 }

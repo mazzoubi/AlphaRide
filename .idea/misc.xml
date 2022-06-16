@@ -3,6 +3,27 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/drawable-v24/btn_back.xml" value="0.22760416666666666" />
+        <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/drawable-v24/btn_back22.xml" value="0.38564102564102565" />
+        <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/drawable-v24/btn_rounded_red.xml" value="0.22760416666666666" />
+        <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/drawable-v24/ic_baseline_add_circle_outline_24.xml" value="0.22760416666666666" />
+        <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/drawable-v24/ic_baseline_arrow_back_ios_24.xml" value="0.22760416666666666" />
+        <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/drawable-v24/ic_baseline_arrow_forward_ios_24.xml" value="0.22760416666666666" />
+        <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/drawable-v24/ic_baseline_attach_money_24.xml" value="0.22760416666666666" />
+        <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/drawable-v24/ic_baseline_dashboard_24.xml" value="0.22760416666666666" />
+        <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/drawable-v24/ic_baseline_notifications_24.xml" value="0.22760416666666666" />
+        <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/drawable-v24/ic_baseline_person_241.xml" value="0.22760416666666666" />
+        <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/drawable-v24/ic_baseline_search_24.xml" value="0.22760416666666666" />
+        <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/drawable/back1.xml" value="0.38564102564102565" />
+        <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/drawable/back2.xml" value="0.38564102564102565" />
+        <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/drawable/back4.xml" value="0.38564102564102565" />
+        <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/layout/activity_login.xml" value="0.36574074074074076" />
+        <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/layout/activity_main.xml" value="0.3685185185185185" />
+        <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/layout/activity_register.xml" value="0.36574074074074076" />
+        <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/layout/activity_verify_phone.xml" value="0.36574074074074076" />
+        <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/layout/fragment_car_info.xml" value="0.37552083333333336" />
+        <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/layout/fragment_document.xml" value="0.37552083333333336" />
+        <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/layout/fragment_user_info.xml" value="0.37552083333333336" />
         <entry key="..\:/android projects/AlphaRide/app/src/main/res/drawable-v24/btn_back.xml" value="0.23055555555555557" />
         <entry key="..\:/android projects/AlphaRide/app/src/main/res/layout/activity_dashboard.xml" value="0.22037037037037038" />
         <entry key="..\:/android projects/AlphaRide/app/src/main/res/layout/activity_dashboard2.xml" value="0.25416666666666665" />

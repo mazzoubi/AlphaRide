@@ -5,16 +5,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/yellow"
+    android:background="@color/yellow2"
     tools:context=".MainActivity">
 
     <ImageView
         android:layout_width="match_parent"
+        android:layout_height="100dp"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="5dp"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/logo"
-        android:layout_height="100dp"/>
+        android:layout_marginTop="5dp"
+        android:src="@drawable/logo" />
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -99,6 +99,7 @@
                             android:background="@drawable/back4"
                             android:fontFamily="serif"
                             android:gravity="center"
+                            android:onClick="Login"
                             android:text="تسجيل الدخول"
                             android:textColor="@color/font"
                             android:textSize="18dp"
@@ -149,14 +150,40 @@
         android:id="@+id/welcome2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/main_card_lay"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="-20dp"
-        android:layout_below="@+id/main_card_lay"
         android:fontFamily="serif"
         android:gravity="center"
-        android:text="مرحبا في رويال رايد"
+        android:text="صفحات التواصل الإجتماعي الرسمية"
         android:textColor="@color/font"
         android:textSize="18dp"
         android:textStyle="bold" />
+
+    <ImageView
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/welcome2"
+        android:id="@+id/insta"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/insta" />
+    <ImageView
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_toLeftOf="@+id/insta"
+        android:id="@+id/face"
+        android:layout_marginRight="25dp"
+        android:layout_below="@+id/welcome2"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/face" />
+    <ImageView
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_toRightOf="@id/insta"
+        android:layout_marginLeft="25dp"
+        android:layout_below="@+id/welcome2"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/twitter" />
 
 </RelativeLayout>

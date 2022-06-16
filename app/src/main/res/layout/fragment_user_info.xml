@@ -1,76 +1,157 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ViewModel.Users.ui.UserInfoFragment">
+    android:background="@color/yellow2"
+    tools:context=".ViewModel.Users.ui.RegisterActivity">
 
-    <com.hbb20.CountryCodePicker
-        android:id="@+id/countryCode_picker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:ccp_defaultNameCode="jo"
-        app:layout_constraintBottom_toBottomOf="@+id/edtPhone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/edtPhone" />
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_margin="30dp"
+        android:id="@+id/main_card_lay"
+        app:cardCornerRadius="30dp"
+        android:elevation="15dp"
+        android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/edtFullName"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="24dp"
-        android:background="@drawable/btn_back"
-        android:ems="10"
-        android:gravity="center"
-        android:hint="الإسم"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:background="@drawable/back1"
+            android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/edtPassword"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="24dp"
-        android:background="@drawable/btn_back"
-        android:ems="10"
-        android:gravity="center"
-        android:hint="كلمة المرور"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtFullName" />
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="15dp"
+                android:src="@drawable/back_btn2"
+                app:tint="@color/font" />
 
-    <EditText
-        android:id="@+id/edtPhone"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="24dp"
-        android:background="@drawable/btn_back"
-        android:ems="10"
-        android:gravity="center"
-        android:hint="رقم الهاتف"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/countryCode_picker"
-        app:layout_constraintTop_toBottomOf="@+id/edtPassword" />
+            <TextView
+                android:id="@+id/welcome3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="17dp"
+                android:layout_marginRight="15dp"
+                android:fontFamily="serif"
+                android:gravity="center"
+                android:text="تحتاج إلى مساعدة ؟"
+                android:textColor="@color/font"
+                android:textSize="18dp"
+                android:textStyle="bold" />
 
-    <Button
-        android:id="@+id/btnNext"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="30dp"
-        android:text="التالي"
-        app:layout_constraintEnd_toEndOf="@+id/edtPhone"
-        app:layout_constraintStart_toStartOf="@+id/edtPassword"
-        app:layout_constraintTop_toBottomOf="@+id/edtPhone" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <ImageView
+                android:id="@+id/logo"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_below="@+id/welcome3"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="25dp"
+                android:src="@drawable/logo" />
+
+            <TextView
+                android:id="@+id/welcome4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/logo"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:fontFamily="serif"
+                android:gravity="center"
+                android:text="أنشئ حساب"
+                android:textColor="@color/font"
+                android:textSize="18dp"
+                android:textStyle="bold" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/welcome4"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/back2">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true">
+
+                    <EditText
+                        android:id="@+id/edtFullName"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="60dp"
+                        android:layout_marginRight="15dp"
+                        android:background="@drawable/btn_back"
+                        android:ems="10"
+                        android:gravity="center"
+                        android:hint="الإسم الكامل"
+                        />
+
+                    <com.hbb20.CountryCodePicker
+                        android:id="@+id/countryCode_picker"
+                        android:layout_width="115dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/edtFullName"
+                        app:ccp_textSize="14dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="7dp"
+                        app:ccp_defaultNameCode="jo" />
+
+                    <EditText
+                        android:id="@+id/edtPhone"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_below="@+id/edtFullName"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginRight="15dp"
+                        android:layout_toRightOf="@+id/countryCode_picker"
+                        android:background="@drawable/btn_back"
+                        android:ems="10"
+                        android:gravity="center"
+                        android:hint="رقم الهاتف"
+                        android:inputType="phone" />
+
+                    <EditText
+                        android:id="@+id/edtPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_below="@+id/edtPhone"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginRight="15dp"
+                        android:background="@drawable/btn_back"
+                        android:ems="10"
+                        android:gravity="center"
+                        android:hint="كلمة المرور"
+                        android:inputType="textPassword" />
+
+                    <Button
+                        android:id="@+id/btnNext"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_below="@+id/edtPassword"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginRight="15dp"
+                        android:background="@drawable/btn_back22"
+                        android:text="التالي" />
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>
