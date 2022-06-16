@@ -79,6 +79,25 @@ public class UserViewModel extends ViewModel {
                 });
     }
 
+    public void UpdateUser(Activity c , UserModel user){
+
+        UserInfo_sharedPreference.setInfo(c,user);
+        Map<String,Object> map = new HashMap<>();
+        map.put("email", user.email );
+        map.put("fullName", user.fullName );
+        map.put("password", user.password );
+
+        Toast.makeText(c, "الرجاء الانتظار ....", Toast.LENGTH_SHORT).show();
+        FirebaseFirestore.getInstance().collection(userCollection).document(user.uid).set(map)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        UserInfo_sharedPreference.setInfo(c,user);
+                        Toast.makeText(c, "تمت عملية الحفظ بنجاح", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
     public void addDriverRequest(Activity c, DriverRequestAccountModel dd){
         Map<String,Object> map = new HashMap<>();
         map.put("colorCar",dd.colorCar );

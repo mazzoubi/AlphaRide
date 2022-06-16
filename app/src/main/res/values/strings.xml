@@ -2,4 +2,13 @@
     <string name="app_name">Alpha Ride</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <!--to toggle the open close button
+     of the navigation drawer-->
+    <string name="navigation_drawer_open">Drawer Open</string>
+    <string name="navigation_drawer_close">Drawer Closed</string>
+    <string name="nav_open">Open</string>
+    <string name="nav_close">Close</string>
+    <string name="title_activity_maps">MapsActivity</string>
 </resources>
