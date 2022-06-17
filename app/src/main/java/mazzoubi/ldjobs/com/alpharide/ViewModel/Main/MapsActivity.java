@@ -100,7 +100,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setZoomGesturesEnabled(true);
         mMap.getUiSettings().setCompassEnabled(true);
-        mMap.setMapType(mMap.MAP_TYPE_SATELLITE);
+        mMap.setMapType(mMap.MAP_TYPE_NORMAL);
 
 
         //Initialize Google Play Services
@@ -225,4 +225,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     };
 
 
+    public void men(View view) {
+
+        drawerLayout.open();
+
+    }
 }

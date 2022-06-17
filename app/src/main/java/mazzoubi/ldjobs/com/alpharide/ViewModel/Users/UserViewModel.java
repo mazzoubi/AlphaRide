@@ -126,7 +126,7 @@ public class UserViewModel extends ViewModel {
 
     public void login(Activity c , String phone,String password){
         FirebaseFirestore.getInstance().collection(userCollection)
-                .whereEqualTo("phoneNumber",phone)
+                .whereEqualTo("phoneNumber","+962"+phone)
                 .whereEqualTo("password",password)
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override

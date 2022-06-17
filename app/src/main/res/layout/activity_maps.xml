@@ -13,11 +13,25 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            map:layout_constraintEnd_toEndOf="parent"
+            android:src="@drawable/men"
+            android:layout_marginTop="15dp"
+            android:onClick="men"
+            android:elevation="10dp"
+            android:id="@+id/men"
+            map:layout_constraintHorizontal_bias="0.044"
+            map:layout_constraintStart_toStartOf="parent"
+            map:layout_constraintTop_toTopOf="parent"
+            map:tint="@color/yellow" />
+
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginStart="60dp"
+            android:layout_marginEnd="60dp"
             android:layout_marginBottom="-20dp"
             map:cardCornerRadius="20dp"
             map:cardElevation="8dp"
