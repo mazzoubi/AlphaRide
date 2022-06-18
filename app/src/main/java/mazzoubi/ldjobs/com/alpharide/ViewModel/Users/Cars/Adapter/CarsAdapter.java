@@ -1,17 +1,15 @@
-package mazzoubi.ldjobs.com.alpharide.ViewModel.Users.Cars;
+package mazzoubi.ldjobs.com.alpharide.ViewModel.Users.Cars.Adapter;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-
+import android.app.Activity;
 import android.app.Dialog;
-import android.content.Intent;
+
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.github.chrisbanes.photoview.PhotoView;
@@ -23,21 +21,45 @@ import mazzoubi.ldjobs.com.alpharide.Data.Users.DriverRequestAccountModel;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.UserInfo_sharedPreference;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.UserModel;
 import mazzoubi.ldjobs.com.alpharide.R;
-import mazzoubi.ldjobs.com.alpharide.ViewModel.Users.Cars.Adapter.CarsAdapter;
-import mazzoubi.ldjobs.com.alpharide.ViewModel.Users.UserViewModel;
 
-public class MyCarsActivity extends AppCompatActivity {
+
+public class CarsAdapter extends ArrayAdapter<DriverRequestAccountModel> {
+
+    DriverRequestAccountModel a ;
+    Activity c ;
+    public CarsAdapter(Activity context, int view, ArrayList<DriverRequestAccountModel> arrayList){
+        super(context,view,arrayList);
+        this.c = context;
+    }
 
     UserModel user;
     TextView txvType , txvModel , txvNo , txvColor ;
 
     TextView txvFront , txvEnd , txvInside , txvCarL , txvDriverL ;
-    ListView listView;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_cars);
-        init();
+    public View getView(int position, View convertView, ViewGroup parent) {
+
+        LayoutInflater layoutInflater=LayoutInflater.from(getContext());
+        View myView = layoutInflater.inflate(R.layout.row_my_cars,parent,false);
+        a = getItem(position);
+
+        user= UserInfo_sharedPreference.getUser(c);
+        txvType = myView.findViewById(R.id.txvType);
+        txvModel = myView.findViewById(R.id.txvModel);
+        txvNo = myView.findViewById(R.id.txvNo);
+        txvColor = myView.findViewById(R.id.txvColor);
+
+        txvFront = myView.findViewById(R.id.textView7);
+        txvEnd = myView.findViewById(R.id.textView8);
+        txvInside = myView.findViewById(R.id.textView9);
+        txvCarL = myView.findViewById(R.id.textView11);
+        txvDriverL = myView.findViewById(R.id.textView12);
+
+        txvType.setText(a.typeCar );
+        txvModel.setText(a.modelCar );
+        txvNo.setText(a.numberCar );
+        txvColor.setText(a.colorCar );
 
         txvFront.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,56 +102,15 @@ public class MyCarsActivity extends AppCompatActivity {
         });
 
 
-    }
 
-    void getCars(){
-        UserViewModel vm = ViewModelProviders.of(this).get(UserViewModel.class);
-        vm.getCars(MyCarsActivity.this);
-        vm.listOfCars.observe(this, new Observer<ArrayList<DriverRequestAccountModel>>() {
-            @Override
-            public void onChanged(ArrayList<DriverRequestAccountModel> driverRequestAccountModels) {
-                ArrayAdapter<DriverRequestAccountModel> adapter = new CarsAdapter(MyCarsActivity.this,
-                        R.layout.row_my_cars,driverRequestAccountModels);
-
-                listView.setAdapter(adapter);
-            }
-        });
-
-    }
-
-    void init(){
-        user= UserInfo_sharedPreference.getUser(MyCarsActivity.this);
-        txvType = findViewById(R.id.txvType);
-        txvModel = findViewById(R.id.txvModel);
-        txvNo = findViewById(R.id.txvNo);
-        txvColor = findViewById(R.id.txvColor);
-        listView = findViewById(R.id.listView);
-
-        txvFront = findViewById(R.id.textView7);
-        txvEnd = findViewById(R.id.textView8);
-        txvInside = findViewById(R.id.textView9);
-        txvCarL = findViewById(R.id.textView11);
-        txvDriverL = findViewById(R.id.textView12);
-
-        txvType.setText(user.carType );
-        txvModel.setText(user.carModel );
-        txvNo.setText(user.numberCar );
-        txvColor.setText(user.carColor );
-
-        txvColor.setText(user.carColor );
-
-        getCars();
-    }
-
-    public void onClickAddCar(View view) {
-        startActivity(new Intent(getApplicationContext(),AddNewCarActivity.class));
+        return myView ;
     }
 
 
-    class ImageDialog extends Dialog{
+    class ImageDialog extends Dialog {
         String image ;
         public ImageDialog(String image){
-            super(MyCarsActivity.this);
+            super(c);
             this.image = image;
         }
 
@@ -139,15 +120,14 @@ public class MyCarsActivity extends AppCompatActivity {
             setContentView(R.layout.dialog_image);
             ImageView imageView = findViewById(R.id.imageView);
             try {
-                PhotoView photoView = new PhotoView(MyCarsActivity.this);
+                PhotoView photoView = new PhotoView(c);
                 Picasso.get().load(Uri.parse(image)).into(photoView);
 
-                new android.app.AlertDialog.Builder(MyCarsActivity.this)
+                new android.app.AlertDialog.Builder(c)
                         .setView(photoView)
                         .show();
             }catch (Exception e){}
         }
     }
-
 
 }

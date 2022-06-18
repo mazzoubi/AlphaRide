@@ -28,4 +28,6 @@ public class DriverRequestAccountModel {
     public String phoneNumber = "" ;
     @PropertyName("typeCar")
     public String typeCar = "" ;
+    @PropertyName("state")
+    public String state = "0" ;
 }

@@ -46,4 +46,19 @@ public class UserModel {
     public boolean usePassword = false;
     @PropertyName("rating")
     public double rating = 5;
+
+
+
+    @PropertyName("driverLicense")
+    public String driverLicense="";
+    @PropertyName("drivingLicense")
+    public String drivingLicense="";
+    @PropertyName("yourPhoto")
+    public String yourPhoto="";
+    @PropertyName("endCar")
+    public String endCar="";
+    @PropertyName("insideCar")
+    public String insideCar="";
+    @PropertyName("frontCar")
+    public String frontCar="";
 }

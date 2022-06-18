@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -24,6 +26,7 @@ import mazzoubi.ldjobs.com.alpharide.ViewModel.Main.DashboardActivity;
 
 public class UserViewModel extends ViewModel {
     private static final String userCollection = "Users" ;
+    public MutableLiveData<ArrayList<DriverRequestAccountModel>> listOfCars = new MutableLiveData<>();
     public void addUser(Activity c , UserModel user, DriverRequestAccountModel dd,
                         Intent intent, ArrayList<Activity> activities){
 
@@ -63,6 +66,14 @@ public class UserViewModel extends ViewModel {
         map.put("countRating",user.countRating );
         map.put("countTrips",user.countTrips );
         map.put("points",user.points );
+
+        //////////////////////////////////////////////////      new detail added
+        map.put("driverLicense",dd.driverLicense );
+        map.put("drivingLicense",dd.drivingLicense );
+        map.put("yourPhoto","");
+        map.put("endCar","");
+        map.put("insideCar","");
+        map.put("frontCar",dd.frontCar );
 
         Toast.makeText(c, "الرجاء الانتظار ....", Toast.LENGTH_SHORT).show();
         FirebaseFirestore.getInstance().collection(userCollection).document(user.uid).set(map)
@@ -106,9 +117,9 @@ public class UserViewModel extends ViewModel {
         map.put("yourPhoto","");
         map.put("endCar","");
         map.put("insideCar","");
-        map.put("email",dd.email );
         map.put("frontCar",dd.frontCar );
         map.put("fullName",dd.fullName );
+        map.put("email",dd.email );
         map.put("idUser",dd.idUser );
         map.put("modelCar",dd.modelCar );
         map.put("numberCar",dd.numberCar );
@@ -124,6 +135,50 @@ public class UserViewModel extends ViewModel {
         });
     }
 
+    public void addNewCar(Activity c, DriverRequestAccountModel dd){
+        Map<String,Object> map = new HashMap<>();
+        map.put("colorCar",dd.colorCar );
+        map.put("driverLicense",dd.driverLicense );
+        map.put("drivingLicense",dd.drivingLicense );
+        map.put("yourPhoto","");
+        map.put("endCar","");
+        map.put("insideCar","");
+        map.put("frontCar",dd.frontCar );
+        map.put("fullName",dd.fullName );
+        map.put("email",dd.email );
+        map.put("idUser",dd.idUser );
+        map.put("modelCar",dd.modelCar );
+        map.put("numberCar",dd.numberCar );
+        map.put("phoneNumber",dd.phoneNumber );
+        map.put("typeCar",dd.typeCar );
+        map.put("state","0" );
+
+        FirebaseFirestore.getInstance().collection("OtherCars")
+                .document(dd.idUser).set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    Toast.makeText(c, "تمت اضافة المركبة بنجاح ", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    public void getCars(Activity c ){
+        listOfCars = new MutableLiveData<>();
+        ArrayList<DriverRequestAccountModel> temp = new ArrayList<>();
+        FirebaseFirestore.getInstance().collection("OtherCars")
+                .whereEqualTo("idUser",UserInfo_sharedPreference.getUser(c).uid )
+                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (DocumentSnapshot d: queryDocumentSnapshots.getDocuments()){
+                    temp.add(d.toObject(DriverRequestAccountModel.class));
+                }
+                listOfCars.setValue(temp);
+            }
+        });
+    }
     public void login(Activity c , String phone,String password){
         FirebaseFirestore.getInstance().collection(userCollection)
                 .whereEqualTo("phoneNumber","+962"+phone)
