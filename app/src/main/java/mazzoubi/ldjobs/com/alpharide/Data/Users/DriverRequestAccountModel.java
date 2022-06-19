@@ -16,6 +16,14 @@ public class DriverRequestAccountModel {
     public String email = "" ;
     @PropertyName("frontCar")
     public String frontCar = "" ;
+
+    @PropertyName("endCar")
+    public String endCar = "" ;
+    @PropertyName("insideCar")
+    public String insideCar = "" ;
+
+
+
     @PropertyName("fullName")
     public String fullName = "" ;
     @PropertyName("idUser")
@@ -30,4 +38,6 @@ public class DriverRequestAccountModel {
     public String typeCar = "" ;
     @PropertyName("state")
     public String state = "0" ;
+    @PropertyName("_id")
+    public String _id = "" ;
 }

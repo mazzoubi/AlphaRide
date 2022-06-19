@@ -151,7 +151,7 @@ public class NewDocumentFragment extends Fragment {
         }else {
 //            startActivity(new Intent(getActivity(), VerifyPhoneActivity.class)); 555555555
             UserViewModel vm = ViewModelProviders.of(getActivity()).get(UserViewModel.class);
-            vm.addNewCar(getActivity(),AddNewCarActivity.driverRequestAccountModel);
+            vm.addNewCar(getActivity(),AddNewCarActivity.userModel,AddNewCarActivity.driverRequestAccountModel);
         }
     }
     void onDriverL(){

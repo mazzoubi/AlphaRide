@@ -135,7 +135,17 @@ public class UserViewModel extends ViewModel {
         });
     }
 
-    public void addNewCar(Activity c, DriverRequestAccountModel dd){
+    public void addNewCar(Activity c, UserModel user , DriverRequestAccountModel dd){
+        dd.idUser=UserInfo_sharedPreference.getUser(c).uid;
+        dd.fullName=UserInfo_sharedPreference.getUser(c).fullName;
+        dd.colorCar = user.carColor;
+        dd.modelCar = user.carModel;
+        dd.typeCar = user.carType;
+        dd.numberCar = user.numberCar;
+        dd.email = UserInfo_sharedPreference.getUser(c).email;
+        dd.phoneNumber = UserInfo_sharedPreference.getUser(c).phoneNumber;
+
+        String key = System.currentTimeMillis()+"";
         Map<String,Object> map = new HashMap<>();
         map.put("colorCar",dd.colorCar );
         map.put("driverLicense",dd.driverLicense );
@@ -152,16 +162,32 @@ public class UserViewModel extends ViewModel {
         map.put("phoneNumber",dd.phoneNumber );
         map.put("typeCar",dd.typeCar );
         map.put("state","0" );
+        map.put("_id",key );
 
         FirebaseFirestore.getInstance().collection("OtherCars")
-                .document(dd.idUser).set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()){
-                    Toast.makeText(c, "تمت اضافة المركبة بنجاح ", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+                .whereEqualTo("idUser",dd.idUser)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if (queryDocumentSnapshots.getDocuments().size()>=2){
+                            Toast.makeText(c, "لا يجوز اضافة اكثر من سيارتين اضافيات!", Toast.LENGTH_SHORT).show();
+                        }else {
+                            FirebaseFirestore.getInstance().collection("OtherCars")
+                                    .document(key).set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()){
+                                        Toast.makeText(c, "تمت اضافة المركبة بنجاح ", Toast.LENGTH_SHORT).show();
+                                        c.finish();
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+
+
     }
 
     public void getCars(Activity c ){

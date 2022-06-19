@@ -82,6 +82,12 @@ public class MyCarsActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getCars();
+    }
+
     void getCars(){
         UserViewModel vm = ViewModelProviders.of(this).get(UserViewModel.class);
         vm.getCars(MyCarsActivity.this);
@@ -137,14 +143,9 @@ public class MyCarsActivity extends AppCompatActivity {
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.dialog_image);
-            ImageView imageView = findViewById(R.id.imageView);
+            ImageView imageView = findViewById(R.id.imageViewMain);
             try {
-                PhotoView photoView = new PhotoView(MyCarsActivity.this);
-                Picasso.get().load(Uri.parse(image)).into(photoView);
-
-                new android.app.AlertDialog.Builder(MyCarsActivity.this)
-                        .setView(photoView)
-                        .show();
+                Picasso.get().load(image).into(imageView);
             }catch (Exception e){}
         }
     }

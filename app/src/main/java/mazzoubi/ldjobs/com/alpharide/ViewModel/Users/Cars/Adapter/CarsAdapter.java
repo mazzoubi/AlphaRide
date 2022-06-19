@@ -25,14 +25,14 @@ import mazzoubi.ldjobs.com.alpharide.R;
 
 public class CarsAdapter extends ArrayAdapter<DriverRequestAccountModel> {
 
-    DriverRequestAccountModel a ;
+    DriverRequestAccountModel user ;
     Activity c ;
     public CarsAdapter(Activity context, int view, ArrayList<DriverRequestAccountModel> arrayList){
         super(context,view,arrayList);
         this.c = context;
     }
 
-    UserModel user;
+
     TextView txvType , txvModel , txvNo , txvColor ;
 
     TextView txvFront , txvEnd , txvInside , txvCarL , txvDriverL ;
@@ -42,9 +42,8 @@ public class CarsAdapter extends ArrayAdapter<DriverRequestAccountModel> {
 
         LayoutInflater layoutInflater=LayoutInflater.from(getContext());
         View myView = layoutInflater.inflate(R.layout.row_my_cars,parent,false);
-        a = getItem(position);
+        user = getItem(position);
 
-        user= UserInfo_sharedPreference.getUser(c);
         txvType = myView.findViewById(R.id.txvType);
         txvModel = myView.findViewById(R.id.txvModel);
         txvNo = myView.findViewById(R.id.txvNo);
@@ -56,10 +55,10 @@ public class CarsAdapter extends ArrayAdapter<DriverRequestAccountModel> {
         txvCarL = myView.findViewById(R.id.textView11);
         txvDriverL = myView.findViewById(R.id.textView12);
 
-        txvType.setText(a.typeCar );
-        txvModel.setText(a.modelCar );
-        txvNo.setText(a.numberCar );
-        txvColor.setText(a.colorCar );
+        txvType.setText(user.typeCar );
+        txvModel.setText(user.modelCar );
+        txvNo.setText(user.numberCar );
+        txvColor.setText(user.colorCar );
 
         txvFront.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,14 +117,9 @@ public class CarsAdapter extends ArrayAdapter<DriverRequestAccountModel> {
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.dialog_image);
-            ImageView imageView = findViewById(R.id.imageView);
+            ImageView imageView = findViewById(R.id.imageViewMain);
             try {
-                PhotoView photoView = new PhotoView(c);
-                Picasso.get().load(Uri.parse(image)).into(photoView);
-
-                new android.app.AlertDialog.Builder(c)
-                        .setView(photoView)
-                        .show();
+                Picasso.get().load(image).into(imageView);
             }catch (Exception e){}
         }
     }
