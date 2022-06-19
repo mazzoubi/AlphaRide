@@ -10,5 +10,7 @@
 <color name="yellow2">#FFDE4D</color>
 <color name="font">#8C6E21</color>
 <color name="white">#ffffff</color>
-<color name="black">#000000</color>
+    <color name="black">#000000</color>
+
+    <color name="black2">#9C000000</color>
 </resources>

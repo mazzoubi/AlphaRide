@@ -26,6 +26,8 @@ import mazzoubi.ldjobs.com.alpharide.ViewModel.Main.DashboardActivity;
 
 public class UserViewModel extends ViewModel {
     private static final String userCollection = "Users" ;
+
+    public MutableLiveData<UserModel> userObject = new MutableLiveData<>();
     public MutableLiveData<ArrayList<DriverRequestAccountModel>> listOfCars = new MutableLiveData<>();
     public void addUser(Activity c , UserModel user, DriverRequestAccountModel dd,
                         Intent intent, ArrayList<Activity> activities){
@@ -88,6 +90,23 @@ public class UserViewModel extends ViewModel {
                         c.finish();
                     }
                 });
+    }
+
+    public void getUserInfo(Activity c, String uid){
+        userObject = new MutableLiveData<>();
+        FirebaseFirestore.getInstance().collection(userCollection)
+                .whereEqualTo("uid",uid)
+                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                if (queryDocumentSnapshots.getDocuments().size()<1){
+
+                }else {
+                    UserModel userModel = queryDocumentSnapshots.getDocuments().get(0).toObject(UserModel.class);
+                    userObject.setValue(userModel);
+                }
+            }
+        });
     }
 
     public void UpdateUser(Activity c , UserModel user){

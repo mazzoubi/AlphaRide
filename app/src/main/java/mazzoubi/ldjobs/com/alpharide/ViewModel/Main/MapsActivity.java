@@ -8,6 +8,8 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.Manifest;
 import android.content.Intent;
@@ -22,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
@@ -36,8 +39,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.navigation.NavigationView;
 
+import mazzoubi.ldjobs.com.alpharide.Data.Users.UserInfo_sharedPreference;
+import mazzoubi.ldjobs.com.alpharide.Data.Users.UserModel;
 import mazzoubi.ldjobs.com.alpharide.R;
 import mazzoubi.ldjobs.com.alpharide.ViewModel.Users.Cars.MyCarsActivity;
+import mazzoubi.ldjobs.com.alpharide.ViewModel.Users.UserViewModel;
 import mazzoubi.ldjobs.com.alpharide.ViewModel.Users.ui.ProfileActivity;
 import mazzoubi.ldjobs.com.alpharide.databinding.ActivityMapsBinding;
 
@@ -57,6 +63,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     ConstraintLayout constraintLayout ;
     ToggleButton toggleButton ;
+    TextView txvAccountState ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -147,6 +154,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         constraintLayout = findViewById(R.id.constraintLayout);
         toggleButton = findViewById(R.id.toggleButton);
+        txvAccountState = findViewById(R.id.textView10);
 
         toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -158,6 +166,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         });
+
+        getUserInfo();
     }
 
 
@@ -231,5 +241,53 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         drawerLayout.open();
 
+    }
+
+//    void getUserInfo(){
+//        toggleButton.setClickable(false);
+//        toggleButton.setTextOff("الرجاء الانتظار...");
+//        toggleButton.setTextOn("الرجاء الانتظار...");
+//        UserViewModel vm = ViewModelProviders.of(this).get(UserViewModel.class);
+//        vm.getUserInfo(MapsActivity.this, UserInfo_sharedPreference.getUser(MapsActivity.this).uid);
+//        vm.userObject.observe(this, new Observer<UserModel>() {
+//            @Override
+//            public void onChanged(UserModel userModel) {
+//                UserInfo_sharedPreference.setInfo(MapsActivity.this,userModel);
+//                if (!userModel.stateAccount.equals("StateAccount.active")){
+//                    toggleButton.setClickable(false);
+//                    toggleButton.setTextOff("يرجى انتظار قبول الادمن لطلبك");
+//                    toggleButton.setTextOn("يرجى انتظار قبول الادمن لطلبك");
+//                }else {
+//                    toggleButton.setClickable(true);
+//                    toggleButton.setTextOff("غير متصل");
+//                    toggleButton.setTextOn("متصل");
+//                }
+//
+//            }
+//        });
+//    }
+
+
+    void getUserInfo(){
+        txvAccountState.setText("الرجاء الانتظار...");
+        txvAccountState.setText("الرجاء الانتظار...");
+        UserViewModel vm = ViewModelProviders.of(this).get(UserViewModel.class);
+        vm.getUserInfo(MapsActivity.this, UserInfo_sharedPreference.getUser(MapsActivity.this).uid);
+        vm.userObject.observe(this, new Observer<UserModel>() {
+            @Override
+            public void onChanged(UserModel userModel) {
+                UserInfo_sharedPreference.setInfo(MapsActivity.this,userModel);
+                if (!userModel.stateAccount.equals("StateAccount.active")){
+                    toggleButton.setVisibility(View.INVISIBLE);
+                    txvAccountState.setText("يرجى انتظار قبول الادمن لطلبك");
+                    txvAccountState.setText("يرجى انتظار قبول الادمن لطلبك");
+                }else {
+                    toggleButton.setVisibility(View.VISIBLE);
+                    txvAccountState.setVisibility(View.GONE);
+
+                }
+
+            }
+        });
     }
 }
