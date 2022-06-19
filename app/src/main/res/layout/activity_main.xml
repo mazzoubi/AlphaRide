@@ -5,159 +5,123 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/yellow2"
+    android:background="@drawable/background2"
     tools:context=".MainActivity">
 
-    <ImageView
+    <TextView
+        android:id="@+id/welcome"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="30dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="5dp"
-        android:src="@drawable/logo3" />
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="25dp"
+        android:fontFamily="serif"
+        android:gravity="right"
+        android:text="تحتاج لمساعدة ؟"
+        android:textColor="@color/colorPrimary"
+        android:textSize="18dp"
+        android:textStyle="bold" />
 
-    <androidx.cardview.widget.CardView
+    <ImageView
+        android:id="@+id/img"
+        android:layout_width="270dp"
+        android:layout_height="170dp"
+        android:layout_below="@+id/welcome"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="75dp"
+        android:layout_marginRight="25dp"
+        android:src="@drawable/logo5" />
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_centerInParent="true"
-        android:layout_margin="30dp"
-        android:id="@+id/main_card_lay"
-        app:cardCornerRadius="30dp"
-        android:elevation="15dp"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/img"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="15dp">
 
-        <RelativeLayout
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_lay2"
             android:layout_width="match_parent"
-            android:background="@drawable/back1"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/welcome"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginLeft="25dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginRight="25dp"
-                android:fontFamily="serif"
-                android:gravity="center"
-                android:text="مرحبا في رويال رايد"
-                android:textColor="@color/font"
-                android:textSize="32dp"
-                android:textStyle="bold" />
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card_lay"
-                android:layout_width="230dp"
-                android:layout_height="130dp"
-                android:layout_below="@+id/welcome"
-                android:layout_centerHorizontal="true"
-                android:layout_marginStart="30dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginEnd="30dp"
-                android:layout_marginBottom="30dp"
-                android:elevation="15dp"
-                app:cardCornerRadius="30dp">
-
-                <ImageView
-                    android:id="@+id/gif"
-                    android:scaleType="fitXY"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-            </androidx.cardview.widget.CardView>
+            android:layout_height="45dp"
+            android:layout_above="@+id/card_lay3"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="30dp"
+            android:elevation="15dp"
+            app:cardCornerRadius="5dp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
-                android:layout_below="@+id/card_lay"
-                android:layout_centerHorizontal="true"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="-50dp"
-                android:layout_marginRight="15dp"
-                android:layout_marginBottom="15dp"
-                android:background="@drawable/back2">
+                android:layout_height="match_parent">
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/card_lay2"
-                    android:layout_width="180dp"
-                    android:layout_height="45dp"
+                <Button
+                    android:id="@+id/login"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:layout_centerInParent="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_margin="30dp"
-                    android:elevation="15dp"
-                    app:cardCornerRadius="5dp">
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <Button
-                            android:id="@+id/login"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_centerInParent="true"
-                            android:background="@drawable/back4"
-                            android:fontFamily="serif"
-                            android:gravity="center"
-                            android:onClick="Login"
-                            android:text="تسجيل الدخول"
-                            android:textColor="@color/font"
-                            android:textSize="18dp"
-                            android:textStyle="bold" />
-
-                    </RelativeLayout>
-
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/card_lay3"
-                    android:layout_width="180dp"
-                    android:layout_height="45dp"
-                    android:layout_below="@+id/card_lay2"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="-15dp"
-                    android:elevation="15dp"
-                    app:cardCornerRadius="5dp">
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <Button
-                            android:id="@+id/register"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/back4"
-                            android:fontFamily="serif"
-                            android:gravity="center"
-                            android:onClick="Register"
-                            android:text="سجل مجانا"
-                            android:textColor="@color/font"
-                            android:textSize="18dp"
-                            android:textStyle="bold" />
-
-                    </RelativeLayout>
-
-                </androidx.cardview.widget.CardView>
+                    android:background="@drawable/back4"
+                    android:fontFamily="serif"
+                    android:gravity="center"
+                    android:onClick="Login"
+                    android:text="تسجيل الدخول"
+                    android:textColor="@color/font"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
 
             </RelativeLayout>
 
-        </RelativeLayout>
+        </androidx.cardview.widget.CardView>
 
-    </androidx.cardview.widget.CardView>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_lay3"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="-15dp"
+            android:elevation="15dp"
+            app:cardCornerRadius="5dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Button
+                    android:id="@+id/register"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/back4"
+                    android:fontFamily="serif"
+                    android:gravity="center"
+                    android:onClick="Register"
+                    android:text="سجل مجانا"
+                    android:textColor="@color/font"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/welcome2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/main_card_lay"
+        android:layout_above="@+id/face"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="-20dp"
+        android:layout_marginBottom="15dp"
         android:fontFamily="serif"
         android:gravity="center"
         android:text="صفحات التواصل الإجتماعي الرسمية"
-        android:textColor="@color/font"
+        android:textColor="@color/colorPrimary"
         android:textSize="18dp"
         android:textStyle="bold" />
 
@@ -165,7 +129,8 @@
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/welcome2"
+        android:layout_marginBottom="15dp"
+        android:layout_alignParentBottom="true"
         android:id="@+id/insta"
         android:layout_marginTop="5dp"
         android:src="@drawable/insta" />
@@ -174,8 +139,9 @@
         android:layout_height="35dp"
         android:layout_toLeftOf="@+id/insta"
         android:id="@+id/face"
+        android:layout_marginBottom="15dp"
         android:layout_marginRight="25dp"
-        android:layout_below="@+id/welcome2"
+        android:layout_alignParentBottom="true"
         android:layout_marginTop="5dp"
         android:src="@drawable/face" />
     <ImageView
@@ -183,7 +149,8 @@
         android:layout_height="35dp"
         android:layout_toRightOf="@id/insta"
         android:layout_marginLeft="25dp"
-        android:layout_below="@+id/welcome2"
+        android:layout_marginBottom="15dp"
+        android:layout_alignParentBottom="true"
         android:layout_marginTop="5dp"
         android:src="@drawable/twitter" />
 

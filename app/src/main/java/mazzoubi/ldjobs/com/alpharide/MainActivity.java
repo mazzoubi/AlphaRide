@@ -36,10 +36,6 @@ public class MainActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_DENIED)
             ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.ACCESS_COARSE_LOCATION}, 5);
 
-        Glide.with(MainActivity.this)
-                .load(R.drawable.main_logo)
-                .into((ImageView) findViewById(R.id.gif));
-
     }
 
     public void Login(View view) {

@@ -45,13 +45,12 @@
 
                 <ToggleButton
                     android:id="@+id/toggleButton"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="32dp"
-                    android:layout_marginEnd="32dp"
                     android:layout_marginBottom="20dp"
                     android:checked="false"
                     android:text="ToggleButton"
+                    android:background="@drawable/btn_back223"
                     android:textOff="غير متصل"
                     android:textOn="متصل"
                     map:layout_constraintBottom_toTopOf="@+id/constraintLayout"
