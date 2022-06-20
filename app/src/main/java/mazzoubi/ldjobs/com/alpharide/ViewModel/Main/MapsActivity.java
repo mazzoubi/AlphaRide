@@ -143,7 +143,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         break;
 
                     case R.id.nav_logout:
-
+                        MapsActivity.this.finishAffinity();
                         break;
                 }
                 return false;
