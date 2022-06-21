@@ -3,6 +3,7 @@ package mazzoubi.ldjobs.com.alpharide;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.Manifest;
 import android.content.Intent;
@@ -14,6 +15,8 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 
+import mazzoubi.ldjobs.com.alpharide.Data.Users.UserInfo_sharedPreference;
+import mazzoubi.ldjobs.com.alpharide.ViewModel.Users.UserViewModel;
 import mazzoubi.ldjobs.com.alpharide.ViewModel.Users.ui.LoginActivity;
 import mazzoubi.ldjobs.com.alpharide.ViewModel.Users.ui.RegisterActivity;
 
@@ -36,6 +39,14 @@ public class MainActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_DENIED)
             ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.ACCESS_COARSE_LOCATION}, 5);
 
+        if (UserInfo_sharedPreference.getUser(MainActivity.this).uid==null||
+                UserInfo_sharedPreference.getUser(MainActivity.this).uid.equals("")){
+
+        }else {
+            UserViewModel vm = ViewModelProviders.of(this).get(UserViewModel.class);
+            vm.login(MainActivity.this,UserInfo_sharedPreference.getUser(MainActivity.this).phoneNumber,
+                    UserInfo_sharedPreference.getUser(MainActivity.this).password);
+        }
     }
 
     public void Login(View view) {

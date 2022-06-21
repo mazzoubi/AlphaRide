@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -135,6 +136,18 @@
                 app:layout_constraintTop_toTopOf="@+id/textView6" />
 
             <TextView
+                android:id="@+id/txvColor3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/btn_back"
+                android:padding="5dp"
+                android:text="TextView"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="@+id/textView6"
+                app:layout_constraintTop_toBottomOf="@+id/txvColor" />
+
+            <TextView
                 android:id="@+id/textView11"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -143,7 +156,7 @@
                 android:background="@drawable/btn_back22"
                 android:text="رخصة المركبة"
                 app:layout_constraintEnd_toEndOf="@+id/textView6"
-                app:layout_constraintTop_toBottomOf="@+id/txvColor" />
+                app:layout_constraintTop_toBottomOf="@+id/txvColor3" />
 
             <TextView
                 android:id="@+id/textView12"
@@ -186,6 +199,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/textView8"
                 app:layout_constraintTop_toBottomOf="@+id/textView8" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

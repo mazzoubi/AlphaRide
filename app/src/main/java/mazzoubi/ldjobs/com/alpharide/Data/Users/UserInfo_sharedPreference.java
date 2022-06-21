@@ -2,9 +2,13 @@ package mazzoubi.ldjobs.com.alpharide.Data.Users;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.PropertyName;
+
+import mazzoubi.ldjobs.com.alpharide.MainActivity;
 
 public class UserInfo_sharedPreference {
     public static UserModel getUser(Activity c){
@@ -92,6 +96,8 @@ public class UserInfo_sharedPreference {
 
         editor.apply();
 
+        FirebaseAuth.getInstance().signOut();
+        c.startActivity(new Intent(c, MainActivity.class));
         c.finish();
     }
 }

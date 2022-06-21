@@ -1,6 +1,7 @@
 package mazzoubi.ldjobs.com.alpharide.ViewModel.Users;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.widget.Toast;
 
@@ -19,10 +20,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import mazzoubi.ldjobs.com.alpharide.ClassDate;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.DriverRequestAccountModel;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.UserInfo_sharedPreference;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.UserModel;
 import mazzoubi.ldjobs.com.alpharide.ViewModel.Main.DashboardActivity;
+import mazzoubi.ldjobs.com.alpharide.ViewModel.Users.Cars.MyCarsActivity;
 
 public class UserViewModel extends ViewModel {
     private static final String userCollection = "Users" ;
@@ -77,11 +80,15 @@ public class UserViewModel extends ViewModel {
         map.put("insideCar","");
         map.put("frontCar",dd.frontCar );
 
-        Toast.makeText(c, "الرجاء الانتظار ....", Toast.LENGTH_SHORT).show();
+        ProgressDialog progressDialog = new ProgressDialog(c);
+        progressDialog.setCancelable(false);
+        progressDialog.setTitle("الرجاء الإنتظار...");
+        progressDialog.show();
         FirebaseFirestore.getInstance().collection(userCollection).document(user.uid).set(map)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
+                        progressDialog.dismiss();
                         Toast.makeText(c, "تمت اضافة المستخدم بنجاح", Toast.LENGTH_SHORT).show();
                         c.startActivity(intent);
                         for (Activity d:activities){
@@ -109,6 +116,30 @@ public class UserViewModel extends ViewModel {
         });
     }
 
+    public void getUserInfoByPhoneNumber(Activity c, String phone){
+
+        ProgressDialog progressDialog = new ProgressDialog(c);
+        progressDialog.setCancelable(false);
+        progressDialog.setTitle("الرجاء الإنتظار...");
+        progressDialog.show();
+
+        userObject = new MutableLiveData<>();
+        FirebaseFirestore.getInstance().collection(userCollection)
+                .whereEqualTo("phoneNumber",phone)
+                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                progressDialog.dismiss();
+                if (queryDocumentSnapshots.getDocuments().size()<1){
+                    userObject.setValue(null);
+                }else {
+                    UserModel userModel = queryDocumentSnapshots.getDocuments().get(0).toObject(UserModel.class);
+                    userObject.setValue(userModel);
+                }
+            }
+        });
+    }
+
     public void UpdateUser(Activity c , UserModel user){
 
         UserInfo_sharedPreference.setInfo(c,user);
@@ -117,11 +148,15 @@ public class UserViewModel extends ViewModel {
         map.put("fullName", user.fullName );
         map.put("password", user.password );
 
-        Toast.makeText(c, "الرجاء الانتظار ....", Toast.LENGTH_SHORT).show();
+        ProgressDialog progressDialog = new ProgressDialog(c);
+        progressDialog.setCancelable(false);
+        progressDialog.setTitle("الرجاء الإنتظار...");
+        progressDialog.show();
         FirebaseFirestore.getInstance().collection(userCollection).document(user.uid).set(map)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
+                        progressDialog.dismiss();
                         UserInfo_sharedPreference.setInfo(c,user);
                         Toast.makeText(c, "تمت عملية الحفظ بنجاح", Toast.LENGTH_SHORT).show();
                     }
@@ -144,12 +179,18 @@ public class UserViewModel extends ViewModel {
         map.put("numberCar",dd.numberCar );
         map.put("phoneNumber",dd.phoneNumber );
         map.put("typeCar",dd.typeCar );
+        map.put("create_date", ClassDate.date());
+
+        ProgressDialog progressDialog = new ProgressDialog(c);
+        progressDialog.setCancelable(false);
+        progressDialog.setTitle("الرجاء الإنتظار...");
+        progressDialog.show();
 
         FirebaseFirestore.getInstance().collection("DriverRequestsAccount")
                 .document(dd.idUser).set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-
+                progressDialog.dismiss();
             }
         });
     }
@@ -181,7 +222,13 @@ public class UserViewModel extends ViewModel {
         map.put("phoneNumber",dd.phoneNumber );
         map.put("typeCar",dd.typeCar );
         map.put("state","0" );
+        map.put("create_date", ClassDate.date());
         map.put("_id",key );
+
+        ProgressDialog progressDialog = new ProgressDialog(c);
+        progressDialog.setCancelable(false);
+        progressDialog.setTitle("الرجاء الإنتظار...");
+        progressDialog.show();
 
         FirebaseFirestore.getInstance().collection("OtherCars")
                 .whereEqualTo("idUser",dd.idUser)
@@ -196,6 +243,7 @@ public class UserViewModel extends ViewModel {
                                     .document(key).set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
+                                    progressDialog.dismiss();
                                     if (task.isSuccessful()){
                                         Toast.makeText(c, "تمت اضافة المركبة بنجاح ", Toast.LENGTH_SHORT).show();
                                         c.finish();
@@ -210,6 +258,12 @@ public class UserViewModel extends ViewModel {
     }
 
     public void getCars(Activity c ){
+
+        ProgressDialog progressDialog = new ProgressDialog(c);
+        progressDialog.setCancelable(false);
+        progressDialog.setTitle("الرجاء الإنتظار...");
+        progressDialog.show();
+
         listOfCars = new MutableLiveData<>();
         ArrayList<DriverRequestAccountModel> temp = new ArrayList<>();
         FirebaseFirestore.getInstance().collection("OtherCars")
@@ -220,17 +274,25 @@ public class UserViewModel extends ViewModel {
                 for (DocumentSnapshot d: queryDocumentSnapshots.getDocuments()){
                     temp.add(d.toObject(DriverRequestAccountModel.class));
                 }
+                progressDialog.dismiss();
                 listOfCars.setValue(temp);
             }
         });
     }
+
     public void login(Activity c , String phone,String password){
+
+        ProgressDialog progressDialog = new ProgressDialog(c);
+        progressDialog.setCancelable(false);
+        progressDialog.setTitle("الرجاء الإنتظار...");
+        progressDialog.show();
         FirebaseFirestore.getInstance().collection(userCollection)
-                .whereEqualTo("phoneNumber","+962"+phone)
+                .whereEqualTo("phoneNumber",phone)
                 .whereEqualTo("password",password)
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                progressDialog.dismiss();
                 if (queryDocumentSnapshots.getDocuments().size()<1){
                     Toast.makeText(c, "خطأ في اسم المستخدم او كلمة المرور!", Toast.LENGTH_SHORT).show();
                 }else {

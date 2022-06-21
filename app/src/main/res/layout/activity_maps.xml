@@ -29,9 +29,7 @@
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="60dp"
-            android:layout_marginEnd="60dp"
+            android:layout_height="200dp"
             android:layout_marginBottom="-20dp"
             map:cardCornerRadius="20dp"
             map:cardElevation="8dp"
@@ -41,12 +39,14 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="@color/black2">
 
                 <TextView
                     android:id="@+id/textView10"
                     android:layout_width="0dp"
                     android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
                     android:background="@drawable/btn_back223"
                     android:gravity="center"
                     android:text="يرجى انتظار قبول الادمن لطلبك"
@@ -57,34 +57,74 @@
                     map:layout_constraintEnd_toEndOf="parent"
                     map:layout_constraintHorizontal_bias="0.412"
                     map:layout_constraintStart_toStartOf="parent"
-                    map:layout_constraintTop_toTopOf="parent" />
+                    map:layout_constraintTop_toBottomOf="@+id/textView14" />
 
                 <ToggleButton
                     android:id="@+id/toggleButton"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
-                    android:background="@drawable/btn_back223"
+                    android:layout_height="60dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="25dp"
+                    android:background="@drawable/btn_back22"
                     android:checked="false"
+                    android:textColor="@color/white"
                     android:textOff="غير متصل"
                     android:textOn="متصل"
-                    android:visibility="invisible"
-                    map:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+                    android:textSize="20dp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
                     map:layout_constraintEnd_toEndOf="parent"
                     map:layout_constraintStart_toStartOf="parent"
                     map:layout_constraintTop_toBottomOf="@+id/textView10" />
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/constraintLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:layout_marginBottom="20dp"
-                    android:visibility="gone"
-                    map:layout_constraintBottom_toBottomOf="parent"
+                <TextView
+                    android:id="@+id/textView13"
+                    android:layout_width="120dp"
+                    android:layout_height="13dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/btn_back22"
+                    android:backgroundTint="@color/white"
                     map:layout_constraintEnd_toEndOf="parent"
-                    map:layout_constraintStart_toStartOf="parent">
+                    map:layout_constraintStart_toStartOf="parent"
+                    map:layout_constraintTop_toTopOf="parent" />
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                <TextView
+                    android:id="@+id/textView14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="عرض المزيد"
+                    android:textColor="@color/white"
+                    android:textSize="18dp"
+                    android:textStyle="bold"
+                    map:layout_constraintEnd_toEndOf="@+id/textView13"
+                    map:layout_constraintStart_toStartOf="@+id/textView13"
+                    map:layout_constraintTop_toBottomOf="@+id/textView13" />
+
+                <TextView
+                    android:id="@+id/textView15"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:onClick="men"
+                    map:layout_constraintBottom_toBottomOf="@+id/textView14"
+                    map:layout_constraintEnd_toEndOf="@+id/textView13"
+                    map:layout_constraintStart_toStartOf="@+id/textView13"
+                    map:layout_constraintTop_toTopOf="@+id/textView13" />
+
+<!--                <ImageView-->
+<!--                    android:id="@+id/imageView"-->
+<!--                    android:layout_width="50dp"-->
+<!--                    android:layout_height="50dp"-->
+<!--                    android:layout_marginEnd="10dp"-->
+<!--                    android:layout_marginBottom="23dp"-->
+<!--                    android:src="@drawable/back_btn2"-->
+<!--                    android:onClick="onClickBack"-->
+<!--                    android:tint="@color/white"-->
+<!--                    map:layout_constraintBottom_toBottomOf="parent"-->
+<!--                    map:layout_constraintEnd_toEndOf="parent" />-->
+
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 

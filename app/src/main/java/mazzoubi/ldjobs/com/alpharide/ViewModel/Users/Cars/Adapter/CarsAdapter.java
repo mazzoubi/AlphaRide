@@ -3,6 +3,7 @@ package mazzoubi.ldjobs.com.alpharide.ViewModel.Users.Cars.Adapter;
 import android.app.Activity;
 import android.app.Dialog;
 
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -35,7 +36,7 @@ public class CarsAdapter extends ArrayAdapter<DriverRequestAccountModel> {
 
     TextView txvType , txvModel , txvNo , txvColor ;
 
-    TextView txvFront , txvEnd , txvInside , txvCarL , txvDriverL ;
+    TextView txvFront , txvEnd , txvInside , txvCarL , txvDriverL,txvCarState ;
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -54,11 +55,23 @@ public class CarsAdapter extends ArrayAdapter<DriverRequestAccountModel> {
         txvInside = myView.findViewById(R.id.textView9);
         txvCarL = myView.findViewById(R.id.textView11);
         txvDriverL = myView.findViewById(R.id.textView12);
+        txvCarState = myView.findViewById(R.id.txvColor3);
 
         txvType.setText(user.typeCar );
         txvModel.setText(user.modelCar );
         txvNo.setText(user.numberCar );
         txvColor.setText(user.colorCar );
+
+        if (user.state.equals("0")){
+            txvCarState.setText("حالة الموافقة: في إنتظار الموافقة من الادمن");
+            txvCarState.setTextColor(Color.YELLOW);
+        }else if (user.state.equals("1")){
+            txvCarState.setText("حالة الموافقة: تمت الموافقة من الادمن");
+            txvCarState.setTextColor(Color.GREEN);
+        }else {
+            txvCarState.setText("حالة الموافقة: تمت الرفض من الادمن");
+            txvCarState.setTextColor(Color.RED);
+        }
 
         txvFront.setOnClickListener(new View.OnClickListener() {
             @Override

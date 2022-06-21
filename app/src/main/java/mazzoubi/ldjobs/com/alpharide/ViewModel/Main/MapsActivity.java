@@ -61,7 +61,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     int LOCATION_REFRESH_DISTANCE = 1; // 500 meters to update
     LocationManager mLocationManager;
 
-    ConstraintLayout constraintLayout ;
     ToggleButton toggleButton ;
     TextView txvAccountState ;
     @Override
@@ -104,6 +103,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.getUiSettings().setZoomControlsEnabled(true);
@@ -143,7 +144,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         break;
 
                     case R.id.nav_logout:
-                        MapsActivity.this.finishAffinity();
+                        UserInfo_sharedPreference.logout(MapsActivity.this);
                         break;
                 }
                 return false;
@@ -152,7 +153,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 //        drawerLayout.openDrawer(GravityCompat.START);
 
-        constraintLayout = findViewById(R.id.constraintLayout);
         toggleButton = findViewById(R.id.toggleButton);
         txvAccountState = findViewById(R.id.textView10);
 
@@ -160,9 +160,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b){
-                    constraintLayout.setVisibility(View.VISIBLE);
+                    toggleButton.setBackgroundDrawable(getDrawable(R.drawable.btn_back23));
+//                    constraintLayout.setVisibility(View.VISIBLE);
                 }else {
-                    constraintLayout.setVisibility(View.GONE);
+                    toggleButton.setBackgroundDrawable(getDrawable(R.drawable.btn_back22));
+//                    constraintLayout.setVisibility(View.GONE);
                 }
             }
         });
@@ -289,5 +291,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         });
+    }
+
+    public void onClickShowMore(View view) {
+
     }
 }

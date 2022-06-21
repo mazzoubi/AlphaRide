@@ -5,6 +5,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.chrisbanes.photoview.PhotoView;
 import com.squareup.picasso.Picasso;
@@ -96,8 +98,12 @@ public class MyCarsActivity extends AppCompatActivity {
             public void onChanged(ArrayList<DriverRequestAccountModel> driverRequestAccountModels) {
                 ArrayAdapter<DriverRequestAccountModel> adapter = new CarsAdapter(MyCarsActivity.this,
                         R.layout.row_my_cars,driverRequestAccountModels);
-
                 listView.setAdapter(adapter);
+
+                if (driverRequestAccountModels.size()<1){
+                    Toast.makeText(getApplicationContext(), "لا يوجد لديك سيارات اضافية!", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 

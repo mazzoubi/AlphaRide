@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 
+import com.hbb20.CountryCodePicker;
+
 import mazzoubi.ldjobs.com.alpharide.Data.Users.UserInfo_sharedPreference;
 import mazzoubi.ldjobs.com.alpharide.R;
 import mazzoubi.ldjobs.com.alpharide.ViewModel.Main.DashboardActivity;
@@ -17,7 +19,7 @@ import mazzoubi.ldjobs.com.alpharide.ViewModel.Users.UserViewModel;
 public class LoginActivity extends AppCompatActivity {
 
     EditText edtPhone , edtPassword ;
-
+    CountryCodePicker countryCode_picker ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,6 +28,9 @@ public class LoginActivity extends AppCompatActivity {
 
         edtPassword = findViewById(R.id.edtPassword);
         edtPhone = findViewById(R.id.edtPhone);
+        countryCode_picker = findViewById(R.id.countryCode_picker);
+
+
 
     }
 
@@ -36,7 +41,8 @@ public class LoginActivity extends AppCompatActivity {
             edtPassword.setError("ادخل كلمة المرور");
         }else{
             UserViewModel vm = ViewModelProviders.of(this).get(UserViewModel.class);
-            vm.login(LoginActivity.this,edtPhone.getText().toString(),
+            vm.login(LoginActivity.this,
+                    countryCode_picker.getSelectedCountryCodeWithPlus()+edtPhone.getText().toString(),
                     edtPassword.getText().toString());
         }
 

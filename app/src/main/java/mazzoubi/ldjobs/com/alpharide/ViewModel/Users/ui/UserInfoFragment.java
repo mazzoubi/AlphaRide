@@ -3,16 +3,21 @@ package mazzoubi.ldjobs.com.alpharide.ViewModel.Users.ui;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.hbb20.CountryCodePicker;
 
+import mazzoubi.ldjobs.com.alpharide.Data.Users.UserModel;
 import mazzoubi.ldjobs.com.alpharide.R;
+import mazzoubi.ldjobs.com.alpharide.ViewModel.Users.UserViewModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -103,8 +108,22 @@ public class UserInfoFragment extends Fragment {
             RegisterActivity.userModel.password = edtPassword.getText().toString();
             RegisterActivity.userModel.phoneNumber =
                     countryCodePicker.getSelectedCountryCodeWithPlus()+edtPhone.getText().toString();
-            getFragmentManager().beginTransaction().replace(R.id.frameLayout,new CarInfoFragment())
-                    .commit();
+
+            UserViewModel userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
+            userViewModel.getUserInfoByPhoneNumber(getActivity(), RegisterActivity.userModel.phoneNumber);
+            userViewModel.userObject.observe(this, new Observer<UserModel>() {
+                @Override
+                public void onChanged(UserModel userModel) {
+                    if (userModel==null){
+                        getFragmentManager().beginTransaction().replace(R.id.frameLayout,new CarInfoFragment())
+                                .commit();
+                    }else {
+                        Toast.makeText(getContext(), "رقم الهاتف هذا مستخدم مسبقاً الرجاء المحاولة برقم اخر!", Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+
+
         }
     }
 
