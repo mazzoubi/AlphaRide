@@ -36,7 +36,7 @@ public class CarsAdapter extends ArrayAdapter<DriverRequestAccountModel> {
 
     TextView txvType , txvModel , txvNo , txvColor ;
 
-    TextView txvFront , txvEnd , txvInside , txvCarL , txvDriverL,txvCarState ;
+    TextView txvFront, txvCarL , txvDriverL,txvCarState ;
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -51,16 +51,14 @@ public class CarsAdapter extends ArrayAdapter<DriverRequestAccountModel> {
         txvColor = myView.findViewById(R.id.txvColor);
 
         txvFront = myView.findViewById(R.id.textView7);
-        txvEnd = myView.findViewById(R.id.textView8);
-        txvInside = myView.findViewById(R.id.textView9);
         txvCarL = myView.findViewById(R.id.textView11);
         txvDriverL = myView.findViewById(R.id.textView12);
         txvCarState = myView.findViewById(R.id.txvColor3);
 
-        txvType.setText(user.typeCar );
-        txvModel.setText(user.modelCar );
-        txvNo.setText(user.numberCar );
-        txvColor.setText(user.colorCar );
+        txvType.setText("نوع المركبة: "+user.typeCar );
+        txvModel.setText("سنة الصنع : "+user.modelCar );
+        txvNo.setText("رقم المركبة: "+user.numberCar );
+        txvColor.setText("رقم المركبة: "+user.colorCar );
 
         if (user.state.equals("0")){
             txvCarState.setText("حالة الموافقة: في إنتظار الموافقة من الادمن");
@@ -77,22 +75,6 @@ public class CarsAdapter extends ArrayAdapter<DriverRequestAccountModel> {
             @Override
             public void onClick(View view) {
                 ImageDialog a = new ImageDialog(user.frontCar);
-                a.show();
-            }
-        });
-
-        txvEnd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ImageDialog a = new ImageDialog(user.endCar);
-                a.show();
-            }
-        });
-
-        txvInside.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ImageDialog a = new ImageDialog(user.insideCar);
                 a.show();
             }
         });

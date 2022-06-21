@@ -53,12 +53,11 @@ public class UserInfo_sharedPreference {
         editor.putBoolean("emailVerified" , user.emailVerified );
         editor.putBoolean("usePassword" , user.usePassword );
         editor.putFloat("rating" , (float) user.rating);
-
         editor.putString("uid", user.uid );
         editor.putString("carColor", user.carColor );
         editor.putString("carModel", user.carModel );
         editor.putString("carType", user.carType );
-        editor.putString("email", user.email );
+        editor.putString("email", user.email);
         editor.putString("fullName", user.fullName );
         editor.putString("imageProfile", user.imageProfile );
         editor.putString("emailFacebook", user.emailFacebook );

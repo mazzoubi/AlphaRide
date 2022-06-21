@@ -88,15 +88,16 @@
             android:layout_height="40dp"
             android:layout_below="@+id/edtFullName"
             android:layout_marginTop="5dp"
-            android:textColor="@color/colorPrimary"
-            android:textColorHint="@color/colorPrimary"
             android:layout_marginRight="15dp"
             android:layout_toRightOf="@+id/countryCode_picker"
             android:background="@drawable/btn_back"
             android:ems="10"
+            android:maxLength="9"
             android:gravity="center"
             android:hint="رقم الهاتف"
-            android:inputType="phone" />
+            android:inputType="phone"
+            android:textColor="@color/colorPrimary"
+            android:textColorHint="@color/colorPrimary" />
 
         <EditText
             android:id="@+id/edtPassword"

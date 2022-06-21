@@ -42,7 +42,7 @@
         android:layout_centerHorizontal="true"
         android:fontFamily="serif"
         android:gravity="center"
-        android:text="بيانات المركبة الرئيسية"
+        android:text="بيانات المركبة الثانوية"
         android:textColor="@color/colorPrimary"
         android:textSize="18dp"
         android:textStyle="bold" />
