@@ -36,6 +36,14 @@ public class UserInfo_sharedPreference {
         user.emailVerified=sharedPreferences.getBoolean("emailVerified",false);
         user.usePassword=sharedPreferences.getBoolean("usePassword",false);
         user.rating=sharedPreferences.getFloat("rating",0);
+
+        user.driverLicense = sharedPreferences.getString("driverLicense" , "");
+        user.drivingLicense = sharedPreferences.getString("drivingLicense" , "");
+        user.yourPhoto = sharedPreferences.getString("yourPhoto" , "");
+        user.endCar = sharedPreferences.getString("endCar" , "");
+        user.insideCar = sharedPreferences.getString("insideCar" , "");
+        user.frontCar = sharedPreferences.getString("frontCar" , "");
+
         return user;
     }
 
@@ -65,6 +73,14 @@ public class UserInfo_sharedPreference {
         editor.putInt("countTrips",user.countTrips );
         editor.putInt("points",user.points );
 
+
+        editor.putString("driverLicense",user.driverLicense);
+        editor.putString("drivingLicense",user.drivingLicense);
+        editor.putString("yourPhoto",user.yourPhoto);
+        editor.putString("endCar",user.endCar);
+        editor.putString("insideCar",user.insideCar);
+        editor.putString("frontCar",user.frontCar);
+
         editor.apply();
     }
 
@@ -93,6 +109,15 @@ public class UserInfo_sharedPreference {
         editor.putInt("countRating",0 );
         editor.putInt("countTrips",0 );
         editor.putInt("points",0 );
+
+
+        editor.putString("driverLicense" , "");
+        editor.putString("drivingLicense" , "");
+        editor.putString("yourPhoto" , "");
+        editor.putString("endCar" , "");
+        editor.putString("insideCar" , "");
+        editor.putString("frontCar" , "");
+
 
         editor.apply();
 
