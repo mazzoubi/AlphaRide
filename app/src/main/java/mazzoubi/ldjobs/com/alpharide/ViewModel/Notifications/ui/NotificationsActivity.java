@@ -36,6 +36,7 @@ public class NotificationsActivity extends AppCompatActivity {
         txvWaiting = findViewById(R.id.textView19);
         getNotifications();
 
+
     }
 
     void getNotifications(){
