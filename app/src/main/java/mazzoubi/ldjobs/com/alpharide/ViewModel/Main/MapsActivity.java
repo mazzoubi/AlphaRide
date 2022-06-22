@@ -2,6 +2,7 @@ package mazzoubi.ldjobs.com.alpharide.ViewModel.Main;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -12,6 +13,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -42,9 +44,12 @@ import com.google.android.material.navigation.NavigationView;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.UserInfo_sharedPreference;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.UserModel;
 import mazzoubi.ldjobs.com.alpharide.R;
+import mazzoubi.ldjobs.com.alpharide.ViewModel.Notifications.ui.NotificationsActivity;
 import mazzoubi.ldjobs.com.alpharide.ViewModel.Users.Cars.MyCarsActivity;
 import mazzoubi.ldjobs.com.alpharide.ViewModel.Users.UserViewModel;
+import mazzoubi.ldjobs.com.alpharide.ViewModel.Users.ui.MyTripsActivity;
 import mazzoubi.ldjobs.com.alpharide.ViewModel.Users.ui.ProfileActivity;
+import mazzoubi.ldjobs.com.alpharide.ViewModel.Wallet.ui.WalletActivity;
 import mazzoubi.ldjobs.com.alpharide.databinding.ActivityMapsBinding;
 
 
@@ -146,6 +151,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     case R.id.nav_logout:
                         UserInfo_sharedPreference.logout(MapsActivity.this);
+                        break;
+                    case R.id.notifications:
+                        startActivity(new Intent(getApplicationContext(), NotificationsActivity.class));
+                        break;
+                    case R.id.myTrips:
+                        startActivity(new Intent(getApplicationContext(), MyTripsActivity.class));
+                        break;
+                    case R.id.wallet:
+                        startActivity(new Intent(getApplicationContext(), WalletActivity.class));
                         break;
                 }
                 return false;
@@ -294,7 +308,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-    public void onClickShowMore(View view) {
 
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+        builder.setTitle("هل تريد الخروج من التطبيق؟");
+        builder.setPositiveButton("", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                MapsActivity.super.onBackPressed();
+            }
+        });
+        builder.setNegativeButton("", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        builder.show();
     }
 }

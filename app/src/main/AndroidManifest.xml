@@ -11,8 +11,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
-
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
 
     <application
         android:allowBackup="true"
@@ -22,6 +21,15 @@
         android:roundIcon="@drawable/logo"
         android:supportsRtl="false"
         android:theme="@style/AppTheme">
+        <activity
+            android:name=".ViewModel.Notifications.ui.NotificationsActivity"
+            android:exported="true" />
+        <activity
+            android:name=".ViewModel.Users.ui.MyTripsActivity"
+            android:exported="true" />
+        <activity
+            android:name=".ViewModel.Wallet.ui.WalletActivity"
+            android:exported="true" />
         <activity
             android:name=".MainActivity"
             android:exported="true" />

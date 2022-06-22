@@ -84,6 +84,7 @@ public class UserInfo_sharedPreference {
         editor.apply();
     }
 
+
     public static void logout(Activity c){
         SharedPreferences.Editor editor = c.getSharedPreferences("User", Context.MODE_PRIVATE).edit();
 

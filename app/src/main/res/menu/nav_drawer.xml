@@ -10,6 +10,15 @@
         android:title="إدارة السيارات" />
 
     <item
+        android:id="@+id/myTrips"
+        android:title="رحلاتي" />
+    <item
+        android:id="@+id/notifications"
+        android:title="الاشعارات" />
+    <item
+        android:id="@+id/wallet"
+        android:title="المحفظة" />
+    <item
         android:id="@+id/nav_logout"
         android:title="تسجيل خروج" />
 
