@@ -33,7 +33,7 @@ public class MyCarsActivity extends AppCompatActivity {
     UserModel user;
     TextView txvType , txvModel , txvNo , txvColor ;
 
-    TextView txvFront , txvEnd , txvInside , txvCarL , txvDriverL ;
+    TextView txvFront , txvCarL , txvDriverL ;
     ListView listView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,22 +45,6 @@ public class MyCarsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ImageDialog a = new ImageDialog(user.frontCar);
-                a.show();
-            }
-        });
-
-        txvEnd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ImageDialog a = new ImageDialog(user.endCar);
-                a.show();
-            }
-        });
-
-        txvInside.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ImageDialog a = new ImageDialog(user.insideCar);
                 a.show();
             }
         });
@@ -118,17 +102,13 @@ public class MyCarsActivity extends AppCompatActivity {
         listView = findViewById(R.id.listView);
 
         txvFront = findViewById(R.id.textView7);
-        txvEnd = findViewById(R.id.textView8);
-        txvInside = findViewById(R.id.textView9);
         txvCarL = findViewById(R.id.textView11);
         txvDriverL = findViewById(R.id.textView12);
 
-        txvType.setText(user.carType );
-        txvModel.setText(user.carModel );
-        txvNo.setText(user.numberCar );
-        txvColor.setText(user.carColor );
-
-        txvColor.setText(user.carColor );
+        txvType.setText("نوع المركبة: "+user.carType );
+        txvModel.setText("سنة الصنع : "+user.carModel );
+        txvNo.setText("رقم المركبة: "+user.numberCar );
+        txvColor.setText("رقم المركبة: "+user.carColor );
 
         getCars();
     }

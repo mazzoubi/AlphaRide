@@ -72,7 +72,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -246,9 +245,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         public void onLocationChanged(final Location location) {
             LatLng l =new LatLng(location.getLatitude(), location.getLongitude());
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(l,20.0f));
-            mMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(location.getLatitude(), location.getLongitude()))
-                    .title("Hello world"));
+//            mMap.addMarker(new MarkerOptions()
+//                    .position(new LatLng(location.getLatitude(), location.getLongitude()))
+//                    .title("Hello world"));
 
         }
     };

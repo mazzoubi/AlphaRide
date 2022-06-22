@@ -82,12 +82,13 @@
                 android:layout_toRightOf="@+id/countryCode_picker"
                 android:background="@drawable/btn_back"
                 android:ems="10"
-                android:textColor="@color/colorPrimary"
-                android:textColorHint="@color/colorPrimary"
                 android:gravity="center"
+                android:maxLength="9"
                 android:hint="رقم الهاتف"
                 android:inputType="phone"
-                android:onClick="onClickLogin" />
+                android:onClick="onClickLogin"
+                android:textColor="@color/colorPrimary"
+                android:textColorHint="@color/colorPrimary" />
 
             <EditText
                 android:id="@+id/edtPassword"

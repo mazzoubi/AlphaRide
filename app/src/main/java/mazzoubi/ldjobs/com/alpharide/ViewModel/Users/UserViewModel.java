@@ -147,12 +147,13 @@ public class UserViewModel extends ViewModel {
         map.put("email", user.email );
         map.put("fullName", user.fullName );
         map.put("password", user.password );
+        map.put("imageProfile", user.imageProfile );
 
         ProgressDialog progressDialog = new ProgressDialog(c);
         progressDialog.setCancelable(false);
         progressDialog.setTitle("الرجاء الإنتظار...");
         progressDialog.show();
-        FirebaseFirestore.getInstance().collection(userCollection).document(user.uid).set(map)
+        FirebaseFirestore.getInstance().collection(userCollection).document(user.uid).update(map)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
