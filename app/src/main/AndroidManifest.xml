@@ -22,7 +22,7 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ViewModel.Main.ContactUsActivity"
+            android:name=".ViewModel.SplashActivity"
             android:exported="true" />
         <activity
             android:name=".ViewModel.Users.ui.TripInfoActivity"
@@ -73,7 +73,7 @@
             android:name=".ViewModel.Users.ui.RegisterActivity"
             android:exported="false" />
         <activity
-            android:name=".ViewModel.SplashActivity"
+            android:name=".ViewModel.Main.ContactUsActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
