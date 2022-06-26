@@ -163,7 +163,7 @@ public class ClassDate extends ViewModel {
                 myCalendar.set(Calendar.MONTH, monthOfYear);
                 myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
-                String myFormat = "d-M-yyyy"; //In which you need put here
+                String myFormat = "yyyy/MM/dd"; //In which you need put here
                 SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
                 dateTo[0] =sdf.format(myCalendar.getTime());

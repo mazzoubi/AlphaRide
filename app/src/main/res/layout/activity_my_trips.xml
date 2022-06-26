@@ -11,11 +11,43 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txvDateTo" />
+
+    <TextView
+        android:id="@+id/txvDateFrom"
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="60dp"
+        android:onClick="onClickDateFrom"
+        android:background="@drawable/btn_back"
+        android:gravity="center|start|left"
+        android:padding="5dp"
+        android:text="من ؟"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txvDateTo"
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="60dp"
+        android:onClick="onClickDateTo"
+        android:background="@drawable/btn_back"
+        android:gravity="center|start|left"
+        android:padding="5dp"
+        android:text="الى ؟"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txvDateFrom" />
 </androidx.constraintlayout.widget.ConstraintLayout>
