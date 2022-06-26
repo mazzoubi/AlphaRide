@@ -66,6 +66,14 @@ public class ClassDate extends ViewModel {
         return time;
     }
 
+
+    public static String timeByDate(Date date){
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss",new Locale("EN"));
+        String time = timeFormat.format(date);
+        return time;
+    }
+
+
     public static String time_12(){
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm a",new Locale("EN"));
         String time = timeFormat.format(new Date());

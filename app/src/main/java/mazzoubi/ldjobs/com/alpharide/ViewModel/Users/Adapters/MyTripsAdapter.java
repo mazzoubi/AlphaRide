@@ -1,15 +1,17 @@
 package mazzoubi.ldjobs.com.alpharide.ViewModel.Users.Adapters;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import mazzoubi.ldjobs.com.alpharide.Data.Notifications.NotificationModel;
+import mazzoubi.ldjobs.com.alpharide.ClassDate;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.MyTripsModel;
 import mazzoubi.ldjobs.com.alpharide.R;
 
@@ -28,11 +30,21 @@ public class MyTripsAdapter extends ArrayAdapter<MyTripsModel> {
         LayoutInflater layoutInflater=LayoutInflater.from(getContext());
         View myView = layoutInflater.inflate(R.layout.row_my_trips,parent,false);
 
-        TextView title = myView.findViewById(R.id.textView2);
+        TextView txvDatetime = myView.findViewById(R.id.txvDatetime);
+        TextView txvAddress = myView.findViewById(R.id.txvAddress);
+        TextView txvTripState = myView.findViewById(R.id.txvTripState);
+        ImageView imageView = myView.findViewById(R.id.imageView);
 
         a= getItem(position);
 
-        title.setText(a.toString());
+        txvDatetime.setText(a.date + " "+ ClassDate.timeByDate(a.dateStart));
+        txvAddress.setText(a.addressCurrent);
+
+        if (a.state.equals("StateTrip.cancelByCustomer")){
+            txvTripState.setText("تم الغاء الرحلة");
+            txvTripState.setTextColor(Color.RED);
+        }
+
 
         return myView ;
     }
