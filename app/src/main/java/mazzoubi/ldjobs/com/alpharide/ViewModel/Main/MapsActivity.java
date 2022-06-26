@@ -262,31 +262,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-//    void getUserInfo(){
-//        toggleButton.setClickable(false);
-//        toggleButton.setTextOff("الرجاء الانتظار...");
-//        toggleButton.setTextOn("الرجاء الانتظار...");
-//        UserViewModel vm = ViewModelProviders.of(this).get(UserViewModel.class);
-//        vm.getUserInfo(MapsActivity.this, UserInfo_sharedPreference.getUser(MapsActivity.this).uid);
-//        vm.userObject.observe(this, new Observer<UserModel>() {
-//            @Override
-//            public void onChanged(UserModel userModel) {
-//                UserInfo_sharedPreference.setInfo(MapsActivity.this,userModel);
-//                if (!userModel.stateAccount.equals("StateAccount.active")){
-//                    toggleButton.setClickable(false);
-//                    toggleButton.setTextOff("يرجى انتظار قبول الادمن لطلبك");
-//                    toggleButton.setTextOn("يرجى انتظار قبول الادمن لطلبك");
-//                }else {
-//                    toggleButton.setClickable(true);
-//                    toggleButton.setTextOff("غير متصل");
-//                    toggleButton.setTextOn("متصل");
-//                }
-//
-//            }
-//        });
-//    }
-
-
     void getUserInfo(){
         txvAccountState.setText("الرجاء الانتظار...");
         txvAccountState.setText("الرجاء الانتظار...");
@@ -310,7 +285,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-
     @Override
     public void onBackPressed() {
         AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
@@ -319,7 +293,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         builder.setPositiveButton("نعم", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                MapsActivity.super.onBackPressed();
+                finishAffinity();
             }
         });
         builder.setNegativeButton("الغاء", new DialogInterface.OnClickListener() {

@@ -22,6 +22,9 @@
         android:id="@+id/contactUs"
         android:title="تواصل معنا" />
     <item
+        android:id="@+id/settings"
+        android:title="الإعدادات" />
+    <item
         android:id="@+id/nav_logout"
         android:title="تسجيل خروج" />
 

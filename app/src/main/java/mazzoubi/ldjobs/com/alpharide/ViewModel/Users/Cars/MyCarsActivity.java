@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -32,12 +33,13 @@ public class MyCarsActivity extends AppCompatActivity {
 
     UserModel user;
     TextView txvType , txvModel , txvNo , txvColor ;
-
     TextView txvFront , txvCarL , txvDriverL ;
     ListView listView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_my_cars);
         init();
 
@@ -64,8 +66,6 @@ public class MyCarsActivity extends AppCompatActivity {
                 a.show();
             }
         });
-
-
     }
 
     @Override
@@ -116,7 +116,6 @@ public class MyCarsActivity extends AppCompatActivity {
     public void onClickAddCar(View view) {
         startActivity(new Intent(getApplicationContext(),AddNewCarActivity.class));
     }
-
 
     class ImageDialog extends Dialog{
         String image ;

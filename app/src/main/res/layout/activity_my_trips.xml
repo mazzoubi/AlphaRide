@@ -1,53 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background2"
     tools:context=".ViewModel.Users.ui.MyTripsActivity">
+
+    <TextView
+        android:id="@+id/welcome4"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/back1"
+        android:fontFamily="serif"
+        android:gravity="center"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:text="رحلاتي السابقة"
+        android:textColor="@color/black"
+        android:textSize="18dp"
+        android:textStyle="bold" />
 
     <ListView
         android:id="@+id/listView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txvDateTo" />
+        android:layout_below="@+id/welcome4"
+        android:layout_width="match_parent"
+        android:layout_marginTop="15dp"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true" />
 
-    <TextView
-        android:id="@+id/txvDateFrom"
-        android:layout_width="0dp"
-        android:layout_height="45dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="60dp"
-        android:onClick="onClickDateFrom"
-        android:background="@drawable/btn_back"
-        android:gravity="center|start|left"
-        android:padding="5dp"
-        android:text="من ؟"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/txvDateTo"
-        android:layout_width="0dp"
-        android:layout_height="45dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="60dp"
-        android:onClick="onClickDateTo"
-        android:background="@drawable/btn_back"
-        android:gravity="center|start|left"
-        android:padding="5dp"
-        android:text="الى ؟"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txvDateFrom" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

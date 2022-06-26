@@ -148,9 +148,14 @@
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navView"
-        android:layout_width="wrap_content"
+        android:layout_width="230dp"
         android:layout_height="match_parent"
-        android:layout_gravity="start"
+        android:background="@drawable/background2"
+        android:layout_gravity="left"
+        app:itemTextColor="#ffffff"
+        app:itemIconTint="#ffffff"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header_test"
         app:menu="@menu/nav_drawer" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

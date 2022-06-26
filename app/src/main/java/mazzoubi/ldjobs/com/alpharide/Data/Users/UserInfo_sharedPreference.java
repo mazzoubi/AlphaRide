@@ -118,11 +118,13 @@ public class UserInfo_sharedPreference {
         editor.putString("insideCar" , "");
         editor.putString("frontCar" , "");
 
-
         editor.apply();
 
         FirebaseAuth.getInstance().signOut();
         c.startActivity(new Intent(c, MainActivity.class));
         c.finish();
+
+//        c.finishAffinity();
+
     }
 }

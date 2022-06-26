@@ -15,10 +15,10 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/logo"
+        android:icon="@drawable/logo6"
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
-        android:roundIcon="@drawable/logo"
+        android:roundIcon="@drawable/logo6"
         android:supportsRtl="false"
         android:theme="@style/AppTheme">
         <activity
@@ -37,7 +37,7 @@
             android:name=".ViewModel.Wallet.ui.WalletActivity"
             android:exported="true" />
         <activity
-            android:name=".MainActivity"
+            android:name=".ViewModel.Main.ContactUsActivity"
             android:exported="true" />
         <activity
             android:name=".ViewModel.Users.Cars.AddNewCarActivity"
@@ -73,7 +73,7 @@
             android:name=".ViewModel.Users.ui.RegisterActivity"
             android:exported="false" />
         <activity
-            android:name=".ViewModel.Main.ContactUsActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

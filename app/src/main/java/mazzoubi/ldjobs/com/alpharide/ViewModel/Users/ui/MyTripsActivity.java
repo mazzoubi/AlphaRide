@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.view.WindowManager;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -29,14 +30,15 @@ public class MyTripsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_my_trips);
         init();
     }
 
     void init(){
         listView = findViewById(R.id.listView);
-        txvDateTo = findViewById(R.id.txvDateTo);
-        txvDateFrom = findViewById(R.id.txvDateFrom);
+//        txvDateTo = findViewById(R.id.txvDateTo);
+//        txvDateFrom = findViewById(R.id.txvDateFrom);
         getMyTrips();
     }
 
