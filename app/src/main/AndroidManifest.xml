@@ -22,6 +22,12 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".ViewModel.Main.ContactUsActivity"
+            android:exported="true" />
+        <activity
+            android:name=".ViewModel.Users.ui.TripInfoActivity"
+            android:exported="true" />
+        <activity
             android:name=".ViewModel.Notifications.ui.NotificationsActivity"
             android:exported="true" />
         <activity

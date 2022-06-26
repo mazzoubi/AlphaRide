@@ -160,6 +160,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     case R.id.wallet:
                         startActivity(new Intent(getApplicationContext(), WalletActivity.class));
                         break;
+                    case R.id.contactUs:
+                        startActivity(new Intent(getApplicationContext(), ContactUsActivity.class));
+                        break;
                 }
                 return false;
             }

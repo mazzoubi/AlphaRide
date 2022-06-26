@@ -19,6 +19,9 @@
         android:id="@+id/wallet"
         android:title="المحفظة" />
     <item
+        android:id="@+id/contactUs"
+        android:title="تواصل معنا" />
+    <item
         android:id="@+id/nav_logout"
         android:title="تسجيل خروج" />
 
