@@ -312,13 +312,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onBackPressed() {
         AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
         builder.setTitle("هل تريد الخروج من التطبيق؟");
-        builder.setPositiveButton("", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("نعم", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 MapsActivity.super.onBackPressed();
             }
         });
-        builder.setNegativeButton("", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("الغاء", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();

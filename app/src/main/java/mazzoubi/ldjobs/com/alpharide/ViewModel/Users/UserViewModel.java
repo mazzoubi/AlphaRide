@@ -135,6 +135,7 @@ public class UserViewModel extends ViewModel {
                 }else {
                     UserModel userModel = queryDocumentSnapshots.getDocuments().get(0).toObject(UserModel.class);
                     userObject.setValue(userModel);
+
                 }
             }
         });
