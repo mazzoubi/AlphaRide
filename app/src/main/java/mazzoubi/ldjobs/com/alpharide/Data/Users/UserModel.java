@@ -1,5 +1,7 @@
 package mazzoubi.ldjobs.com.alpharide.Data.Users;
 
+import android.provider.Settings;
+
 import androidx.annotation.Keep;
 
 import com.google.firebase.firestore.PropertyName;
@@ -40,6 +42,10 @@ public class UserModel {
     public String typeUser = "" ;
     @PropertyName("password")
     public String password = "" ;
+    @PropertyName("token")
+    public String token = "" ;
+    @PropertyName("AID")
+    public String AID = "" ;
     @PropertyName("emailVerified")
     public boolean emailVerified = false;
     @PropertyName("usePassword")
@@ -61,4 +67,7 @@ public class UserModel {
     public String insideCar="";
     @PropertyName("frontCar")
     public String frontCar="";
+
+
+//    final String android_id = Settings.Secure.getString(loginActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
 }

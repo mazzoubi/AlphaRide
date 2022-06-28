@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
@@ -40,6 +41,8 @@ public class VerifyPhoneActivity extends AppCompatActivity {
     ProgressBar progressBar;
     TextInputEditText editText;
     AppCompatButton buttonSignIn;
+    String phoneNumber;
+    String fromWhere = "" ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +56,9 @@ public class VerifyPhoneActivity extends AppCompatActivity {
         editText = findViewById(R.id.editTextCode);
         buttonSignIn = findViewById(R.id.buttonSignIn);
 
-        String phoneNumber = RegisterActivity.userModel.phoneNumber;
+        fromWhere = getIntent().getStringExtra("fromWhere")+"";
+
+        phoneNumber = RegisterActivity.userModel.phoneNumber;
         sendVerificationCode(phoneNumber);
 
         // save phone number
@@ -92,24 +97,32 @@ public class VerifyPhoneActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            SharedPreferences prefs = getApplicationContext().getSharedPreferences("User",
-                                    Context.MODE_PRIVATE);
-                            SharedPreferences.Editor editor = prefs.edit();
-                            editor.putString("id", task.getResult().getUser().getUid());
-                            editor.apply();
 
-                            RegisterActivity.userModel.uid = task.getResult().getUser().getUid();
+                            if (fromWhere.equals("forgotPassword")){
+                                startActivity(new Intent(getApplicationContext(),ForgotPasswordActivity.class)
+                                .putExtra("phoneNumber",phoneNumber));
+                                finish();
+                            }else {
+                                SharedPreferences prefs = getApplicationContext().getSharedPreferences("User",
+                                        Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = prefs.edit();
+                                editor.putString("id", task.getResult().getUser().getUid());
+                                editor.apply();
+
+                                RegisterActivity.userModel.uid = task.getResult().getUser().getUid();
 
 
-                            Intent intent = new Intent(VerifyPhoneActivity.this, DashboardActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                Intent intent = new Intent(VerifyPhoneActivity.this, DashboardActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
-                            ArrayList<Activity> activities = new ArrayList<>();
-                            activities.add(RegisterActivity.activity);
-                            UserViewModel vm = ViewModelProviders.of(VerifyPhoneActivity.this)
-                                    .get(UserViewModel.class);
-                            vm.addUser(VerifyPhoneActivity.this,RegisterActivity.userModel
-                                    ,RegisterActivity.driverRequestAccountModel,intent,activities);
+                                ArrayList<Activity> activities = new ArrayList<>();
+                                activities.add(RegisterActivity.activity);
+                                UserViewModel vm = ViewModelProviders.of(VerifyPhoneActivity.this)
+                                        .get(UserViewModel.class);
+                                RegisterActivity.userModel.AID = Settings.Secure.getString(VerifyPhoneActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
+                                vm.addUser(VerifyPhoneActivity.this,RegisterActivity.userModel
+                                        ,RegisterActivity.driverRequestAccountModel,intent,activities);
+                            }
 
 
                         } else {

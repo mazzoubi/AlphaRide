@@ -39,7 +39,14 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import mazzoubi.ldjobs.com.alpharide.Data.Users.UserInfo_sharedPreference;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.UserModel;
@@ -109,6 +116,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+        updateToken();
+
 
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
@@ -303,5 +312,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
         builder.show();
+    }
+
+
+    void updateToken(){
+        UserViewModel vm = ViewModelProviders.of(this).get(UserViewModel.class);
+        vm.updateToken(MapsActivity.this);
     }
 }

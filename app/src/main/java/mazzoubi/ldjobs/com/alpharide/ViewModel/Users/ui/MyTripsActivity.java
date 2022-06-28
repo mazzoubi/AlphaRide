@@ -5,9 +5,11 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.WindowManager;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -24,6 +26,7 @@ import mazzoubi.ldjobs.com.alpharide.ViewModel.Users.TripsViewModel;
 public class MyTripsActivity extends AppCompatActivity {
 
     ArrayList<MyTripsModel> myTrips ;
+    public static MyTripsModel tripsObject ;
     ListView listView ;
 
     TextView txvDateTo,txvDateFrom;
@@ -33,6 +36,13 @@ public class MyTripsActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_my_trips);
         init();
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                tripsObject = myTrips.get(i);
+                startActivity(new Intent(getApplicationContext(),TripInfoWithMapActivity.class));
+            }
+        });
     }
 
     void init(){

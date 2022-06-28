@@ -62,6 +62,18 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true">
 
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/edtPassword"
+                android:layout_alignEnd="@+id/edtPassword"
+                android:onClick="onClickForgotPassword"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="0dp"
+                android:text="هل نسيت كلمة المرور؟"
+                android:textColor="@color/white" />
+
             <com.hbb20.CountryCodePicker
                 android:id="@+id/countryCode_picker"
                 android:layout_width="115dp"
@@ -83,9 +95,9 @@
                 android:background="@drawable/btn_back"
                 android:ems="10"
                 android:gravity="center"
-                android:maxLength="9"
                 android:hint="رقم الهاتف"
                 android:inputType="phone"
+                android:maxLength="9"
                 android:onClick="onClickLogin"
                 android:textColor="@color/colorPrimary"
                 android:textColorHint="@color/colorPrimary" />
@@ -97,22 +109,22 @@
                 android:layout_below="@+id/edtPhone"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="5dp"
-                android:textColor="@color/colorPrimary"
-                android:textColorHint="@color/colorPrimary"
                 android:layout_marginRight="15dp"
                 android:background="@drawable/btn_back"
                 android:ems="10"
                 android:gravity="center"
                 android:hint="كلمة المرور"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                android:textColor="@color/colorPrimary"
+                android:textColorHint="@color/colorPrimary" />
 
             <Button
                 android:id="@+id/button"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:layout_below="@+id/edtPassword"
+                android:layout_below="@+id/textView8"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="25dp"
                 android:layout_marginRight="15dp"
                 android:background="@drawable/btn_back22"
                 android:onClick="onClickLogin"

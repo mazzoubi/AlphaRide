@@ -5,10 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.PropertyName;
 
 import mazzoubi.ldjobs.com.alpharide.MainActivity;
+import mazzoubi.ldjobs.com.alpharide.ViewModel.Users.UserViewModel;
 
 public class UserInfo_sharedPreference {
     public static UserModel getUser(Activity c){
@@ -43,6 +47,8 @@ public class UserInfo_sharedPreference {
         user.endCar = sharedPreferences.getString("endCar" , "");
         user.insideCar = sharedPreferences.getString("insideCar" , "");
         user.frontCar = sharedPreferences.getString("frontCar" , "");
+        user.token = sharedPreferences.getString("token" , "");
+        user.AID = sharedPreferences.getString("AID" , "");
 
         return user;
     }
@@ -79,12 +85,18 @@ public class UserInfo_sharedPreference {
         editor.putString("endCar",user.endCar);
         editor.putString("insideCar",user.insideCar);
         editor.putString("frontCar",user.frontCar);
+        editor.putString("token",user.token);
+        editor.putString("AID",user.AID);
 
         editor.apply();
     }
 
 
     public static void logout(Activity c){
+
+        UserViewModel vm = ViewModelProviders.of((FragmentActivity) c).get(UserViewModel.class);
+        vm.UpdateAID(c,"");
+
         SharedPreferences.Editor editor = c.getSharedPreferences("User", Context.MODE_PRIVATE).edit();
 
         editor.putBoolean("emailVerified" , false );
@@ -117,6 +129,8 @@ public class UserInfo_sharedPreference {
         editor.putString("endCar" , "");
         editor.putString("insideCar" , "");
         editor.putString("frontCar" , "");
+        editor.putString("token" , "");
+        editor.putString("AID" , "");
 
         editor.apply();
 

@@ -2,10 +2,15 @@ package mazzoubi.ldjobs.com.alpharide.ViewModel.Users;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.provider.Settings;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -15,6 +20,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,6 +31,7 @@ import mazzoubi.ldjobs.com.alpharide.Data.Users.DriverRequestAccountModel;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.UserInfo_sharedPreference;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.UserModel;
 import mazzoubi.ldjobs.com.alpharide.ViewModel.Main.DashboardActivity;
+import mazzoubi.ldjobs.com.alpharide.ViewModel.Main.MapsActivity;
 import mazzoubi.ldjobs.com.alpharide.ViewModel.Users.Cars.MyCarsActivity;
 
 public class UserViewModel extends ViewModel {
@@ -32,6 +39,9 @@ public class UserViewModel extends ViewModel {
 
     public MutableLiveData<UserModel> userObject = new MutableLiveData<>();
     public MutableLiveData<ArrayList<DriverRequestAccountModel>> listOfCars = new MutableLiveData<>();
+
+
+
     public void addUser(Activity c , UserModel user, DriverRequestAccountModel dd,
                         Intent intent, ArrayList<Activity> activities){
 
@@ -65,6 +75,7 @@ public class UserViewModel extends ViewModel {
         map.put("stateAccount", user.stateAccount );
         map.put("typeUser", user.typeUser );
         map.put("password", user.password );
+        map.put("AID", user.AID );
 //        map.put("tripid", tams );
 
         map.put("balance",user.balance );
@@ -161,6 +172,45 @@ public class UserViewModel extends ViewModel {
                         progressDialog.dismiss();
                         UserInfo_sharedPreference.setInfo(c,user);
                         Toast.makeText(c, "تمت عملية الحفظ بنجاح", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+
+    public void UpdateAID(Activity c , String AID){
+        Map<String,Object> map = new HashMap<>();
+        map.put("AID", AID );
+
+        FirebaseFirestore.getInstance().collection(userCollection)
+                .document(UserInfo_sharedPreference.getUser(c).uid).update(map)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        SharedPreferences.Editor editor = c.getSharedPreferences("User", Context.MODE_PRIVATE).edit();
+                        editor.putString("AID" , AID);
+                    }
+                });
+    }
+
+    public void forgotPassword(Activity c , UserModel user){
+
+        UserInfo_sharedPreference.setInfo(c,user);
+        Map<String,Object> map = new HashMap<>();
+        map.put("password", user.password );
+
+        ProgressDialog progressDialog = new ProgressDialog(c);
+        progressDialog.setCancelable(false);
+        progressDialog.setTitle("الرجاء الإنتظار...");
+        progressDialog.show();
+        FirebaseFirestore.getInstance().collection(userCollection).document(user.uid).update(map)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        progressDialog.dismiss();
+                        UserInfo_sharedPreference.setInfo(c,user);
+                        c.startActivity(new Intent(c, MapsActivity.class));
+                        Toast.makeText(c, "تمت عملية الحفظ بنجاح", Toast.LENGTH_SHORT).show();
+                        c.finish();
                     }
                 });
     }
@@ -299,11 +349,50 @@ public class UserViewModel extends ViewModel {
                     Toast.makeText(c, "خطأ في اسم المستخدم او كلمة المرور!", Toast.LENGTH_SHORT).show();
                 }else {
                     UserModel a = queryDocumentSnapshots.getDocuments().get(0).toObject(UserModel.class);
-                    UserInfo_sharedPreference.setInfo(c,a);
-                    c.startActivity(new Intent(c,DashboardActivity.class));
-                    c.finish();
+                    String AID = Settings.Secure.getString(c.getContentResolver(), Settings.Secure.ANDROID_ID);
+
+                    if (a.AID.isEmpty()||a.AID.equals(AID)){
+                        UserInfo_sharedPreference.setInfo(c,a);
+                        UpdateAID(c,AID);
+                        c.startActivity(new Intent(c,DashboardActivity.class));
+                        c.finish();
+                    }else {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(c);
+                        builder.setTitle("النظام...");
+                        builder.setMessage("لقد لاحظنا أن هذا الحساب قيد تسجيل الدخول على جهاز آخر, الرجاء تسجيل الخروج من الجهاز الآخر ,,, اذا كنت لا تستطيع الوصول الى الجهاز الرجاء التواصل مع الدعم الفني!");
+                        builder.setPositiveButton("موافق", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        });
+                        builder.show();
+                    }
+
                 }
             }
         });
+    }
+
+    public void updateToken(Activity c){
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (task.isSuccessful()) {
+                            String token = task.getResult();
+                            Map<String,Object> map = new HashMap<>();
+                            map.put("token",token);
+                            FirebaseFirestore.getInstance().collection(userCollection)
+                                    .document(UserInfo_sharedPreference.getUser(c).uid)
+                                    .update(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+
+                                }
+                            });
+                        }
+                    }
+                });
     }
 }
