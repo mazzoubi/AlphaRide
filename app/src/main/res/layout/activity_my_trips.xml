@@ -27,10 +27,12 @@
 
     <ListView
         android:id="@+id/listView"
-        android:layout_below="@+id/welcome4"
         android:layout_width="match_parent"
-        android:layout_marginTop="15dp"
         android:layout_height="match_parent"
-        android:layout_centerHorizontal="true" />
+        android:layout_below="@+id/welcome4"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp" />
 
 </RelativeLayout>

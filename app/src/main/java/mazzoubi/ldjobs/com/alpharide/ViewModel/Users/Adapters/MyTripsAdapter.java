@@ -30,10 +30,9 @@ public class MyTripsAdapter extends ArrayAdapter<MyTripsModel> {
         LayoutInflater layoutInflater=LayoutInflater.from(getContext());
         View myView = layoutInflater.inflate(R.layout.row_my_trips,parent,false);
 
-        TextView txvDatetime = myView.findViewById(R.id.txvDatetime);
-        TextView txvAddress = myView.findViewById(R.id.txvAddress);
-        TextView txvTripState = myView.findViewById(R.id.txvTripState);
-        ImageView imageView = myView.findViewById(R.id.imageView);
+        TextView txvDatetime = myView.findViewById(R.id.txt3);
+        TextView txvAddress = myView.findViewById(R.id.txt5);
+        TextView txvTripState = myView.findViewById(R.id.txt1);
 
         a= getItem(position);
 

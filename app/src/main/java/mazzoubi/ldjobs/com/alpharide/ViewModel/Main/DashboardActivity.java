@@ -18,7 +18,6 @@ public class DashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_dashboard);
-//        UserInfo_sharedPreference.logout(DashboardActivity.this);
 
         startActivity(new Intent(getApplicationContext(),MapsActivity.class));
     }

@@ -30,6 +30,7 @@ import mazzoubi.ldjobs.com.alpharide.ClassDate;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.DriverRequestAccountModel;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.UserInfo_sharedPreference;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.UserModel;
+import mazzoubi.ldjobs.com.alpharide.MainActivity;
 import mazzoubi.ldjobs.com.alpharide.ViewModel.Main.DashboardActivity;
 import mazzoubi.ldjobs.com.alpharide.ViewModel.Main.MapsActivity;
 import mazzoubi.ldjobs.com.alpharide.ViewModel.Users.Cars.MyCarsActivity;
@@ -181,15 +182,19 @@ public class UserViewModel extends ViewModel {
         Map<String,Object> map = new HashMap<>();
         map.put("AID", AID );
 
-        FirebaseFirestore.getInstance().collection(userCollection)
-                .document(UserInfo_sharedPreference.getUser(c).uid).update(map)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        SharedPreferences.Editor editor = c.getSharedPreferences("User", Context.MODE_PRIVATE).edit();
-                        editor.putString("AID" , AID);
-                    }
-                });
+        if(!UserInfo_sharedPreference.getUser(c).uid.equals("")
+                && UserInfo_sharedPreference.getUser(c).uid != null){
+
+            FirebaseFirestore.getInstance().collection(userCollection)
+                    .document(UserInfo_sharedPreference.getUser(c).uid).update(map)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            SharedPreferences.Editor editor = c.getSharedPreferences("User", Context.MODE_PRIVATE).edit();
+                            editor.putString("AID" , AID);
+                        }
+                    });
+        }
     }
 
     public void forgotPassword(Activity c , UserModel user){
@@ -357,16 +362,9 @@ public class UserViewModel extends ViewModel {
                         c.startActivity(new Intent(c,DashboardActivity.class));
                         c.finish();
                     }else {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(c);
-                        builder.setTitle("النظام...");
-                        builder.setMessage("لقد لاحظنا أن هذا الحساب قيد تسجيل الدخول على جهاز آخر, الرجاء تسجيل الخروج من الجهاز الآخر ,,, اذا كنت لا تستطيع الوصول الى الجهاز الرجاء التواصل مع الدعم الفني!");
-                        builder.setPositiveButton("موافق", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                            }
-                        });
-                        builder.show();
+                        Toast.makeText(c, "تم تسجيل خروجك من الجهاز القديم..", Toast.LENGTH_SHORT).show();
+                        c.startActivity(new Intent(c, DashboardActivity.class));
+                        c.finish();
                     }
 
                 }

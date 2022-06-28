@@ -8,6 +8,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -27,6 +28,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_forgot_password);
 
         edtPassword = findViewById(R.id.editTextTextPersonName);
@@ -42,10 +44,11 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                p.dismiss();
                 if (queryDocumentSnapshots.getDocuments().size()<1){
                     AlertDialog.Builder builder = new AlertDialog.Builder(ForgotPasswordActivity.this);
                     builder.setTitle("النظام...");
-                    builder.setMessage("انت لم تقم بانشاء الحساب بعد الرجاء انشاء حساب أولاً !");
+                    builder.setMessage("الرجاء انشاء حساب أولاً !");
                     builder.setCancelable(false);
                     builder.setPositiveButton("موافق", new DialogInterface.OnClickListener() {
                         @Override

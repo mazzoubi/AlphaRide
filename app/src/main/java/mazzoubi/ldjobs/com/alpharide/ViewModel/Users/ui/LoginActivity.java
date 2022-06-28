@@ -48,8 +48,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void onClickForgotPassword(View view) {
-        if (edtPassword.getText().toString().isEmpty()){
-            edtPassword.setError("ادخل رقم الهاتف");
+        if (edtPhone.getText().toString().isEmpty()){
+            edtPhone.setError("ادخل رقم الهاتف");
         }else {
             RegisterActivity.userModel = new UserModel();
             RegisterActivity.userModel.phoneNumber = countryCode_picker.getSelectedCountryCodeWithPlus()+edtPhone.getText().toString();

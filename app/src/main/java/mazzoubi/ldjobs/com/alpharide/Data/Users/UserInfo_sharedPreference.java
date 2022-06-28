@@ -73,7 +73,7 @@ public class UserInfo_sharedPreference {
         editor.putString("typeUser", user.typeUser );
         editor.putString("password", user.password );
 
-        editor.putInt("balance",user.balance );
+        editor.putInt("balance", user.balance );
         editor.putInt("countRating",user.countRating );
         editor.putInt("countTrips",user.countTrips );
         editor.putInt("points",user.points );
@@ -132,13 +132,11 @@ public class UserInfo_sharedPreference {
         editor.putString("token" , "");
         editor.putString("AID" , "");
 
+        editor.clear();
         editor.apply();
 
         FirebaseAuth.getInstance().signOut();
         c.startActivity(new Intent(c, MainActivity.class));
-        c.finish();
-
-//        c.finishAffinity();
 
     }
 }

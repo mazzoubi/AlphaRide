@@ -1,6 +1,7 @@
 package mazzoubi.ldjobs.com.alpharide.ViewModel.Main;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -21,6 +22,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,7 +44,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.HashMap;
@@ -50,7 +55,9 @@ import java.util.Map;
 
 import mazzoubi.ldjobs.com.alpharide.Data.Users.UserInfo_sharedPreference;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.UserModel;
+import mazzoubi.ldjobs.com.alpharide.MainActivity;
 import mazzoubi.ldjobs.com.alpharide.R;
+import mazzoubi.ldjobs.com.alpharide.RequestUserPermissions;
 import mazzoubi.ldjobs.com.alpharide.ViewModel.Notifications.ui.NotificationsActivity;
 import mazzoubi.ldjobs.com.alpharide.ViewModel.Users.Cars.MyCarsActivity;
 import mazzoubi.ldjobs.com.alpharide.ViewModel.Users.UserViewModel;
@@ -102,17 +109,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
         }
+
+        if(!UserInfo_sharedPreference.getUser(MapsActivity.this).uid.equals("")
+        && UserInfo_sharedPreference.getUser(MapsActivity.this).uid != null){
+            try{
+                FirebaseFirestore.getInstance()
+                        .collection("Users")
+                        .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                        .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                            @Override
+                            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                                String AID = Settings.Secure
+                                        .getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+                                if(!AID.equals(value.getString("AID"))
+                                && !value.getString("AID").equals("")){
+                                    Toast.makeText(MapsActivity.this, "تم تسجيل الدخول من جهاز اخر", Toast.LENGTH_SHORT).show();
+                                    UserInfo_sharedPreference.logout(MapsActivity.this);
+                                }
+                            }
+                        });
+            }
+            catch (Exception ex){}
+        }
+
+
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
@@ -152,11 +174,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     case R.id.nav_account:
                         startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
                         break;
-
                     case R.id.nav_settings:
                         startActivity(new Intent(getApplicationContext(), MyCarsActivity.class));
                         break;
-
                     case R.id.nav_logout:
                         UserInfo_sharedPreference.logout(MapsActivity.this);
                         break;
@@ -171,6 +191,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         break;
                     case R.id.contactUs:
                         startActivity(new Intent(getApplicationContext(), ContactUsActivity.class));
+                        break;
+                    case R.id.settings:
+                        startActivity(new Intent(getApplicationContext(), RequestUserPermissions.class));
                         break;
                 }
                 return false;

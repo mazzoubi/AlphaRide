@@ -12,6 +12,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.lang.invoke.MutableCallSite;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import mazzoubi.ldjobs.com.alpharide.Data.Users.MyTripsModel;
 
@@ -31,6 +32,7 @@ public class TripsViewModel extends ViewModel {
                         for (DocumentSnapshot d: queryDocumentSnapshots.getDocuments()){
                             temp.add(0,d.toObject(MyTripsModel.class));
                         }
+                        Collections.reverse(temp);
                         listOfMyTrips.setValue(temp);
                     }
                 });

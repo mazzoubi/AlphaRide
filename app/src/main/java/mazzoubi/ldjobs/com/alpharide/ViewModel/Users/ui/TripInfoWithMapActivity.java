@@ -3,6 +3,7 @@ package mazzoubi.ldjobs.com.alpharide.ViewModel.Users.ui;
 import androidx.fragment.app.FragmentActivity;
 
 import android.os.Bundle;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -31,6 +32,7 @@ public class TripInfoWithMapActivity extends FragmentActivity implements OnMapRe
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
 
         binding = ActivityTripInfoWithMapBinding.inflate(getLayoutInflater());
@@ -58,7 +60,7 @@ public class TripInfoWithMapActivity extends FragmentActivity implements OnMapRe
         // Add a marker in Sydney and move the camera
         LatLng customerLatlng = new LatLng(Double.parseDouble(MyTripsActivity.tripsObject.locationCustomer.get("lat")+""),
                 Double.parseDouble(MyTripsActivity.tripsObject.locationCustomer.get("lng")+""));
-        MarkerOptions m = new MarkerOptions().position(customerLatlng).title("موقع الزبون");
+        MarkerOptions m = new MarkerOptions().position(customerLatlng).title("موقع الإنطلاق");
         mMap.addMarker(m);
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(customerLatlng));
