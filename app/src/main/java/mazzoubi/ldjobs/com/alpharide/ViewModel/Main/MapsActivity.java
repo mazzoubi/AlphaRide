@@ -17,6 +17,9 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -39,6 +42,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -146,7 +151,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setZoomGesturesEnabled(true);
         mMap.getUiSettings().setCompassEnabled(true);
-        mMap.setMapType(mMap.MAP_TYPE_NORMAL);
+        mMap.setTrafficEnabled(true);
 
 
         //Initialize Google Play Services
@@ -155,13 +160,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
                 buildGoogleApiClient();
-                mMap.setMyLocationEnabled(true);
+//                mMap.setMyLocationEnabled(true);
             }
         } else {
             buildGoogleApiClient();
-            mMap.setMyLocationEnabled(true);
+//            mMap.setMyLocationEnabled(true);
         }
-
 
         drawerLayout = findViewById(R.id.my_drawer_layout);
         navigationView = findViewById(R.id.navView);
@@ -278,15 +282,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private final LocationListener mLocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(final Location location) {
+            Drawable circleDrawable = getResources().getDrawable(R.drawable.cc);
+            BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
+//            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_baseline_account_circle_24);
+            mMap.clear();
             LatLng l =new LatLng(location.getLatitude(), location.getLongitude());
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(l,20.0f));
-//            mMap.addMarker(new MarkerOptions()
-//                    .position(new LatLng(location.getLatitude(), location.getLongitude()))
-//                    .title("Hello world"));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(l,17.0f));
+            mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(location.getLatitude(), location.getLongitude()))
+                    .icon(markerIcon));
 
         }
     };
 
+    private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
+        Canvas canvas = new Canvas();
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        canvas.setBitmap(bitmap);
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        drawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
 
     public void men(View view) {
 
