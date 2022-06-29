@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background2"
+        tools:context=".ViewModel.Users.Cars.ChangeImagesActivity">
+
+        <TextView
+            android:id="@+id/welcome"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="25dp"
+            android:fontFamily="serif"
+            android:gravity="right"
+            android:text="تحتاج لمساعدة ؟"
+            android:textColor="@color/colorPrimary"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/img"
+            android:layout_width="270dp"
+            android:layout_height="170dp"
+            android:layout_below="@+id/welcome"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="75dp"
+            android:layout_marginRight="25dp"
+            android:src="@drawable/logo5" />
+
+    <TextView
+        android:id="@+id/welcome4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/img"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="serif"
+        android:gravity="center"
+        android:text="تعديل بيانات المركبة "
+        android:textColor="@color/colorPrimary"
+        android:textSize="18dp"
+        android:textStyle="bold" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_below="@+id/welcome4">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:context=".ViewModel.Users.ui.DocumentFragment">
+
+
+                <Button
+                    android:id="@+id/btnDriverL"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:background="@drawable/btn_back22"
+                    android:text="تعديل صورة رخصة القيادة للسائق"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/checkBoxDriverL"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/btnCarL"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="15dp"
+                    android:background="@drawable/btn_back22"
+                    android:text="تعديل صورة رخصة المركبة"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/checkBoxCarL"
+                    app:layout_constraintTop_toBottomOf="@+id/btnDriverL" />
+
+                <Button
+                    android:id="@+id/btnFrontCar"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="15dp"
+                    android:background="@drawable/btn_back22"
+                    android:text="تعديل صورة امامية للمركبة"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/checkBoxFrontCar"
+                    app:layout_constraintTop_toBottomOf="@+id/btnCarL" />
+
+                <CheckBox
+                    android:id="@+id/checkBoxDriverL"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:backgroundTint="@color/white"
+                    android:buttonTint="@color/white"
+                    android:enabled="false"
+                    app:layout_constraintBottom_toBottomOf="@+id/btnDriverL"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/btnDriverL" />
+
+                <CheckBox
+                    android:id="@+id/checkBoxCarL"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:backgroundTint="@color/white"
+                    android:buttonTint="@color/white"
+                    android:enabled="false"
+                    app:layout_constraintBottom_toBottomOf="@+id/btnCarL"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/btnCarL" />
+
+                <CheckBox
+                    android:id="@+id/checkBoxFrontCar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:backgroundTint="@color/white"
+                    android:buttonTint="@color/white"
+                    android:enabled="false"
+                    app:layout_constraintBottom_toBottomOf="@+id/btnFrontCar"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/btnFrontCar" />
+
+                <Button
+                    android:id="@+id/btnNext"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/btn_back22"
+                    android:onClick="onClickNext"
+                    android:text="التالي"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/btnFrontCar" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </RelativeLayout>
+
+    </RelativeLayout>

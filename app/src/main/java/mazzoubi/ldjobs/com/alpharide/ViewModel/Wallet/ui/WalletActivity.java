@@ -20,6 +20,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,10 +86,12 @@ public class WalletActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Toast.makeText(WalletActivity.this, "يرجى الإنتظار..", Toast.LENGTH_SHORT).show();
+                                double a = Double.parseDouble(Balance)+Double.parseDouble(obj.value);
+                                double x = new BigDecimal(a).setScale(2, RoundingMode.HALF_UP).doubleValue();
                                 Map<String, Object> map = new HashMap<>();
                                 map.put("available", "0");
                                 map.put("balance_before", Balance+"");
-                                map.put("balance_after", (new BigDecimal(Balance).add(new BigDecimal(obj.value))) + "");
+                                map.put("balance_after", x + "");
                                 map.put("withdraw_by_id", UserInfo_sharedPreference.getUser(WalletActivity.this).uid);
                                 map.put("withdraw_by_name", UserInfo_sharedPreference.getUser(WalletActivity.this).fullName);
                                 map.put("withdraw_date", ClassDate.date());
@@ -104,7 +107,7 @@ public class WalletActivity extends AppCompatActivity {
                                         FirebaseFirestore.getInstance()
                                                 .collection("Users")
                                                 .document(UserInfo_sharedPreference.getUser(WalletActivity.this).uid)
-                                                .update("balance", new BigDecimal(map.get("balance_after").toString()).intValue()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                .update("balance", x).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
 

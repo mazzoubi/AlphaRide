@@ -111,6 +111,7 @@
             android:text="البريد الإلكتروني"
             android:textColor="@color/white"
             android:textSize="20dp"
+            android:onClick="onClickSendEmail"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -158,6 +159,7 @@
             android:layout_height="0dp"
             android:background="@drawable/btn_back22"
             android:backgroundTint="@color/font"
+            android:onClick="onClickLiveChat"
             android:text="دردش"
             android:textColor="@color/white"
             android:textSize="20dp"

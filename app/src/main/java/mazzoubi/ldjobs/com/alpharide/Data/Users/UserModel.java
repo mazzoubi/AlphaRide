@@ -9,7 +9,7 @@ import com.google.firebase.firestore.PropertyName;
 @Keep
 public class UserModel {
     @PropertyName("balance")
-    public int balance = 0;
+    public double balance = 0;
     @PropertyName("countRating")
     public int countRating = 0;
     @PropertyName("countTrips")

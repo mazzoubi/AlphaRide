@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import androidx.annotation.Keep;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -14,11 +15,12 @@ import com.google.firebase.firestore.PropertyName;
 import mazzoubi.ldjobs.com.alpharide.MainActivity;
 import mazzoubi.ldjobs.com.alpharide.ViewModel.Users.UserViewModel;
 
+@Keep
 public class UserInfo_sharedPreference {
     public static UserModel getUser(Activity c){
         UserModel user = new UserModel();
         SharedPreferences sharedPreferences = c.getSharedPreferences("User", Context.MODE_PRIVATE);
-        user.balance=sharedPreferences.getInt("balance",0);
+        user.balance=sharedPreferences.getFloat("balance",0);
         user.countRating=sharedPreferences.getInt("countRating",0);
         user.countTrips=sharedPreferences.getInt("countTrips",0);
         user.points=sharedPreferences.getInt("points",0);
@@ -73,7 +75,7 @@ public class UserInfo_sharedPreference {
         editor.putString("typeUser", user.typeUser );
         editor.putString("password", user.password );
 
-        editor.putInt("balance", user.balance );
+        editor.putFloat("balance", (float) user.balance );
         editor.putInt("countRating",user.countRating );
         editor.putInt("countTrips",user.countTrips );
         editor.putInt("points",user.points );
@@ -88,7 +90,9 @@ public class UserInfo_sharedPreference {
         editor.putString("token",user.token);
         editor.putString("AID",user.AID);
 
+        editor.commit();
         editor.apply();
+
     }
 
 
@@ -132,7 +136,7 @@ public class UserInfo_sharedPreference {
         editor.putString("token" , "");
         editor.putString("AID" , "");
 
-        editor.clear();
+        editor.commit();
         editor.apply();
 
         FirebaseAuth.getInstance().signOut();

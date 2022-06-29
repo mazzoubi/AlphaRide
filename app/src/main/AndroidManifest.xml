@@ -26,6 +26,12 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".ViewModel.Users.Cars.ChangeImagesActivity"
+            android:exported="true" />
+        <activity
+            android:name=".ViewModel.Main.LiveChatActivity"
+            android:exported="true" />
+        <activity
             android:name=".RequestUserPermissions"
             android:exported="false" />
 

@@ -182,7 +182,7 @@ public class UserViewModel extends ViewModel {
         Map<String,Object> map = new HashMap<>();
         map.put("AID", AID );
 
-        if(!UserInfo_sharedPreference.getUser(c).uid.equals("")
+        if(!(UserInfo_sharedPreference.getUser(c).uid+"").equals("")
                 && UserInfo_sharedPreference.getUser(c).uid != null){
 
             FirebaseFirestore.getInstance().collection(userCollection)
@@ -221,6 +221,7 @@ public class UserViewModel extends ViewModel {
     }
 
     public void addDriverRequest(Activity c, DriverRequestAccountModel dd){
+        String key = ClassDate.currentTimeAtMs();
         Map<String,Object> map = new HashMap<>();
         map.put("colorCar",dd.colorCar );
         map.put("driverLicense",dd.driverLicense );
@@ -237,6 +238,7 @@ public class UserViewModel extends ViewModel {
         map.put("phoneNumber",dd.phoneNumber );
         map.put("typeCar",dd.typeCar );
         map.put("create_date", ClassDate.date());
+        map.put("_id", key);
 
         ProgressDialog progressDialog = new ProgressDialog(c);
         progressDialog.setCancelable(false);
@@ -244,7 +246,7 @@ public class UserViewModel extends ViewModel {
         progressDialog.show();
 
         FirebaseFirestore.getInstance().collection("DriverRequestsAccount")
-                .document(dd.idUser).set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                .document(key).set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 progressDialog.dismiss();
@@ -356,8 +358,8 @@ public class UserViewModel extends ViewModel {
                     UserModel a = queryDocumentSnapshots.getDocuments().get(0).toObject(UserModel.class);
                     String AID = Settings.Secure.getString(c.getContentResolver(), Settings.Secure.ANDROID_ID);
 
+                    UserInfo_sharedPreference.setInfo(c,a);
                     if (a.AID.isEmpty()||a.AID.equals(AID)){
-                        UserInfo_sharedPreference.setInfo(c,a);
                         UpdateAID(c,AID);
                         c.startActivity(new Intent(c,DashboardActivity.class));
                         c.finish();

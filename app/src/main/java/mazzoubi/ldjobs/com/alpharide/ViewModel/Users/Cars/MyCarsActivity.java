@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -31,17 +32,31 @@ import mazzoubi.ldjobs.com.alpharide.ViewModel.Users.UserViewModel;
 
 public class MyCarsActivity extends AppCompatActivity {
 
-    UserModel user;
+    public static UserModel user;
     TextView txvType , txvModel , txvNo , txvColor ;
     TextView txvFront , txvCarL , txvDriverL ;
     ListView listView;
-
+    ArrayList<DriverRequestAccountModel> requestAccount ;
+    public static DriverRequestAccountModel requestAccountModel  ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_my_cars);
         init();
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                requestAccountModel=requestAccount.get(i);
+                if (requestAccountModel.state.equals("1")){
+                    Toast.makeText(getApplicationContext(), "لايمكن تعديل المعلومات", Toast.LENGTH_SHORT).show();
+                }else {
+                    startActivity(new Intent(getApplicationContext(),ChangeImagesActivity.class).putExtra("from","2"));
+                }
+
+            }
+        });
 
         txvFront.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,6 +95,7 @@ public class MyCarsActivity extends AppCompatActivity {
         vm.listOfCars.observe(this, new Observer<ArrayList<DriverRequestAccountModel>>() {
             @Override
             public void onChanged(ArrayList<DriverRequestAccountModel> driverRequestAccountModels) {
+                requestAccount =driverRequestAccountModels;
                 ArrayAdapter<DriverRequestAccountModel> adapter = new CarsAdapter(MyCarsActivity.this,
                         R.layout.row_my_cars,driverRequestAccountModels);
                 listView.setAdapter(adapter);
@@ -115,6 +131,15 @@ public class MyCarsActivity extends AppCompatActivity {
 
     public void onClickAddCar(View view) {
         startActivity(new Intent(getApplicationContext(),AddNewCarActivity.class));
+    }
+
+    public void onClickChangeMainCar(View view) {
+        if (user.stateAccount.equals("StateAccount.active")){
+            Toast.makeText(getApplicationContext(), "لايمكن تعديل المعلومات", Toast.LENGTH_SHORT).show();
+        }else {
+            startActivity(new Intent(getApplicationContext(),ChangeImagesActivity.class).putExtra("from","1"));
+        }
+
     }
 
     class ImageDialog extends Dialog{

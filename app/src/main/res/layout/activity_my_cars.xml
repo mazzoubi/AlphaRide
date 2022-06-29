@@ -8,6 +8,13 @@
     android:background="@drawable/background2"
     tools:context=".ViewModel.Users.Cars.MyCarsActivity">
 
+    <Button
+        android:id="@+id/button5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onClickChangeMainCar"
+        android:text="تعديل معلومات المركبة الأساسية" />
+
     <TextView
         android:id="@+id/welcome4"
         android:layout_width="wrap_content"
