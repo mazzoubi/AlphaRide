@@ -47,14 +47,16 @@ public class MainActivity extends AppCompatActivity {
                             Manifest.permission.ACCESS_COARSE_LOCATION },
                     1); }
 
-        if (UserInfo_sharedPreference.getUser(MainActivity.this).uid==null||
-                UserInfo_sharedPreference.getUser(MainActivity.this).uid.equals("")){
+        try {
+            if (UserInfo_sharedPreference.getUser(MainActivity.this).uid==null||
+                    UserInfo_sharedPreference.getUser(MainActivity.this).uid.equals("")){
 
-        }else {
-            UserViewModel vm = ViewModelProviders.of(this).get(UserViewModel.class);
-            vm.login(MainActivity.this,UserInfo_sharedPreference.getUser(MainActivity.this).phoneNumber,
-                    UserInfo_sharedPreference.getUser(MainActivity.this).password);
-        }
+            }else {
+                UserViewModel vm = ViewModelProviders.of(this).get(UserViewModel.class);
+                vm.login(MainActivity.this,UserInfo_sharedPreference.getUser(MainActivity.this).phoneNumber,
+                        UserInfo_sharedPreference.getUser(MainActivity.this).password);
+            }
+        }catch (Exception e){}
     }
 
     public void Login(View view) {
