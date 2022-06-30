@@ -48,7 +48,7 @@ import mazzoubi.ldjobs.com.alpharide.ViewModel.Users.UserViewModel;
 
 public class ChangeImagesActivity extends AppCompatActivity {
     CheckBox checkBoxDriverL , checkBoxCarL , checkBoxFrontCar ;
-    Button btnDriverL , btnCarL , btnFrontCar,btnNext;
+    Button btnDriverL , btnCarL , btnFrontCar;
     String imaPath = System.currentTimeMillis()+"";
 
     String from = "";
@@ -89,7 +89,7 @@ public class ChangeImagesActivity extends AppCompatActivity {
         btnDriverL = findViewById(R.id.btnDriverL);
         btnCarL = findViewById(R.id.btnCarL);
         btnFrontCar = findViewById(R.id.btnFrontCar);
-        btnNext = findViewById(R.id.btnNext);
+
     }
     
     void onDriverL(){
