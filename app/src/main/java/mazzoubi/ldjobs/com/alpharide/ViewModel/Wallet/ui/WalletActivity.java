@@ -21,6 +21,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,10 +72,17 @@ public class WalletActivity extends AppCompatActivity {
                 try{
                     List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
                     ScratchCardsClass obj = list.get(0).toObject(ScratchCardsClass.class);
+
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                    Date card_date = sdf.parse(obj.expire_date);
+                    Date cur_date = sdf.parse(ClassDate.date());
+
                     if(obj.available.equals("0"))
                         Toast.makeText(WalletActivity.this, "هذه البطاقة مستخدمة مسبقا", Toast.LENGTH_SHORT).show();
                     else if(!obj.serial.equals(edt.getText().toString()))
                         Toast.makeText(WalletActivity.this, "لم يتم العثور على البطاقة", Toast.LENGTH_SHORT).show();
+                    else if((cur_date.compareTo(card_date)) > 0){
+                        Toast.makeText(WalletActivity.this, "هذه البطاقة منتهية الصلاحية", Toast.LENGTH_SHORT).show(); }
                     else{
                         new AlertDialog.Builder(WalletActivity.this)
                                 .setMessage("هذه البطاقة بعنوان "+obj.title+" وتقوم بإضافة رصيد فعلي بقيمة "+obj.value+" تنتهي صلاحية هذه البطاقة بتاريخ "+obj.expire_date+" هل ترغب بشحن الرصيد ؟")

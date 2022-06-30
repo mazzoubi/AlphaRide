@@ -131,7 +131,11 @@ public class MyCarsActivity extends AppCompatActivity {
     }
 
     public void onClickAddCar(View view) {
-        startActivity(new Intent(getApplicationContext(),AddNewCarActivity.class));
+
+        if(requestAccount.size() >= 2)
+            Toast.makeText(MyCarsActivity.this, "لا يمكن إضافة أكثر من 3 سيارات على الحساب", Toast.LENGTH_SHORT).show();
+        else
+            startActivity(new Intent(getApplicationContext(),AddNewCarActivity.class));
     }
 
     public void onClickChangeMainCar(View view) {

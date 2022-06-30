@@ -23,7 +23,9 @@ public class NotificationViewModel extends ViewModel {
     public void getNotifications(Activity c){
         ArrayList<NotificationModel> temp = new ArrayList<>();
 
-        FirebaseFirestore.getInstance().collection(notificationsCollection).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        FirebaseFirestore.getInstance()
+                .collection(notificationsCollection)
+                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 for (DocumentSnapshot d : queryDocumentSnapshots.getDocuments()){
