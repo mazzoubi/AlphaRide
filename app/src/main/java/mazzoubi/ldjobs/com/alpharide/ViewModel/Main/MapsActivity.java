@@ -27,14 +27,17 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -47,6 +50,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -151,6 +155,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setZoomGesturesEnabled(true);
         mMap.getUiSettings().setCompassEnabled(true);
+        mMap.setIndoorEnabled(true);
         mMap.setTrafficEnabled(true);
 
 
@@ -160,49 +165,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
                 buildGoogleApiClient();
-//                mMap.setMyLocationEnabled(true);
+                mMap.setMyLocationEnabled(true);
             }
         } else {
             buildGoogleApiClient();
-//            mMap.setMyLocationEnabled(true);
+            mMap.setMyLocationEnabled(true);
         }
-
-        drawerLayout = findViewById(R.id.my_drawer_layout);
-        navigationView = findViewById(R.id.navView);
-
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-                switch (item.getItemId()){
-                    case R.id.nav_account:
-                        startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
-                        break;
-                    case R.id.nav_settings:
-                        startActivity(new Intent(getApplicationContext(), MyCarsActivity.class));
-                        break;
-                    case R.id.nav_logout:
-                        UserInfo_sharedPreference.logout(MapsActivity.this);
-                        break;
-                    case R.id.notifications:
-                        startActivity(new Intent(getApplicationContext(), NotificationsActivity.class));
-                        break;
-                    case R.id.myTrips:
-                        startActivity(new Intent(getApplicationContext(), MyTripsActivity.class));
-                        break;
-                    case R.id.wallet:
-                        startActivity(new Intent(getApplicationContext(), WalletActivity.class));
-                        break;
-                    case R.id.contactUs:
-                        startActivity(new Intent(getApplicationContext(), ContactUsActivity.class));
-                        break;
-                    case R.id.settings:
-                        startActivity(new Intent(getApplicationContext(), RequestUserPermissions.class));
-                        break;
-                }
-                return false;
-            }
-        });
 
 //        drawerLayout.openDrawer(GravityCompat.START);
 
@@ -222,7 +190,101 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+        setNavView();
         getUserInfo();
+    }
+
+    void setNavView(){
+        drawerLayout = findViewById(R.id.my_drawer_layout);
+        navigationView = findViewById(R.id.navView);
+
+        TextView nav_myProfile , nav_wallet , nav_carMg , nav_myTrips
+                , nav_notifications , nav_sittings , nav_contactUs , nav_logout ;
+        ImageView nav_imageView;
+        LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
+        View view= inflater.inflate(R.layout.menu_nav,navigationView);
+        nav_myProfile = view.findViewById(R.id.textView3);
+        nav_wallet = view.findViewById(R.id.textView9);
+        nav_carMg = view.findViewById(R.id.textView20);
+        nav_myTrips = view.findViewById(R.id.textView21);
+        nav_notifications = view.findViewById(R.id.textView22);
+        nav_sittings = view.findViewById(R.id.textView23);
+        nav_contactUs = view.findViewById(R.id.textView24);
+        nav_logout = view.findViewById(R.id.textView25);
+        nav_imageView = view.findViewById(R.id.imageView);
+
+        FirebaseFirestore.getInstance().collection("AdminDataConfig")
+                .document("Data")
+                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                        String Event = value.getString("Event");
+                        try {
+                            Glide.with(getApplicationContext()).load(Event).into(nav_imageView);
+                        }catch (Exception e){}
+                    }
+                });
+
+
+        nav_myProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+            }
+        });
+        nav_wallet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), WalletActivity.class));
+            }
+        });
+        nav_carMg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), MyCarsActivity.class));
+            }
+        });
+        nav_myTrips.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), MyTripsActivity.class));
+            }
+        });
+        nav_notifications.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), NotificationsActivity.class));
+            }
+        });
+        nav_sittings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), RequestUserPermissions.class));
+            }
+        });
+        nav_contactUs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), ContactUsActivity.class));
+            }
+        });
+        nav_logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                UserInfo_sharedPreference.logout(MapsActivity.this);
+            }
+        });
+
+
+        FirebaseFirestore.getInstance().collection("Users")
+                .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                        nav_wallet.setText("المحفظة" + "   "+UserInfo_sharedPreference
+                                .round(value.getDouble("balance"),2));
+                    }
+                });
     }
 
 

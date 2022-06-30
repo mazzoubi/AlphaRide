@@ -69,7 +69,6 @@ public class NewCarInfoFragment extends Fragment {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_new_car_info, container, false);
         init(view);
-
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

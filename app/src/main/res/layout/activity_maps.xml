@@ -14,14 +14,15 @@
         android:layout_height="match_parent">
 
         <ImageView
+            android:id="@+id/men"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            map:layout_constraintEnd_toEndOf="parent"
-            android:src="@drawable/men"
+            android:layout_marginStart="50dp"
             android:layout_marginTop="15dp"
-            android:onClick="men"
             android:elevation="10dp"
-            android:id="@+id/men"
+            android:onClick="men"
+            android:src="@drawable/men"
+            map:layout_constraintEnd_toEndOf="parent"
             map:layout_constraintHorizontal_bias="0.044"
             map:layout_constraintStart_toStartOf="parent"
             map:layout_constraintTop_toTopOf="parent"
@@ -136,26 +137,32 @@
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            map:barrierDirection="right"
             android:layout_height="match_parent"
+            map:barrierDirection="right"
             map:layout_constraintBottom_toBottomOf="parent"
             map:layout_constraintEnd_toEndOf="parent"
+            map:layout_constraintHorizontal_bias="0.0"
             map:layout_constraintStart_toStartOf="parent"
-            map:layout_constraintTop_toTopOf="parent" />
+            map:layout_constraintTop_toTopOf="parent"
+            map:layout_constraintVertical_bias="0.0" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navView"
-        android:layout_width="230dp"
+        android:layout_width="300dp"
         android:layout_height="match_parent"
         android:background="@drawable/background2"
         android:layout_gravity="left"
         app:itemTextColor="#ffffff"
         app:itemIconTint="#ffffff"
         android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header_test"
-        app:menu="@menu/nav_drawer" />
+
+        >
+
+<!--        app:headerLayout="@layout/nav_header_test"-->
+
+    </com.google.android.material.navigation.NavigationView>
 
 </androidx.drawerlayout.widget.DrawerLayout>
