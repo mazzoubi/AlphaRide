@@ -74,7 +74,7 @@ public class UserViewModel extends ViewModel {
         map.put("numberCar", user.numberCar );
         map.put("phoneNumber", user.phoneNumber );
         map.put("stateAccount", user.stateAccount );
-        map.put("typeUser", user.typeUser );
+        map.put("typeUser", "TypeAccount.driver" );
         map.put("password", user.password );
         map.put("AID", user.AID );
 //        map.put("tripid", tams );

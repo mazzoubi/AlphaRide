@@ -52,7 +52,8 @@ public class MyCarsActivity extends AppCompatActivity {
                 if (requestAccountModel.state.equals("1")){
                     Toast.makeText(getApplicationContext(), "لايمكن تعديل المعلومات", Toast.LENGTH_SHORT).show();
                 }else {
-                    startActivity(new Intent(getApplicationContext(),ChangeImagesActivity.class).putExtra("from","2"));
+                    startActivity(new Intent(getApplicationContext(),ChangeImagesActivity.class)
+                            .putExtra("from","2"));
                 }
 
             }
@@ -137,7 +138,8 @@ public class MyCarsActivity extends AppCompatActivity {
         if (user.stateAccount.equals("StateAccount.active")){
             Toast.makeText(getApplicationContext(), "لايمكن تعديل المعلومات", Toast.LENGTH_SHORT).show();
         }else {
-            startActivity(new Intent(getApplicationContext(),ChangeImagesActivity.class).putExtra("from","1"));
+            startActivity(new Intent(getApplicationContext(),ChangeImagesActivity.class)
+                    .putExtra("from","1"));
         }
 
     }

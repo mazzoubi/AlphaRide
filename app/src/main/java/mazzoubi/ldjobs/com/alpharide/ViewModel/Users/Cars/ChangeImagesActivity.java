@@ -267,6 +267,8 @@ public class ChangeImagesActivity extends AppCompatActivity {
                                     FirebaseFirestore.getInstance().collection("Users")
                                             .document(UserInfo_sharedPreference.getUser(ChangeImagesActivity.this).uid)
                                             .update(map);
+                                    MyCarsActivity.user.driverLicense = uri.toString();
+                                    UserInfo_sharedPreference.setInfo(ChangeImagesActivity.this, MyCarsActivity.user);
                                     FirebaseFirestore.getInstance().collection("DriverRequestsAccount")
                                             .whereEqualTo("idUser",UserInfo_sharedPreference.getUser(ChangeImagesActivity.this).uid)
                                             .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -323,6 +325,8 @@ public class ChangeImagesActivity extends AppCompatActivity {
                                     FirebaseFirestore.getInstance().collection("Users")
                                             .document(UserInfo_sharedPreference.getUser(ChangeImagesActivity.this).uid)
                                             .update(map);
+                                    MyCarsActivity.user.drivingLicense = uri.toString();
+                                    UserInfo_sharedPreference.setInfo(ChangeImagesActivity.this, MyCarsActivity.user);
                                     FirebaseFirestore.getInstance().collection("DriverRequestsAccount")
                                             .whereEqualTo("idUser",UserInfo_sharedPreference.getUser(ChangeImagesActivity.this).uid)
                                             .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -379,6 +383,8 @@ public class ChangeImagesActivity extends AppCompatActivity {
                                     FirebaseFirestore.getInstance().collection("Users")
                                             .document(UserInfo_sharedPreference.getUser(ChangeImagesActivity.this).uid)
                                             .update(map);
+                                    MyCarsActivity.user.frontCar = uri.toString();
+                                    UserInfo_sharedPreference.setInfo(ChangeImagesActivity.this, MyCarsActivity.user);
                                     FirebaseFirestore.getInstance().collection("DriverRequestsAccount")
                                             .whereEqualTo("idUser",UserInfo_sharedPreference.getUser(ChangeImagesActivity.this).uid)
                                             .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -436,6 +442,8 @@ public class ChangeImagesActivity extends AppCompatActivity {
                                     FirebaseFirestore.getInstance().collection("Users")
                                             .document(UserInfo_sharedPreference.getUser(ChangeImagesActivity.this).uid)
                                             .update(map);
+                                    MyCarsActivity.user.driverLicense = uri.toString();
+                                    UserInfo_sharedPreference.setInfo(ChangeImagesActivity.this, MyCarsActivity.user);
                                     FirebaseFirestore.getInstance().collection("DriverRequestsAccount")
                                             .whereEqualTo("idUser",UserInfo_sharedPreference.getUser(ChangeImagesActivity.this).uid)
                                             .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -492,6 +500,8 @@ public class ChangeImagesActivity extends AppCompatActivity {
                                     FirebaseFirestore.getInstance().collection("Users")
                                             .document(UserInfo_sharedPreference.getUser(ChangeImagesActivity.this).uid)
                                             .update(map);
+                                    MyCarsActivity.user.drivingLicense = uri.toString();
+                                    UserInfo_sharedPreference.setInfo(ChangeImagesActivity.this, MyCarsActivity.user);
                                     FirebaseFirestore.getInstance().collection("DriverRequestsAccount")
                                             .whereEqualTo("idUser",UserInfo_sharedPreference.getUser(ChangeImagesActivity.this).uid)
                                             .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -547,6 +557,8 @@ public class ChangeImagesActivity extends AppCompatActivity {
                                     FirebaseFirestore.getInstance().collection("Users")
                                             .document(UserInfo_sharedPreference.getUser(ChangeImagesActivity.this).uid)
                                             .update(map);
+                                    MyCarsActivity.user.frontCar = uri.toString();
+                                    UserInfo_sharedPreference.setInfo(ChangeImagesActivity.this, MyCarsActivity.user);
                                     FirebaseFirestore.getInstance().collection("DriverRequestsAccount")
                                             .whereEqualTo("idUser",UserInfo_sharedPreference.getUser(ChangeImagesActivity.this).uid)
                                             .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
