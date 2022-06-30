@@ -31,13 +31,14 @@ public class NotificationsAdapter extends ArrayAdapter<NotificationModel> {
         TextView title = myView.findViewById(R.id.textView16);
         TextView body = myView.findViewById(R.id.textView17);
         TextView date = myView.findViewById(R.id.textView18);
+        TextView count = myView.findViewById(R.id.count);
 
         a= getItem(position);
 
         title.setText(a.title);
         body.setText(a.body);
         date.setText(a.createdAt.toString());
-
+        count.setText("-"+(position+1) + "-");
 
 
         return myView ;

@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:background="@drawable/btn_back22"
         android:backgroundTint="@color/colorAccent"
-        android:layout_margin="15dp"
+        android:layout_margin="5dp"
         android:layout_height="wrap_content">
 
         <TextView
@@ -17,8 +17,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
+            android:layout_toLeftOf="@+id/count"
             android:layout_marginTop="5dp"
-            android:layout_marginEnd="30dp"
             android:gravity="right"
             android:text="TextView"
             android:textColor="@color/white"
@@ -28,14 +28,29 @@
         <TextView
             android:id="@+id/textView17"
             android:layout_width="match_parent"
+            android:layout_toLeftOf="@+id/count"
             android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
             android:layout_below="@+id/textView16"
-            android:textColor="@color/white"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="5dp"
             android:gravity="right"
-            android:layout_marginTop="10dp"
+            android:text="TextView"
+            android:textColor="@color/white"
+            android:textSize="14dp" />
+
+        <TextView
+            android:id="@+id/count"
+            android:layout_width="wrap_content"
+            android:textStyle="bold"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/textView16"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
             android:layout_marginEnd="30dp"
-            android:text="TextView"/>
+            android:gravity="right"
+            android:textColor="@color/white"
+            android:textSize="14dp" />
 
         <TextView
             android:id="@+id/textView18"
@@ -43,12 +58,13 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/textView17"
             android:layout_marginStart="30dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="30dp"
+            android:layout_toLeftOf="@+id/count"
+            android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
             android:gravity="right"
             android:text="TextView"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:textSize="14dp" />
 
     </RelativeLayout>
 
