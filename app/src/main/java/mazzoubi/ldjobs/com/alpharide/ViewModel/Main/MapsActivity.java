@@ -208,6 +208,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         getUserInfo();
     }
 
+
     void setNavView(){
         drawerLayout = findViewById(R.id.my_drawer_layout);
         navigationView = findViewById(R.id.navView);
