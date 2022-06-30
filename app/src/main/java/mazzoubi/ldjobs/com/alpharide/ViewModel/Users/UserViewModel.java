@@ -96,7 +96,8 @@ public class UserViewModel extends ViewModel {
         progressDialog.setCancelable(false);
         progressDialog.setTitle("الرجاء الإنتظار...");
         progressDialog.show();
-        FirebaseFirestore.getInstance().collection(userCollection).document(user.uid).set(map)
+        FirebaseFirestore.getInstance().collection(userCollection)
+                .document(user.uid).set(map)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -138,6 +139,7 @@ public class UserViewModel extends ViewModel {
         userObject = new MutableLiveData<>();
         FirebaseFirestore.getInstance().collection(userCollection)
                 .whereEqualTo("phoneNumber",phone)
+                .whereEqualTo("typeUser", "TypeAccount.driver")
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -166,7 +168,8 @@ public class UserViewModel extends ViewModel {
         progressDialog.setCancelable(false);
         progressDialog.setTitle("الرجاء الإنتظار...");
         progressDialog.show();
-        FirebaseFirestore.getInstance().collection(userCollection).document(user.uid).update(map)
+        FirebaseFirestore.getInstance().collection(userCollection)
+                .document(user.uid).update(map)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -186,7 +189,8 @@ public class UserViewModel extends ViewModel {
                 && UserInfo_sharedPreference.getUser(c).uid != null){
 
             FirebaseFirestore.getInstance().collection(userCollection)
-                    .document(UserInfo_sharedPreference.getUser(c).uid).update(map)
+                    .document(UserInfo_sharedPreference.getUser(c).uid)
+                    .update(map)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
@@ -207,7 +211,9 @@ public class UserViewModel extends ViewModel {
         progressDialog.setCancelable(false);
         progressDialog.setTitle("الرجاء الإنتظار...");
         progressDialog.show();
-        FirebaseFirestore.getInstance().collection(userCollection).document(user.uid).update(map)
+        FirebaseFirestore.getInstance().collection(userCollection)
+                .document(user.uid)
+                .update(map)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -345,9 +351,11 @@ public class UserViewModel extends ViewModel {
         progressDialog.setCancelable(false);
         progressDialog.setTitle("الرجاء الإنتظار...");
         progressDialog.show();
-        FirebaseFirestore.getInstance().collection(userCollection)
+        FirebaseFirestore.getInstance()
+                .collection(userCollection)
                 .whereEqualTo("phoneNumber",phone)
                 .whereEqualTo("password",password)
+                .whereEqualTo("typeUser", "TypeAccount.driver")
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
