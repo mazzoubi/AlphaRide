@@ -17,8 +17,7 @@
             android:id="@+id/men"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="7dp"
             android:elevation="10dp"
             android:onClick="men"
             android:src="@drawable/men"
@@ -151,17 +150,164 @@
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navView"
-        android:layout_width="300dp"
+        android:layout_width="230dp"
         android:layout_height="match_parent"
         android:background="@drawable/background2"
+        map:headerLayout="@layout/nav_header_test"
         android:layout_gravity="left"
         app:itemTextColor="#ffffff"
         app:itemIconTint="#ffffff"
-        android:fitsSystemWindows="true"
+        android:fitsSystemWindows="true">
 
-        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_marginTop="150dp"
+            android:layout_height="match_parent">
 
-<!--        app:headerLayout="@layout/nav_header_test"-->
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ملفي الشخصي"
+                android:textColor="@color/white"
+                android:fontFamily="serif"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="15dp"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/textView9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="المحفظة"
+                android:textColor="@color/white"
+                android:layout_below="@+id/textView3"
+                android:fontFamily="serif"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="25dp"
+                android:layout_marginRight="15dp"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/textView20"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="إدارة السيارات"
+                android:textColor="@color/white"
+                android:layout_below="@+id/textView9"
+                android:fontFamily="serif"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="25dp"
+                android:layout_marginRight="15dp"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/textView21"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="رحلاتي السابقة"
+                android:textColor="@color/white"
+                android:layout_below="@+id/textView20"
+                android:fontFamily="serif"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="25dp"
+                android:layout_marginRight="15dp"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/textView22"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="الإشعارات"
+                android:textColor="@color/white"
+                android:layout_below="@+id/textView21"
+                android:fontFamily="serif"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="25dp"
+                android:layout_marginRight="15dp"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/textView23"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="الإعدادات"
+                android:textColor="@color/white"
+                android:layout_below="@+id/textView22"
+                android:fontFamily="serif"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="25dp"
+                android:layout_marginRight="15dp"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/textView24"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="تواصل معنا"
+                android:textColor="@color/white"
+                android:layout_below="@+id/textView23"
+                android:fontFamily="serif"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="25dp"
+                android:layout_marginRight="15dp"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/textView25"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="تسجيل الخروج"
+                android:textColor="@color/white"
+                android:layout_below="@+id/textView24"
+                android:fontFamily="serif"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="25dp"
+                android:layout_marginRight="15dp"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/textView26"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="منطقة إعلانية"
+                android:textColor="@color/white"
+                android:layout_above="@+id/card"
+                android:layout_centerHorizontal="true"
+                android:fontFamily="serif"
+                android:layout_marginTop="25dp"
+                android:layout_marginRight="15dp"
+                android:textSize="12dp"
+                android:textStyle="bold" />
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="10dp"
+                android:id="@+id/card"
+                android:layout_marginEnd="10dp"
+                map:cardCornerRadius="25dp"
+                android:layout_alignParentBottom="true"
+                android:layout_height="120dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:background="@color/white"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/imageView"
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:background="@drawable/logo3"
+                        android:scaleType="fitXY"/>
+
+                </RelativeLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </RelativeLayout>
 
     </com.google.android.material.navigation.NavigationView>
 

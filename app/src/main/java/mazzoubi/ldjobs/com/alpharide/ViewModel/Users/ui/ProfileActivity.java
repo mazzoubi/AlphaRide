@@ -20,6 +20,7 @@ import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -46,6 +47,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.UserInfo_sharedPreference;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.UserModel;
 import mazzoubi.ldjobs.com.alpharide.R;
+import mazzoubi.ldjobs.com.alpharide.ViewModel.Main.MapsActivity;
 import mazzoubi.ldjobs.com.alpharide.ViewModel.Users.UserViewModel;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -63,6 +65,7 @@ public class ProfileActivity extends AppCompatActivity {
         init();
 
     }
+
 
 
     void init(){

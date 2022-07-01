@@ -14,22 +14,28 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.Manifest;
+import android.app.Service;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -91,10 +97,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     ToggleButton toggleButton ;
     TextView txvAccountState ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -172,7 +178,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setIndoorEnabled(true);
         mMap.setTrafficEnabled(true);
 
-
         //Initialize Google Play Services
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this,
@@ -208,7 +213,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         getUserInfo();
     }
 
-
     void setNavView(){
         drawerLayout = findViewById(R.id.my_drawer_layout);
         navigationView = findViewById(R.id.navView);
@@ -216,17 +220,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         TextView nav_myProfile , nav_wallet , nav_carMg , nav_myTrips
                 , nav_notifications , nav_sittings , nav_contactUs , nav_logout ;
         ImageView nav_imageView;
-        LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
-        View view= inflater.inflate(R.layout.menu_nav,navigationView);
-        nav_myProfile = view.findViewById(R.id.textView3);
-        nav_wallet = view.findViewById(R.id.textView9);
-        nav_carMg = view.findViewById(R.id.textView20);
-        nav_myTrips = view.findViewById(R.id.textView21);
-        nav_notifications = view.findViewById(R.id.textView22);
-        nav_sittings = view.findViewById(R.id.textView23);
-        nav_contactUs = view.findViewById(R.id.textView24);
-        nav_logout = view.findViewById(R.id.textView25);
-        nav_imageView = view.findViewById(R.id.imageView);
+//        LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
+//        View view= inflater.inflate(R.layout.menu_nav,navigationView);
+        nav_myProfile = findViewById(R.id.textView3);
+        nav_wallet = findViewById(R.id.textView9);
+        nav_carMg = findViewById(R.id.textView20);
+        nav_myTrips = findViewById(R.id.textView21);
+        nav_notifications = findViewById(R.id.textView22);
+        nav_sittings = findViewById(R.id.textView23);
+        nav_contactUs = findViewById(R.id.textView24);
+        nav_logout = findViewById(R.id.textView25);
+        nav_imageView = findViewById(R.id.imageView);
 
         FirebaseFirestore.getInstance().collection("AdminDataConfig")
                 .document("Data")
@@ -297,7 +301,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     @Override
                     public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                         nav_wallet.setText("المحفظة" + "   "+UserInfo_sharedPreference
-                                .round(value.getDouble("balance"),2));
+                                .round(value.getDouble("balance"),2) + "   " + "دينار");
                     }
                 });
     }
