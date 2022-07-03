@@ -47,6 +47,8 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.bumptech.glide.Glide;
+import com.firebase.geofire.GeoFireUtils;
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -66,6 +68,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.HashMap;
@@ -102,7 +105,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     TextView txvAccountState ;
 
     boolean isConnected = false;
+    public static boolean InTrip = false;
     Drawable circleDrawable ;
+
+    EventListener<DocumentSnapshot> event;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -167,6 +174,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             Manifest.permission.ACCESS_COARSE_LOCATION },
                     1); }
 
+        event = new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+
+                Toast.makeText(MapsActivity.this, value.getString("idDriver"), Toast.LENGTH_SHORT).show();
+
+            }
+        };
+
     }
 
     @Override
@@ -218,11 +234,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (b){
                     circleDrawable = getResources().getDrawable(R.drawable.ccc);
                     toggleButton.setBackgroundDrawable(getDrawable(R.drawable.btn_back23));
-//                    constraintLayout.setVisibility(View.VISIBLE);
-                }else {
+
+                    FirebaseFirestore.getInstance()
+                            .collection("driverRequests")
+                            .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                            .addSnapshotListener(event);
+
+                }
+                else {
                     circleDrawable = getResources().getDrawable(R.drawable.cc);
                     toggleButton.setBackgroundDrawable(getDrawable(R.drawable.btn_back22));
-//                    constraintLayout.setVisibility(View.GONE);
+                    FirebaseFirestore.getInstance()
+                            .collection("locations")
+                            .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                            .delete();
+
+                    FirebaseFirestore.getInstance()
+                            .collection("driverRequests")
+                            .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                            .addSnapshotListener(event).remove();
+
                 }
 
 
@@ -414,6 +445,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(location.getLatitude(), location.getLongitude()))
                     .icon(markerIcon));
+
+            if(isConnected){
+                Map<String, Object> map = new HashMap<>();
+                Map<String, Object> mini_map = new HashMap<>();
+                String geohash = GeoFireUtils.getGeoHashForLocation(new GeoLocation(location.getLatitude(), location.getLongitude()));
+                GeoPoint geopoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+
+                mini_map.put("geohash", geohash);
+                mini_map.put("geopoint", geopoint);
+
+                if(!InTrip) map.put("available",true);
+                else map.put("available",false);
+                map.put("idUser", UserInfo_sharedPreference.getUser(MapsActivity.this).uid);
+                map.put("position", mini_map);
+
+                FirebaseFirestore.getInstance()
+                        .collection("locations")
+                        .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                        .set(map);
+            }
+            else{
+                FirebaseFirestore.getInstance()
+                        .collection("locations")
+                        .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                        .delete(); }
 
         }
     };
