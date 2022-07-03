@@ -16,12 +16,15 @@ import androidx.lifecycle.ViewModelProviders;
 import android.Manifest;
 import android.app.Service;
 import android.content.Context;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
@@ -91,13 +94,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     GoogleApiClient mGoogleApiClient;
 
-    int LOCATION_REFRESH_TIME = 15000; // 15 seconds to update
-    int LOCATION_REFRESH_DISTANCE = 1; // 500 meters to update
+    int LOCATION_REFRESH_TIME = 0; // 15 seconds to update
+    int LOCATION_REFRESH_DISTANCE = 0; // 500 meters to update
     LocationManager mLocationManager;
 
     ToggleButton toggleButton ;
     TextView txvAccountState ;
 
+    boolean isConnected = false;
+    Drawable circleDrawable ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -169,7 +174,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
         updateToken();
 
-
+        circleDrawable= getResources().getDrawable(R.drawable.cc);
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.getUiSettings().setZoomControlsEnabled(true);
@@ -177,6 +182,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.getUiSettings().setCompassEnabled(true);
         mMap.setIndoorEnabled(true);
         mMap.setTrafficEnabled(true);
+
+        Toast.makeText(getApplicationContext(), "الرجاء انتظار تحميل الخريطة....", Toast.LENGTH_LONG).show();
+        BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
+//            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_baseline_account_circle_24);
+        mMap.clear();
+        LatLng l =new LatLng(markerLat, markerLng);
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(l,15.0f));
+        mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(markerLat, markerLng))
+                .icon(markerIcon));
 
         //Initialize Google Play Services
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -199,13 +214,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                isConnected = b;
                 if (b){
+                    circleDrawable = getResources().getDrawable(R.drawable.ccc);
                     toggleButton.setBackgroundDrawable(getDrawable(R.drawable.btn_back23));
 //                    constraintLayout.setVisibility(View.VISIBLE);
                 }else {
+                    circleDrawable = getResources().getDrawable(R.drawable.cc);
                     toggleButton.setBackgroundDrawable(getDrawable(R.drawable.btn_back22));
 //                    constraintLayout.setVisibility(View.GONE);
                 }
+
+
+
+
+                    BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
+//            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_baseline_account_circle_24);
+                    mMap.clear();
+                    LatLng l =new LatLng(markerLat, markerLng);
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(l,15.0f));
+                    mMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(markerLat, markerLng))
+                            .icon(markerIcon));
+
             }
         });
 
@@ -302,6 +333,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                         nav_wallet.setText("المحفظة" + "   "+UserInfo_sharedPreference
                                 .round(value.getDouble("balance"),2) + "   " + "دينار");
+                        nav_wallet.setTextColor(Color.WHITE);
+                        if(UserInfo_sharedPreference
+                                .round(value.getDouble("balance"),2)>0){
+                            nav_wallet.setTextColor(Color.GREEN);
+                        }else if(UserInfo_sharedPreference
+                                .round(value.getDouble("balance"),2)<0){
+                            nav_wallet.setTextColor(Color.RED);
+                        }
+
                     }
                 });
     }
@@ -360,15 +400,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
     }
+    double markerLat =0 ,markerLng=0;
     private final LocationListener mLocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(final Location location) {
-            Drawable circleDrawable = getResources().getDrawable(R.drawable.cc);
+            markerLat = location.getLatitude();
+            markerLng = location.getLongitude();
             BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
 //            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_baseline_account_circle_24);
             mMap.clear();
             LatLng l =new LatLng(location.getLatitude(), location.getLongitude());
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(l,17.0f));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(l,15.0f));
             mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(location.getLatitude(), location.getLongitude()))
                     .icon(markerIcon));
@@ -393,7 +435,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     void getUserInfo(){
         txvAccountState.setText("الرجاء الانتظار...");
-        txvAccountState.setText("الرجاء الانتظار...");
         UserViewModel vm = ViewModelProviders.of(this).get(UserViewModel.class);
         vm.getUserInfo(MapsActivity.this, UserInfo_sharedPreference.getUser(MapsActivity.this).uid);
         vm.userObject.observe(this, new Observer<UserModel>() {
@@ -402,7 +443,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 UserInfo_sharedPreference.setInfo(MapsActivity.this,userModel);
                 if (!userModel.stateAccount.equals("StateAccount.active")){
                     toggleButton.setVisibility(View.INVISIBLE);
-                    txvAccountState.setText("يرجى انتظار قبول الادمن لطلبك");
                     txvAccountState.setText("يرجى انتظار قبول الادمن لطلبك");
                 }else {
                     toggleButton.setVisibility(View.VISIBLE);
