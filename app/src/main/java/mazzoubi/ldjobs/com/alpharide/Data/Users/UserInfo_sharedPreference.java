@@ -20,7 +20,7 @@ public class UserInfo_sharedPreference {
     public static UserModel getUser(Activity c){
         UserModel user = new UserModel();
         SharedPreferences sharedPreferences = c.getSharedPreferences("User", Context.MODE_PRIVATE);
-        user.balance=round(sharedPreferences.getFloat("balance",0),2);
+        user.balance=(double) round(sharedPreferences.getFloat("balance",0),2);
         user.countRating=sharedPreferences.getInt("countRating",0);
         user.countTrips=sharedPreferences.getInt("countTrips",0);
         user.points=sharedPreferences.getInt("points",0);
