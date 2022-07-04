@@ -199,10 +199,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 final TextView t3 = dialog.findViewById(R.id.txvNo);
                 final TextView t4 = dialog.findViewById(R.id.txvColor);
 
-//                t1.setText("إسم الراكب : "+value.getString("nameCustomer"));
-//                t2.setText("هاتف الراكب : "+value.getString("phoneCustomer"));
-//                t3.setText("خصم الرحلة : "+value.get("discount").toString());
-//                t4.setText("مرجع الخريطة : "+value.getString("currentAddress"));
+                try{
+                    t1.setText("إسم الراكب : "+value.getString("nameCustomer"));
+                    t2.setText("هاتف الراكب : "+value.getString("phoneCustomer"));
+                    t3.setText("خصم الرحلة : "+value.get("discount").toString());
+                    t4.setText("مرجع الخريطة : "+value.getString("currentAddress"));
+                } catch (Exception ex){}
 
             }
         };
@@ -213,8 +215,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
         updateToken();
-
-
 
         circleDrawable= getResources().getDrawable(R.drawable.cc);
         mMap = googleMap;

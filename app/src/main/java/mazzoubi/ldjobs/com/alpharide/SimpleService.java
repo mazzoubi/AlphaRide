@@ -48,11 +48,11 @@ public class SimpleService extends FloatingBubbleService {
         final Context context = getApplicationContext();
 
         return new FloatingBubbleConfig.Builder()
-                .bubbleIcon(ContextCompat.getDrawable(context, R.drawable.logo5))
+                .bubbleIcon(ContextCompat.getDrawable(context, R.drawable.logo7))
                 .removeBubbleIcon(ContextCompat.getDrawable(context, com.siddharthks.bubbles.R.drawable.close_default_icon))
-                .bubbleIconDp(54)
+                .bubbleIconDp(75)
 //                .expandableView(aa())
-                .removeBubbleIconDp(54)
+                .removeBubbleIconDp(75)
                 .paddingDp(4)
                 .borderRadiusDp(0)
                 .expandableColor(Color.WHITE)
