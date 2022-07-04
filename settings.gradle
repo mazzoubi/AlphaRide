@@ -1,2 +1,3 @@
 rootProject.name = "Alpha Ride"
 include ':app'
+include ':bubbles'

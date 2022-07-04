@@ -81,6 +81,7 @@ import mazzoubi.ldjobs.com.alpharide.Data.Users.UserModel;
 import mazzoubi.ldjobs.com.alpharide.MainActivity;
 import mazzoubi.ldjobs.com.alpharide.R;
 import mazzoubi.ldjobs.com.alpharide.RequestUserPermissions;
+import mazzoubi.ldjobs.com.alpharide.SimpleService;
 import mazzoubi.ldjobs.com.alpharide.ViewModel.Notifications.ui.NotificationsActivity;
 import mazzoubi.ldjobs.com.alpharide.ViewModel.Users.Cars.MyCarsActivity;
 import mazzoubi.ldjobs.com.alpharide.ViewModel.Users.UserViewModel;
@@ -111,6 +112,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Drawable circleDrawable ;
 
     EventListener<DocumentSnapshot> event;
+    Intent ser_int;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -197,20 +199,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 final TextView t3 = dialog.findViewById(R.id.txvNo);
                 final TextView t4 = dialog.findViewById(R.id.txvColor);
 
-                t1.setText("إسم الراكب : "+value.getString("nameCustomer"));
-                t2.setText("هاتف الراكب : "+value.getString("phoneCustomer"));
-                t3.setText("خصم الرحلة : "+value.get("discount").toString());
-                t4.setText("مرجع الخريطة : "+value.getString("currentAddress"));
+//                t1.setText("إسم الراكب : "+value.getString("nameCustomer"));
+//                t2.setText("هاتف الراكب : "+value.getString("phoneCustomer"));
+//                t3.setText("خصم الرحلة : "+value.get("discount").toString());
+//                t4.setText("مرجع الخريطة : "+value.getString("currentAddress"));
 
             }
         };
-
+        ser_int = new Intent(getApplicationContext(), SimpleService.class);
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
         updateToken();
+
+
 
         circleDrawable= getResources().getDrawable(R.drawable.cc);
         mMap = googleMap;
@@ -262,6 +266,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
                             .addSnapshotListener(event);
 
+                    //add bubble here
+                    if (!Settings.canDrawOverlays(MapsActivity.this)) {
+                        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                Uri.parse("package:" + getPackageName()));
+                        startActivityForResult(intent, 1234);
+                    }
+                    else
+                    startService(ser_int);
+
                 }
                 else {
                     circleDrawable = getResources().getDrawable(R.drawable.cc);
@@ -275,6 +288,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             .collection("driverRequests")
                             .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
                             .addSnapshotListener(event).remove();
+
+                    //remove bubble here
+
+                    stopService(ser_int);
 
                 }
 
