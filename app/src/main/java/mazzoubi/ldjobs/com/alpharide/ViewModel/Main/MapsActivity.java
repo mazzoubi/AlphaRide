@@ -25,6 +25,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
@@ -41,6 +42,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -178,7 +180,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
 
-                Toast.makeText(MapsActivity.this, value.getString("idDriver"), Toast.LENGTH_SHORT).show();
+                final androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(MapsActivity.this);
+                LayoutInflater inflater = MapsActivity.this.getLayoutInflater();
+                builder.setView(inflater.inflate(R.layout.dialog_trip_req, null));
+                final androidx.appcompat.app.AlertDialog dialog = builder.create();
+                ((FrameLayout) dialog.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                lp.copyFrom(dialog.getWindow().getAttributes());
+                lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+                lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                dialog.getWindow().setAttributes(lp);
+                dialog.show();
+
+                final TextView t1 = dialog.findViewById(R.id.txvType);
+                final TextView t2 = dialog.findViewById(R.id.txvModel);
+                final TextView t3 = dialog.findViewById(R.id.txvNo);
+                final TextView t4 = dialog.findViewById(R.id.txvColor);
+
+                t1.setText("إسم الراكب : "+value.getString("nameCustomer"));
+                t2.setText("هاتف الراكب : "+value.getString("phoneCustomer"));
+                t3.setText("خصم الرحلة : "+value.get("discount").toString());
+                t4.setText("مرجع الخريطة : "+value.getString("currentAddress"));
 
             }
         };
