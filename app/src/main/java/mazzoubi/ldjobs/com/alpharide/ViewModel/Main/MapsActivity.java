@@ -181,30 +181,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         event = new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                String val="";
+                try{ val = value.getString("idCustomer");}
+                catch (Exception ex){}
 
-                final androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(MapsActivity.this);
-                LayoutInflater inflater = MapsActivity.this.getLayoutInflater();
-                builder.setView(inflater.inflate(R.layout.dialog_trip_req, null));
-                final androidx.appcompat.app.AlertDialog dialog = builder.create();
-                ((FrameLayout) dialog.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-                lp.copyFrom(dialog.getWindow().getAttributes());
-                lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-                lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                dialog.getWindow().setAttributes(lp);
-                dialog.show();
+                if(val!= null){
+                    final androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(MapsActivity.this);
+                    LayoutInflater inflater = MapsActivity.this.getLayoutInflater();
+                    builder.setView(inflater.inflate(R.layout.dialog_trip_req, null));
+                    final androidx.appcompat.app.AlertDialog dialog = builder.create();
+                    ((FrameLayout) dialog.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                    lp.copyFrom(dialog.getWindow().getAttributes());
+                    lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+                    lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                    dialog.getWindow().setAttributes(lp);
+                    dialog.show();
 
-                final TextView t1 = dialog.findViewById(R.id.txvType);
-                final TextView t2 = dialog.findViewById(R.id.txvModel);
-                final TextView t3 = dialog.findViewById(R.id.txvNo);
-                final TextView t4 = dialog.findViewById(R.id.txvColor);
+                    final TextView t1 = dialog.findViewById(R.id.txvType);
+                    final TextView t2 = dialog.findViewById(R.id.txvModel);
+                    final TextView t3 = dialog.findViewById(R.id.txvNo);
+                    final TextView t4 = dialog.findViewById(R.id.txvColor);
 
-                try{
-                    t1.setText("إسم الراكب : "+value.getString("nameCustomer"));
-                    t2.setText("هاتف الراكب : "+value.getString("phoneCustomer"));
-                    t3.setText("خصم الرحلة : "+value.get("discount").toString());
-                    t4.setText("مرجع الخريطة : "+value.getString("currentAddress"));
-                } catch (Exception ex){}
+                    try{
+                        t1.setText("إسم الراكب : "+value.getString("nameCustomer"));
+                        t2.setText("هاتف الراكب : "+value.getString("phoneCustomer"));
+                        t3.setText("خصم الرحلة : "+value.get("discount").toString());
+                        t4.setText("مرجع الخريطة : "+value.getString("currentAddress"));
+                    } catch (Exception ex){}
+                }
 
             }
         };
