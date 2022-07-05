@@ -1,10 +1,12 @@
 package mazzoubi.ldjobs.com.alpharide.ViewModel.Wallet.ui;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -27,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import mazzoubi.ldjobs.com.alpharide.ApplicationLifecycleHandler;
 import mazzoubi.ldjobs.com.alpharide.ClassDate;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.UserInfo_sharedPreference;
 import mazzoubi.ldjobs.com.alpharide.R;
@@ -37,11 +40,16 @@ public class WalletActivity extends AppCompatActivity {
     TextView txt;
     String Balance;
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_wallet);
+
+        ApplicationLifecycleHandler handler = new ApplicationLifecycleHandler();
+        registerActivityLifecycleCallbacks(handler);
+        registerComponentCallbacks(handler);
 
         txt = findViewById(R.id.balance);
 

@@ -1,5 +1,6 @@
 package mazzoubi.ldjobs.com.alpharide.ViewModel.Users.Cars;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -8,6 +9,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -23,6 +25,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import mazzoubi.ldjobs.com.alpharide.ApplicationLifecycleHandler;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.DriverRequestAccountModel;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.UserInfo_sharedPreference;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.UserModel;
@@ -38,12 +41,17 @@ public class MyCarsActivity extends AppCompatActivity {
     ListView listView;
     ArrayList<DriverRequestAccountModel> requestAccount ;
     public static DriverRequestAccountModel requestAccountModel  ;
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_my_cars);
         init();
+
+        ApplicationLifecycleHandler handler = new ApplicationLifecycleHandler();
+        registerActivityLifecycleCallbacks(handler);
+        registerComponentCallbacks(handler);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

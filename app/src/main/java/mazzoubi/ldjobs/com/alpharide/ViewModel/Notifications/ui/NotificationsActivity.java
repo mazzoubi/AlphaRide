@@ -1,10 +1,12 @@
 package mazzoubi.ldjobs.com.alpharide.ViewModel.Notifications.ui;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -14,6 +16,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import mazzoubi.ldjobs.com.alpharide.ApplicationLifecycleHandler;
 import mazzoubi.ldjobs.com.alpharide.Data.Notifications.NotificationModel;
 import mazzoubi.ldjobs.com.alpharide.R;
 import mazzoubi.ldjobs.com.alpharide.ViewModel.Notifications.Adapters.NotificationsAdapter;
@@ -23,6 +26,7 @@ public class NotificationsActivity extends AppCompatActivity {
 
     ListView listView ;
     TextView txvWaiting ;
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +34,9 @@ public class NotificationsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_notifications);
         init();
 
+        ApplicationLifecycleHandler handler = new ApplicationLifecycleHandler();
+        registerActivityLifecycleCallbacks(handler);
+        registerComponentCallbacks(handler);
 
     }
 

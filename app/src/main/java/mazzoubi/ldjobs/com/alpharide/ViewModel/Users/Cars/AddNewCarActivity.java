@@ -1,12 +1,15 @@
 package mazzoubi.ldjobs.com.alpharide.ViewModel.Users.Cars;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+import mazzoubi.ldjobs.com.alpharide.ApplicationLifecycleHandler;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.DriverRequestAccountModel;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.UserModel;
 import mazzoubi.ldjobs.com.alpharide.R;
@@ -21,6 +24,7 @@ public class AddNewCarActivity extends AppCompatActivity {
     public static UserModel userModel ;
     public static DriverRequestAccountModel driverRequestAccountModel;
     public static Activity activity ;
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +32,9 @@ public class AddNewCarActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_new_car);
         init();
 
+        ApplicationLifecycleHandler handler = new ApplicationLifecycleHandler();
+        registerActivityLifecycleCallbacks(handler);
+        registerComponentCallbacks(handler);
 
     }
 

@@ -1,7 +1,9 @@
 package mazzoubi.ldjobs.com.alpharide.ViewModel.Users.ui;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.FragmentActivity;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -17,6 +19,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import mazzoubi.ldjobs.com.alpharide.ApplicationLifecycleHandler;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.UserInfo_sharedPreference;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.UserModel;
 import mazzoubi.ldjobs.com.alpharide.R;
@@ -53,8 +56,14 @@ public class TripInfoWithMapActivity extends FragmentActivity implements OnMapRe
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
+        ApplicationLifecycleHandler handler = new ApplicationLifecycleHandler();
+        registerActivityLifecycleCallbacks(handler);
+        registerComponentCallbacks(handler);
+
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera

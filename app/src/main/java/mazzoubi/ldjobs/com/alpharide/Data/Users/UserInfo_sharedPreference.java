@@ -20,7 +20,9 @@ public class UserInfo_sharedPreference {
     public static UserModel getUser(Activity c){
         UserModel user = new UserModel();
         SharedPreferences sharedPreferences = c.getSharedPreferences("User", Context.MODE_PRIVATE);
-        user.balance=(double) round(sharedPreferences.getFloat("balance",0),2);
+        try {
+            user.balance= Double.parseDouble(round(sharedPreferences.getFloat("balance",0),2)+"");
+        }catch (Exception e){}
         user.countRating=sharedPreferences.getInt("countRating",0);
         user.countTrips=sharedPreferences.getInt("countTrips",0);
         user.points=sharedPreferences.getInt("points",0);
@@ -139,8 +141,10 @@ public class UserInfo_sharedPreference {
         editor.commit();
         editor.apply();
 
-        FirebaseAuth.getInstance().signOut();
-        c.startActivity(new Intent(c, MainActivity.class));
+        try {
+            FirebaseAuth.getInstance().signOut();
+            c.startActivity(new Intent(c, MainActivity.class));
+        }catch (Exception e){ }
 
     }
 

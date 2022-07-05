@@ -2,6 +2,7 @@ package mazzoubi.ldjobs.com.alpharide.ViewModel.Main;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -76,6 +77,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import java.util.HashMap;
 import java.util.Map;
 
+import mazzoubi.ldjobs.com.alpharide.ApplicationLifecycleHandler;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.UserInfo_sharedPreference;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.UserModel;
 import mazzoubi.ldjobs.com.alpharide.MainActivity;
@@ -113,6 +115,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     EventListener<DocumentSnapshot> event;
     Intent ser_int;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (UserInfo_sharedPreference.getUser(MapsActivity.this).balance<=0){
+            AlertDialog.Builder builder= new AlertDialog.Builder(MapsActivity.this);
+            builder.setTitle("رويال رايد");
+            builder.setMessage("لا تمتلك رصيد كافي لاستقبال طلبات, يرجى الشحن لفك حجز الحساب");
+            builder.setPositiveButton("شحن", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    startActivity(new Intent(getApplicationContext(),WalletActivity.class));
+                }
+            });
+            builder.setNegativeButton("الغاء", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                }
+            });
+            builder.setCancelable(false);
+            builder.show();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -216,10 +242,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         ser_int = new Intent(getApplicationContext(), SimpleService.class);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     public void onMapReady(GoogleMap googleMap) {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
         updateToken();
+
+        ApplicationLifecycleHandler handler = new ApplicationLifecycleHandler();
+        registerActivityLifecycleCallbacks(handler);
+        registerComponentCallbacks(handler);
 
         circleDrawable= getResources().getDrawable(R.drawable.cc);
         mMap = googleMap;
@@ -263,22 +294,48 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 isConnected = b;
                 if (b){
-                    circleDrawable = getResources().getDrawable(R.drawable.ccc);
-                    toggleButton.setBackgroundDrawable(getDrawable(R.drawable.btn_back23));
 
-                    FirebaseFirestore.getInstance()
-                            .collection("driverRequests")
-                            .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                            .addSnapshotListener(event);
+                    if (UserInfo_sharedPreference.getUser(MapsActivity.this).balance<=0){
+                        AlertDialog.Builder builder= new AlertDialog.Builder(MapsActivity.this);
+                        builder.setTitle("رويال رايد");
+                        builder.setMessage("لا تمتلك رصيد كافي لاستقبال طلبات, يرجى الشحن لفك حجز الحساب");
+                        builder.setPositiveButton("شحن", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                startActivity(new Intent(getApplicationContext(),WalletActivity.class));
+                            }
+                        });
+                        builder.setNegativeButton("الغاء", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                toggleButton.setChecked(false);
+                            }
+                        });
+                        builder.setCancelable(false);
+                        builder.show();
 
-                    //add bubble here
-                    if (!Settings.canDrawOverlays(MapsActivity.this)) {
-                        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                                Uri.parse("package:" + getPackageName()));
-                        startActivityForResult(intent, 1234);
+                    }else {
+                        circleDrawable = getResources().getDrawable(R.drawable.ccc);
+                        toggleButton.setBackgroundDrawable(getDrawable(R.drawable.btn_back23));
+
+                        FirebaseFirestore.getInstance()
+                                .collection("driverRequests")
+                                .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                .addSnapshotListener(event);
+
+                        //add bubble here
+                        if (!Settings.canDrawOverlays(MapsActivity.this)) {
+                            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                    Uri.parse("package:" + getPackageName()));
+                            startActivityForResult(intent, 1234);
+                        }
+                        else{
+//                        startService(ser_int);
+                        }
+
                     }
-                    else
-                    startService(ser_int);
+
+
 
                 }
                 else {
@@ -296,7 +353,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     //remove bubble here
 
-                    stopService(ser_int);
+//                    stopService(ser_int);
 
                 }
 
