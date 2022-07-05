@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import mazzoubi.ldjobs.com.alpharide.Data.Users.UserInfo_sharedPreference;
+
 public class ApplicationLifecycleHandler implements Application.ActivityLifecycleCallbacks, ComponentCallbacks2 {
 
     private static final String TAG = ApplicationLifecycleHandler.class.getSimpleName();
@@ -27,8 +29,14 @@ public class ApplicationLifecycleHandler implements Application.ActivityLifecycl
     @Override
     public void onActivityResumed(Activity activity) {
 
-        ser_int = new Intent(activity, SimpleService.class);
-        activity.stopService(ser_int);
+        if (UserInfo_sharedPreference.getUser(activity).uid==null||
+                UserInfo_sharedPreference.getUser(activity).uid.equals("")){
+
+        }else {
+            ser_int = new Intent(activity, SimpleService.class);
+            activity.stopService(ser_int);
+        }
+
         if(isInBackground){
             Log.d(TAG, "app went to foreground");
             isInBackground = false;
@@ -43,6 +51,8 @@ public class ApplicationLifecycleHandler implements Application.ActivityLifecycl
 
     @Override
     public void onActivityStopped(Activity activity) {
+//        ser_int = new Intent(activity, SimpleService.class);
+//        activity.stopService(ser_int);
     }
 
     @Override
@@ -51,10 +61,13 @@ public class ApplicationLifecycleHandler implements Application.ActivityLifecycl
 
     @Override
     public void onActivityDestroyed(Activity activity) {
+        ser_int = new Intent(activity, SimpleService.class);
+        activity.stopService(ser_int);
     }
 
     @Override
     public void onConfigurationChanged(Configuration configuration) {
+
     }
 
     @Override

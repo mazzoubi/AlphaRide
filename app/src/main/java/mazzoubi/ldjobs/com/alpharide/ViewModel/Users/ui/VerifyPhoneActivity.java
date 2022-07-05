@@ -1,6 +1,7 @@
 package mazzoubi.ldjobs.com.alpharide.ViewModel.Users.ui;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.lifecycle.ViewModelProviders;
@@ -9,6 +10,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
@@ -29,6 +31,7 @@ import com.google.firebase.auth.PhoneAuthProvider;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+import mazzoubi.ldjobs.com.alpharide.ApplicationLifecycleHandler;
 import mazzoubi.ldjobs.com.alpharide.R;
 import mazzoubi.ldjobs.com.alpharide.ViewModel.Main.DashboardActivity;
 import mazzoubi.ldjobs.com.alpharide.ViewModel.Users.UserViewModel;
@@ -44,12 +47,15 @@ public class VerifyPhoneActivity extends AppCompatActivity {
     String phoneNumber;
     String fromWhere = "" ;
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_verify_phone);
-
+        ApplicationLifecycleHandler handler = new ApplicationLifecycleHandler();
+        registerActivityLifecycleCallbacks(handler);
+        registerComponentCallbacks(handler);
         mAuth = FirebaseAuth.getInstance();
 
         progressBar = findViewById(R.id.progressbar);

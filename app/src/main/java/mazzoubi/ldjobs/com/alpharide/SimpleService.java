@@ -51,7 +51,7 @@ public class SimpleService extends FloatingBubbleService {
                 .bubbleIcon(ContextCompat.getDrawable(context, R.drawable.logo7))
                 .removeBubbleIcon(ContextCompat.getDrawable(context, com.siddharthks.bubbles.R.drawable.close_default_icon))
                 .bubbleIconDp(75)
-//                .expandableView(aa())
+                .expandableView(aa())
                 .removeBubbleIconDp(75)
                 .paddingDp(4)
                 .borderRadiusDp(0)
@@ -67,13 +67,22 @@ public class SimpleService extends FloatingBubbleService {
     }
 
     View aa(){//شو هاي ؟
-        View view = getInflater().inflate(R.layout.activity_maps, null) ;
-        ImageView imageView = view.findViewById(R.id.image);
+        View view = getInflater().inflate(R.layout.z_bobbles, null) ;
+        ImageView imageView = view.findViewById(R.id.imageView3);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(view.getContext(), MapsActivity.class)
-                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+//                startActivity(new Intent(view.getContext(), MapsActivity.class)
+//                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+
+                Intent ser_int = new Intent(view.getContext(), SimpleService.class);
+                view.getContext().stopService(ser_int);
+
+                Intent i = new Intent(view.getContext(), MapsActivity.class);
+                i.setAction(Intent.ACTION_MAIN);
+                i.addCategory(Intent.CATEGORY_LAUNCHER);
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(i);
             }
         });
         return view;

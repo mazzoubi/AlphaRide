@@ -2,6 +2,7 @@ package mazzoubi.ldjobs.com.alpharide.ViewModel;
 
 import static java.lang.Thread.sleep;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -11,16 +12,23 @@ import android.os.Bundle;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import mazzoubi.ldjobs.com.alpharide.ApplicationLifecycleHandler;
 import mazzoubi.ldjobs.com.alpharide.MainActivity;
 import mazzoubi.ldjobs.com.alpharide.R;
 
 public class SplashActivity extends AppCompatActivity {
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_splash);
+
+        ApplicationLifecycleHandler handler = new ApplicationLifecycleHandler();
+        registerActivityLifecycleCallbacks(handler);
+        registerComponentCallbacks(handler);
+
 
         String msg = "Whenever you want. Wherever you are";
         final TextView tv = findViewById(R.id.intro);

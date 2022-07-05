@@ -32,6 +32,7 @@ import java.util.Map;
 import mazzoubi.ldjobs.com.alpharide.ApplicationLifecycleHandler;
 import mazzoubi.ldjobs.com.alpharide.ClassDate;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.UserInfo_sharedPreference;
+import mazzoubi.ldjobs.com.alpharide.Data.Users.UserModel;
 import mazzoubi.ldjobs.com.alpharide.R;
 import mazzoubi.ldjobs.com.alpharide.ScratchCardsClass;
 
@@ -127,7 +128,9 @@ public class WalletActivity extends AppCompatActivity {
                                                 .update("balance", x).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-
+                                                UserModel mm = UserInfo_sharedPreference.getUser(WalletActivity.this);
+                                                mm.balance = x;
+                                                UserInfo_sharedPreference.setInfo(WalletActivity.this,mm);
                                                 Toast.makeText(WalletActivity.this, "تم شحن الرصيد بنجاح", Toast.LENGTH_SHORT).show();
                                                 recreate();
 
