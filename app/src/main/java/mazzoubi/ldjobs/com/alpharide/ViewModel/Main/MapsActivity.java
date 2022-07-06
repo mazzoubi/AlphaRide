@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
+import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -37,7 +38,9 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.provider.Settings;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -48,6 +51,7 @@ import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -70,6 +74,8 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -86,6 +92,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -131,6 +138,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     EventListener<DocumentSnapshot> event;
     Intent ser_int;
     Location loc;
+    long StartedTripAt = 0;
+    ArrayList<Location> TripDistanceCalc;
 
     @Override
     protected void onResume() {
@@ -157,6 +166,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     int dialog_count = 0;
+    CountDownTimer cd;
+    DocumentSnapshot Snap_data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -229,8 +240,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         ((FrameLayout) dialog.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
         lp.copyFrom(dialog.getWindow().getAttributes());
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = Math.round(TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 400, getResources().getDisplayMetrics()));
         dialog.getWindow().setAttributes(lp);
 
         event = new EventListener<DocumentSnapshot>() {
@@ -245,193 +257,538 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 try{ val = value.getString("idCustomer"); }
                 catch (Exception ex){}
 
-                if(val!= null){
+                if(val!= null && isConnected){
                     if(dialog_count == 0){
-                        dialog_count++;
+                        dialog_count = 1;
                         dialog.show();
                         InTrip = true;
-                    }
+                        Snap_data = value;
+                        final TextView t1 = dialog.findViewById(R.id.txvType);
+                        final TextView t3 = dialog.findViewById(R.id.txvNo);
+                        final TextView t4 = dialog.findViewById(R.id.txvColor);
+                        final TextView t5 = dialog.findViewById(R.id.textView11);
+                        final TextView t6 = dialog.findViewById(R.id.textView7);
+                        final ImageView close = dialog.findViewById(R.id.close);
 
-                    final TextView t1 = dialog.findViewById(R.id.txvType);
-                    final TextView t2 = dialog.findViewById(R.id.txvModel);
-                    final TextView t3 = dialog.findViewById(R.id.txvNo);
-                    final TextView t4 = dialog.findViewById(R.id.txvColor);
-                    final TextView t5 = dialog.findViewById(R.id.textView11);
-                    final TextView t6 = dialog.findViewById(R.id.textView7);
-                    final ImageView close = dialog.findViewById(R.id.close);
+                        t4.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
 
-                    t2.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Intent intent = new Intent(Intent.ACTION_DIAL);
-                            intent.setData(Uri.parse("tel:"+value.getString("phoneCustomer").replace("+962", "0")));
-                            startActivity(intent);
-                        }
-                    });
-
-                    t4.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-
-                            Geocoder coder = new Geocoder(MapsActivity.this);
-                            double lng = 0;
-                            double lat = 0;
-                            try {
-                                ArrayList<Address> adresses = (ArrayList<Address>) coder.getFromLocationName(value.getString("currentAddress"), 1);
-                                for(Address add : adresses){
-                                    lng = add.getLongitude();
-                                    lat = add.getLatitude();
+                                Geocoder coder = new Geocoder(MapsActivity.this);
+                                double lng = 0;
+                                double lat = 0;
+                                try {
+                                    ArrayList<Address> adresses = (ArrayList<Address>) coder.getFromLocationName(value.getString("currentAddress"), 1);
+                                    for(Address add : adresses){
+                                        lng = add.getLongitude();
+                                        lat = add.getLatitude();
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
-                            } catch (Exception e) {
-                                e.printStackTrace();
+
+                                Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                                        Uri.parse("http://maps.google.com/maps?saddr="+
+                                                loc.getLatitude()+","+loc.getLongitude()+
+                                                "&daddr="+lat+","+lng));
+                                startActivity(intent);
                             }
+                        });
 
-                            Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                                    Uri.parse("http://maps.google.com/maps?saddr="+
-                                            loc.getLatitude()+","+loc.getLongitude()+
-                                            "&daddr="+lat+","+lng));
-                            startActivity(intent);
-                        }
-                    });
+                        close.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                dialog.dismiss();
+                                dialog_count = 0;
+                                InTrip = false;
+                                isConnected = true;
+                                findViewById(R.id.card_default).setVisibility(View.VISIBLE);
+                                findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
 
-                    close.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            dialog.dismiss();
-                            dialog_count--;
-                            InTrip = false;
+                                FirebaseFirestore.getInstance()
+                                        .collection("driverRequests")
+                                        .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                        .delete();
 
-                            FirebaseFirestore.getInstance()
-                                    .collection("driverRequests")
-                                    .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                                    .delete();
+                            }
+                        });
 
-                        }
-                    });
+                        t6.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                dialog.dismiss();
+                                dialog_count = 0;
+                                InTrip = false;
+                                isConnected = true;
+                                findViewById(R.id.card_default).setVisibility(View.VISIBLE);
+                                findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
 
-                    t6.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            dialog.dismiss();
-                            dialog_count--;
-                            InTrip = false;
+                                FirebaseFirestore.getInstance()
+                                        .collection("driverRequests")
+                                        .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                        .delete();
 
-                            FirebaseFirestore.getInstance()
-                                    .collection("driverRequests")
-                                    .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                                    .delete();
+                            }
+                        });
 
-                        }
-                    });
+                        t5.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
 
-                    t5.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
+                                InTrip = true;
+                                final Map<String, Object> map = new HashMap<>();
+                                final Map<String, Object> mini_map = new HashMap<>();
+                                final Map<String, Object> mini_map2 = new HashMap<>();
+                                final Map<String, Object> mini_map3 = new HashMap<>();
 
-                            InTrip = true;
-                            final Map<String, Object> map = new HashMap<>();
-                            final Map<String, Object> mini_map = new HashMap<>();
-                            final Map<String, Object> mini_map2 = new HashMap<>();
-                            final Map<String, Object> mini_map3 = new HashMap<>();
+                                map.put("tripsid", System.currentTimeMillis());
+                                map.put("date", ClassDate.date());
+                                map.put("idCustomer", value.getString("idCustomer"));
+                                map.put("idDriver", UserInfo_sharedPreference.getUser(MapsActivity.this).uid);
+                                map.put("dateStart", FieldValue.serverTimestamp());
+                                map.put("dateAcceptRequest", FieldValue.serverTimestamp());
+                                map.put("state", "StateTrip.active");
+                                map.put("km", 0.0);
+                                map.put("totalPrice", 0.0);
+                                map.put("hours", value.get("hours"));
+                                map.put("typeTrip", value.getString("typeTrip"));
+                                map.put("discount", value.get("discount"));
+                                map.put("addressCurrent", value.getString("currentAddress"));
 
-                            map.put("tripsid", System.currentTimeMillis());
-                            map.put("date", ClassDate.date());
-                            map.put("idCustomer", value.getString("idCustomer"));
-                            map.put("idDriver", UserInfo_sharedPreference.getUser(MapsActivity.this).uid);
-                            map.put("dateStart", FieldValue.serverTimestamp());
-                            map.put("dateAcceptRequest", FieldValue.serverTimestamp());
-                            map.put("state", "StateTrip.active");
-                            map.put("km", 0.0);
-                            map.put("totalPrice", 0.0);
-                            map.put("hours", value.get("hours"));
-                            map.put("typeTrip", value.getString("typeTrip"));
-                            map.put("discount", value.get("discount"));
-                            map.put("addressCurrent", value.getString("currentAddress"));
+                                mini_map.put("lat", ((Map<String, Object>) value.get("accessPoint")).get("lat"));
+                                mini_map.put("lng", ((Map<String, Object>) value.get("accessPoint")).get("lng"));
+                                mini_map.put("addressTo", ((Map<String, Object>) value.get("accessPoint")).get("addressTo")+"");
+                                map.put("accessPoint", mini_map);
 
-                            mini_map.put("lat", ((Map<String, Object>) value.get("accessPoint")).get("lat"));
-                            mini_map.put("lng", ((Map<String, Object>) value.get("accessPoint")).get("lng"));
-                            mini_map.put("addressTo", ((Map<String, Object>) value.get("accessPoint")).get("addressTo")+"");
-                            map.put("accessPoint", mini_map);
+                                Geocoder coder = new Geocoder(MapsActivity.this);
+                                double lng = 0;
+                                double lat = 0;
+                                try {
+                                    ArrayList<Address> adresses = (ArrayList<Address>) coder.getFromLocationName(value.getString("currentAddress"), 1);
+                                    for(Address add : adresses){
+                                        lng = add.getLongitude();
+                                        lat = add.getLatitude();
+                                    }
+                                } catch (Exception e) {}
 
-                            Geocoder coder = new Geocoder(MapsActivity.this);
-                            double lng = 0;
-                            double lat = 0;
-                            try {
-                                ArrayList<Address> adresses = (ArrayList<Address>) coder.getFromLocationName(value.getString("currentAddress"), 1);
-                                for(Address add : adresses){
-                                    lng = add.getLongitude();
-                                    lat = add.getLatitude();
-                                }
-                            } catch (Exception e) {}
+                                mini_map2.put("lat", lng);
+                                mini_map2.put("lng", lat);
+                                map.put("locationCustomer", mini_map2);
 
-                            mini_map2.put("lat", lng);
-                            mini_map2.put("lng", lat);
-                            map.put("locationCustomer", mini_map2);
+                                mini_map3.put("lat", loc.getLatitude());
+                                mini_map3.put("lng", loc.getLongitude());
+                                mini_map3.put("rotateDriver", 0);
+                                map.put("locationDriver", mini_map3);
 
-                            mini_map3.put("lat", loc.getLatitude());
-                            mini_map3.put("lng", loc.getLongitude());
-                            mini_map3.put("rotateDriver", 0);
-                            map.put("locationDriver", mini_map3);
+                                FirebaseFirestore.getInstance()
+                                        .collection("Trips")
+                                        .document(map.get("tripsid").toString())
+                                        .set(map)
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
 
-                            FirebaseFirestore.getInstance()
-                                    .collection("Trips")
-                                    .document().set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-
-                                    FirebaseFirestore.getInstance()
-                                            .collection("driverRequests")
-                                            .whereEqualTo("idCustomer", map.get("idCustomer").toString())
-                                            .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                        @Override
-                                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                            List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                                            for(int i=0; i<list.size(); i++){
-                                                FirebaseFirestore.getInstance()
-                                                        .collection("driverRequests")
-                                                        .document(list.get(i).getId())
-                                                        .delete();
+                                        FirebaseFirestore.getInstance()
+                                                .collection("driverRequests")
+                                                .whereEqualTo("idCustomer", map.get("idCustomer").toString())
+                                                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                                List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+                                                for(int i=0; i<list.size(); i++){
+                                                    FirebaseFirestore.getInstance()
+                                                            .collection("driverRequests")
+                                                            .document(list.get(i).getId())
+                                                            .delete();
+                                                }
                                             }
-                                        }
-                                    });
+                                        });
 
-                                    FirebaseFirestore.getInstance()
-                                            .collection("location")
-                                            .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                                            .update("available", false);
+                                        FirebaseFirestore.getInstance()
+                                                .collection("location")
+                                                .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                                .update("available", false);
 
-                                    FirebaseFirestore.getInstance()
-                                            .collection("Users")
-                                            .document(map.get("idCustomer").toString())
-                                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                        @Override
-                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                            SendNoti("الكابتن في الطريق اليك", documentSnapshot.getString("token"));
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                    });
+                                        FirebaseFirestore.getInstance()
+                                                .collection("Users")
+                                                .document(map.get("idCustomer").toString())
+                                                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                SendNoti("الكابتن في الطريق اليك", documentSnapshot.getString("token"));
+                                            }
+                                        });
 
-                    try{
-                        t1.setText("إسم الراكب : "+value.getString("nameCustomer"));
-                        t2.setText("هاتف الراكب : "+value.getString("phoneCustomer"));
-                        t3.setText("خصم الرحلة : "+value.get("discount").toString());
-                        t4.setText("مرجع الخريطة : "+value.getString("currentAddress"));
+                                        findViewById(R.id.card_default).setVisibility(View.INVISIBLE);
+                                        findViewById(R.id.card_default2).setVisibility(View.VISIBLE);
+
+                                        ImageView call = findViewById(R.id.call);
+                                        CardView loca = findViewById(R.id.card3);
+                                        TextView arrive = findViewById(R.id.textView11);
+                                        TextView canc = findViewById(R.id.textView7);
+                                        TextView name = findViewById(R.id.txvType);
+                                        TextView locat = findViewById(R.id.txvColor);
+
+                                        name.setText(value.getString("nameCustomer"));
+                                        locat.setText(value.getString("currentAddress"));
+
+                                        call.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                Intent intent = new Intent(Intent.ACTION_DIAL);
+                                                intent.setData(Uri.parse("tel:"+value.getString("phoneCustomer").replace("+962", "0")));
+                                                startActivity(intent);
+                                            }
+                                        });
+
+                                        loca.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+
+                                                Geocoder coder = new Geocoder(MapsActivity.this);
+                                                double lng = 0;
+                                                double lat = 0;
+                                                try {
+                                                    ArrayList<Address> adresses = (ArrayList<Address>) coder.getFromLocationName(value.getString("currentAddress"), 1);
+                                                    for(Address add : adresses){
+                                                        lng = add.getLongitude();
+                                                        lat = add.getLatitude();
+                                                    }
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+
+                                                Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                                                        Uri.parse("http://maps.google.com/maps?saddr="+
+                                                                loc.getLatitude()+","+loc.getLongitude()+
+                                                                "&daddr="+lat+","+lng));
+                                                startActivity(intent);
+                                            }
+                                        });
+
+                                        //draw line ()------------------------------------------------------------------------
+//                                        DrawPolyLine();
+
+                                        arrive.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+
+                                                if(arrive.getText().toString().equals("لقد وصلت")){
+                                                    FirebaseFirestore.getInstance()
+                                                            .collection("Users")
+                                                            .document(map.get("idCustomer").toString())
+                                                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                        @Override
+                                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                            arrive.setText("بدء الرحلة");
+                                                            SendNoti("لقد وصل الكابتن للموقع.", documentSnapshot.getString("token"));
+
+                                                            cd = new CountDownTimer(300000, 1000) {
+
+                                                                public void onTick(long millisUntilFinished) {
+
+                                                                    if(millisUntilFinished >= 240000){
+                                                                        if(millisUntilFinished-240000 < 10000) canc.setText("04:0" + ((millisUntilFinished-240000)/1000));
+                                                                        else canc.setText("04:" + ((millisUntilFinished-240000)/1000)); }
+
+                                                                    else if(millisUntilFinished >= 180000){
+                                                                        if(millisUntilFinished-180000 < 10000) canc.setText("03:0" + ((millisUntilFinished-180000)/1000));
+                                                                        else canc.setText("03:" + ((millisUntilFinished-180000)/1000)); }
+
+                                                                    else if(millisUntilFinished >= 120000){
+                                                                        if(millisUntilFinished-120000 < 10000) canc.setText("02:0" + ((millisUntilFinished-120000)/1000));
+                                                                        else canc.setText("02:" + ((millisUntilFinished-180000)/1000)); }
+
+                                                                    else if(millisUntilFinished >= 60000){
+                                                                        if(millisUntilFinished-60000 < 10000) canc.setText("01:0" + ((millisUntilFinished-60000)/1000));
+                                                                        else canc.setText("01:" + ((millisUntilFinished-180000)/1000)); }
+
+                                                                    else if(millisUntilFinished >= 0){
+                                                                        if(millisUntilFinished < 10000) canc.setText("01:0" + (millisUntilFinished/1000));
+                                                                        else canc.setText("01:" + (millisUntilFinished/1000)); }
+
+                                                                }
+
+                                                                public void onFinish() {
+                                                                    canc.setText("إلغاء");
+                                                                }
+
+                                                            };
+                                                            cd.start();
+                                                        }
+                                                    });
+                                                }
+                                                else if(arrive.getText().toString().equals("بدء الرحلة")){
+                                                    FirebaseFirestore.getInstance()
+                                                            .collection("Trips")
+                                                            .document(map.get("tripsid").toString())
+                                                            .update("state", "StateTrip.started")
+                                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                                    arrive.setText("إنهاء الرحلة");
+                                                                    StartedTripAt = System.currentTimeMillis();
+                                                                    TripDistanceCalc = new ArrayList<>();
+                                                                    canc.setText("إلغاء");
+                                                                    cd.cancel();
+                                                                }
+                                                            });
+                                                }
+                                                else if(arrive.getText().toString().equals("إنهاء الرحلة")){
+                                                    StartedTripAt = 0;
+                                                    FirebaseFirestore.getInstance()
+                                                            .collection("Trips")
+                                                            .document(map.get("tripsid").toString())
+                                                            .update("state", "StateTrip.needRatingByDriver")
+                                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<Void> task) {
+
+                                                                    FirebaseFirestore.getInstance()
+                                                                            .collection("AdminDataConfig")
+                                                                            .document("Data")
+                                                                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                        @Override
+                                                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                            final androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(MapsActivity.this);
+                                                                            LayoutInflater inflater = MapsActivity.this.getLayoutInflater();
+                                                                            builder.setView(inflater.inflate(R.layout.dialog_trip_req2, null));
+                                                                            final androidx.appcompat.app.AlertDialog dialog2 = builder.create();
+                                                                            ((FrameLayout) dialog2.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                                                                            WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                                                                            lp.copyFrom(dialog2.getWindow().getAttributes());
+                                                                            lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                                                                            lp.height = Math.round(TypedValue.applyDimension(
+                                                                                    TypedValue.COMPLEX_UNIT_DIP, 400, getResources().getDisplayMetrics()));
+                                                                            dialog2.getWindow().setAttributes(lp);
+                                                                            dialog2.show();
+
+                                                                            TextView t1 = dialog2.findViewById(R.id.txvType);
+                                                                            TextView t2 = dialog2.findViewById(R.id.txvColor);
+                                                                            TextView t3 = dialog2.findViewById(R.id.txvNo);
+                                                                            TextView t4 = dialog2.findViewById(R.id.textView11);
+
+                                                                            BigDecimal TripDistance = new BigDecimal("0");
+                                                                            for(int i=0; i<TripDistanceCalc.size()-1; i++)
+                                                                                TripDistance.add(new BigDecimal(GetDistanceFromLatLonInKm(
+                                                                                        TripDistanceCalc.get(i).getLatitude(), TripDistanceCalc.get(i).getLongitude(),
+                                                                                        TripDistanceCalc.get(i+1).getLatitude(), TripDistanceCalc.get(i+1).getLongitude())));
+
+                                                                            double base_price = 0, below_4_km = 0, between_4n5_km = 0, between_5n8_km = 0,
+                                                                                    more_8_km = 0, minute_price = 0, minimum_trip_cost = 0, driver_fee = 0;
+
+                                                                            try{
+                                                                                base_price = Double.parseDouble(documentSnapshot.getString("base_price"));
+                                                                                below_4_km = Double.parseDouble(documentSnapshot.getString("below_4_km"));
+                                                                                between_4n5_km = Double.parseDouble(documentSnapshot.getString("between_4n5_km"));
+                                                                                between_5n8_km = Double.parseDouble(documentSnapshot.getString("between_5n8_km"));
+                                                                                more_8_km = Double.parseDouble(documentSnapshot.getString("more_8_km"));
+                                                                                minute_price = Double.parseDouble(documentSnapshot.getString("minute_price"));
+                                                                                minimum_trip_cost = Double.parseDouble(documentSnapshot.getString("minimum_trip_cost"));
+                                                                                driver_fee = Double.parseDouble(documentSnapshot.getString("driver_fee")); }
+                                                                            catch (Exception ex){}
+
+                                                                            long time = (System.currentTimeMillis()/1000 - StartedTripAt/1000)/60;
+                                                                            BigDecimal TotalTripPrice = new BigDecimal("-1");
+
+                                                                            if(TripDistance.doubleValue() <= 4)
+                                                                                TotalTripPrice = new BigDecimal(base_price)
+                                                                                        .add(new BigDecimal(below_4_km).multiply(TripDistance))
+                                                                                        .add(new BigDecimal(minute_price).multiply(new BigDecimal(time)));
+                                                                            else if(TripDistance.doubleValue() > 4 && TripDistance.doubleValue() <= 5)
+                                                                                TotalTripPrice = new BigDecimal(base_price)
+                                                                                        .add(new BigDecimal(between_4n5_km).multiply(TripDistance))
+                                                                                        .add(new BigDecimal(minute_price).multiply(new BigDecimal(time)));
+                                                                            else if(TripDistance.doubleValue() > 5 && TripDistance.doubleValue() <= 8)
+                                                                                TotalTripPrice = new BigDecimal(base_price)
+                                                                                        .add(new BigDecimal(between_5n8_km).multiply(TripDistance))
+                                                                                        .add(new BigDecimal(minute_price).multiply(new BigDecimal(time)));
+                                                                            else if(TripDistance.doubleValue() > 8)
+                                                                                TotalTripPrice = new BigDecimal(base_price)
+                                                                                        .add(new BigDecimal(more_8_km).multiply(TripDistance))
+                                                                                        .add(new BigDecimal(minute_price).multiply(new BigDecimal(time)));
+
+                                                                            if(TotalTripPrice.doubleValue() < minimum_trip_cost)
+                                                                                TotalTripPrice = new BigDecimal(minimum_trip_cost);
+
+                                                                            BigDecimal fee = TotalTripPrice.multiply(new BigDecimal(driver_fee).divide(new BigDecimal("100")));
+                                                                            BigDecimal final_fee = new BigDecimal("0").subtract(fee);
+                                                                            FirebaseFirestore.getInstance()
+                                                                                    .collection("Users")
+                                                                                    .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                                                                    .update("balance", FieldValue.increment(final_fee.doubleValue()))
+                                                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                        @Override
+                                                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                                                            Toast.makeText(MapsActivity.this, "تم إقتطاع مبلغ "+final_fee.doubleValue(), Toast.LENGTH_SHORT).show();
+                                                                                        }
+                                                                                    });
+
+                                                                            t1.setText(Snap_data.getString("nameCustomer"));
+                                                                            t2.setText(TripDistance.doubleValue()+" Km | "+time+" min");
+                                                                            t3.setText(TotalTripPrice.doubleValue()+" JD");
+
+                                                                            t4.setOnClickListener(new View.OnClickListener() {
+                                                                                @Override
+                                                                                public void onClick(View view) {
+
+                                                                                    RatingBar rate = dialog2.findViewById(R.id.rating);
+                                                                                    double rating = rate.getRating();
+
+                                                                                    Map<String, Object> ra = new HashMap<>();
+                                                                                    ra.put("rating", FieldValue.increment(rating));
+                                                                                    ra.put("countRating", FieldValue.increment(1));
+                                                                                    FirebaseFirestore.getInstance()
+                                                                                            .collection("Users")
+                                                                                            .document(Snap_data.getString("idCustomer"))
+                                                                                            .update(ra).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                        @Override
+                                                                                        public void onComplete(@NonNull Task<Void> task) {
+
+                                                                                            FirebaseFirestore.getInstance()
+                                                                                                    .collection("Trips")
+                                                                                                    .document(map.get("tripsid").toString())
+                                                                                                    .update("state", "StateTrip.needRatingByCustomer")
+                                                                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                                        @Override
+                                                                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                                                                            dialog2.dismiss();
+                                                                                                        }
+                                                                                                    });
+
+                                                                                        }
+                                                                                    });
+                                                                                }
+                                                                            });
+                                                                        }
+                                                                    });
+
+                                                                    arrive.setText("لقد وصلت");
+                                                                    canc.setText("إلغاء");
+                                                                    dialog_count = 0;
+                                                                    InTrip = false;
+                                                                    isConnected = true;
+                                                                    findViewById(R.id.card_default).setVisibility(View.VISIBLE);
+                                                                    findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
+                                                                }
+                                                            });
+                                                }
+                                            }
+                                        });
+
+                                        canc.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+
+                                                if(!canc.getText().toString().equals("إلغاء")){
+                                                    new AlertDialog.Builder(MapsActivity.this)
+                                                            .setMessage("سيتم خصم مبلغ بقيمة 0.5 دينار عند قيامك بإلغاء رحلة مقبولة هل ترغب بذلك ؟")
+                                                            .setPositiveButton("نعم", new DialogInterface.OnClickListener() {
+                                                                @Override
+                                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                                    findViewById(R.id.card_default).setVisibility(View.VISIBLE);
+                                                                    findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
+
+                                                                    dialog_count = 0;
+                                                                    InTrip = false;
+                                                                    isConnected = true;
+                                                                    findViewById(R.id.card_default).setVisibility(View.VISIBLE);
+                                                                    findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
+
+                                                                    FirebaseFirestore.getInstance()
+                                                                            .collection("driverRequests")
+                                                                            .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                                                            .delete();
+
+                                                                    FirebaseFirestore.getInstance()
+                                                                            .collection("Trips")
+                                                                            .document(map.get("tripsid").toString())
+                                                                            .update("state", "StateTrip.cancelByDriver");
+
+                                                                    BigDecimal bal = new BigDecimal(UserInfo_sharedPreference.getUser(MapsActivity.this).balance)
+                                                                            .subtract(new BigDecimal("0.5"));
+                                                                    FirebaseFirestore.getInstance()
+                                                                            .collection("Users")
+                                                                            .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                                                            .update("balance", bal.doubleValue());
+
+                                                                }
+                                                            }).setNegativeButton("لا", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                                            dialog.dismiss();
+                                                        }
+                                                    }).setCancelable(false).create().show();
+                                                }
+                                                else{
+                                                    findViewById(R.id.card_default).setVisibility(View.VISIBLE);
+                                                    findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
+
+                                                    dialog_count = 0;
+                                                    InTrip = false;
+                                                    isConnected = true;
+                                                    findViewById(R.id.card_default).setVisibility(View.VISIBLE);
+                                                    findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
+
+                                                    FirebaseFirestore.getInstance()
+                                                            .collection("driverRequests")
+                                                            .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                                            .delete();
+
+                                                    FirebaseFirestore.getInstance()
+                                                            .collection("Trips")
+                                                            .document(map.get("tripsid").toString())
+                                                            .update("state", "StateTrip.rejected");
+
+                                                }
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+
+                        try{
+                            t1.setText("إسم الراكب : "+value.getString("nameCustomer"));
+                            t3.setText("خصم الرحلة : "+value.get("discount").toString());
+                            t4.setText("مرجع الخريطة : "+value.getString("currentAddress"));
 //                        MediaPlayer mPlayer = MediaPlayer.create(MapsActivity.this, R.raw.aaanicholas);
-                    } catch (Exception ex){}
+                        } catch (Exception ex){}
+
+                    }
                 }
                 else{
                     if (dialog_count == 1){
                         dialog.dismiss();
-                        dialog_count--;
-                        InTrip = false;
+//                        dialog_count = 0;
+//                        InTrip = false;
+//                        isConnected = true;
                     }
                 }
             }
         };
         ser_int = new Intent(getApplicationContext(), SimpleService.class);
+    }
+
+    private void DrawPolyLine() {
+
+        Geocoder coder = new Geocoder(MapsActivity.this);
+        double lng = 0;
+        double lat = 0;
+        try {
+            ArrayList<Address> adresses = (ArrayList<Address>) coder.getFromLocationName(Snap_data.getString("currentAddress"), 1);
+            for(Address add : adresses){
+                lng = add.getLongitude();
+                lat = add.getLatitude();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        PolylineOptions polylineOptions = new PolylineOptions()
+                .add(new LatLng(lat, lng))
+                .add(new LatLng(loc.getLatitude(), loc.getLongitude()));
+        Polyline polyline = mMap.addPolyline(polylineOptions);
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -475,8 +832,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             buildGoogleApiClient();
             mMap.setMyLocationEnabled(true);
         }
-
-//        drawerLayout.openDrawer(GravityCompat.START);
 
         toggleButton = findViewById(R.id.toggleButton);
         txvAccountState = findViewById(R.id.textView10);
@@ -534,9 +889,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
                             .addSnapshotListener(event).remove();
                 }
-
-
-
 
                     BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
                     mMap.clear();
@@ -714,6 +1066,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         @Override
         public void onLocationChanged(final Location location) {
             loc = location;
+            if(StartedTripAt != 0)
+                TripDistanceCalc.add(loc);
+
             markerLat = location.getLatitude();
             markerLng = location.getLongitude();
             BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
@@ -743,6 +1098,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .collection("locations")
                         .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
                         .set(map);
+
+                if(InTrip && Snap_data != null){
+                    DrawPolyLine();
+                }
             }
             else{
                 FirebaseFirestore.getInstance()
@@ -844,6 +1203,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             e.printStackTrace();
         }
 
+    }
+
+    public double GetDistanceFromLatLonInKm(double lat1, double lon1, double lat2, double lon2)
+    {
+        final int R = 6371;
+        // Radius of the earth in km
+        double dLat = deg2rad(lat2 - lat1);
+        // deg2rad below
+        double dLon = deg2rad(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double d = R * c;
+        // Distance in km
+        return d;
+    }
+    private double deg2rad(double deg)
+    {
+        return deg * (Math.PI / 180);
     }
 
 }
