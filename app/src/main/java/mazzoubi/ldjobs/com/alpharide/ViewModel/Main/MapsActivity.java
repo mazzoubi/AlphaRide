@@ -340,7 +340,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             map.put("idDriver", UserInfo_sharedPreference.getUser(MapsActivity.this).uid);
                             map.put("dateStart", FieldValue.serverTimestamp());
                             map.put("dateAcceptRequest", FieldValue.serverTimestamp());
-                            map.put("state", "active");
+                            map.put("state", "StateTrip.active");
                             map.put("km", 0.0);
                             map.put("totalPrice", 0.0);
                             map.put("hours", value.get("hours"));
@@ -350,7 +350,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                             mini_map.put("lat", ((Map<String, Object>) value.get("accessPoint")).get("lat"));
                             mini_map.put("lng", ((Map<String, Object>) value.get("accessPoint")).get("lng"));
-                            mini_map.put("addressTo", ((Map<String, Object>) value.get("accessPoint")).get("addressTo"));
+                            mini_map.put("addressTo", ((Map<String, Object>) value.get("accessPoint")).get("addressTo")+"");
                             map.put("accessPoint", mini_map);
 
                             Geocoder coder = new Geocoder(MapsActivity.this);
