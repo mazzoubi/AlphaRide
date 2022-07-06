@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
@@ -17,6 +18,7 @@ import mazzoubi.ldjobs.com.alpharide.ViewModel.Main.MapsActivity;
 
 public class SimpleService extends FloatingBubbleService {
 
+    
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(intent == null)
@@ -58,7 +60,7 @@ public class SimpleService extends FloatingBubbleService {
                 .expandableColor(Color.WHITE)
                 .triangleColor(0xFF215A64)
                 .gravity(Gravity.END)
-                .physicsEnabled(true)
+                .physicsEnabled(false)
                 .moveBubbleOnTouch(false)
                 .touchClickTime(100)
                 .bubbleExpansionIcon(ContextCompat.getDrawable(context, com.siddharthks.bubbles.R.drawable.triangle_icon))
@@ -72,20 +74,15 @@ public class SimpleService extends FloatingBubbleService {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                startActivity(new Intent(view.getContext(), MapsActivity.class)
-//                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                Intent homeIntent = new Intent(getApplicationContext(), MapsActivity.class);
+                homeIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(homeIntent);
 
                 Intent ser_int = new Intent(view.getContext(), SimpleService.class);
                 view.getContext().stopService(ser_int);
-
-                Intent i = new Intent(view.getContext(), MapsActivity.class);
-                i.setAction(Intent.ACTION_MAIN);
-                i.addCategory(Intent.CATEGORY_LAUNCHER);
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(i);
             }
         });
-        return view;
+        return null;
 
         // مشان لما تكبس على الباوندل تنقلك على الماب اكتيفيتي
     }

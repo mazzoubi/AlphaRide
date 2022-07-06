@@ -28,9 +28,12 @@ import android.graphics.PixelFormat;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -49,6 +52,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.firebase.geofire.GeoFireUtils;
 import com.firebase.geofire.GeoLocation;
@@ -69,15 +76,23 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import mazzoubi.ldjobs.com.alpharide.ApplicationLifecycleHandler;
+import mazzoubi.ldjobs.com.alpharide.ClassDate;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.UserInfo_sharedPreference;
 import mazzoubi.ldjobs.com.alpharide.Data.Users.UserModel;
 import mazzoubi.ldjobs.com.alpharide.MainActivity;
@@ -115,6 +130,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     EventListener<DocumentSnapshot> event;
     Intent ser_int;
+    Location loc;
 
     @Override
     protected void onResume() {
@@ -139,6 +155,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             builder.show();
         }
     }
+
+    int dialog_count = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -204,39 +222,213 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             Manifest.permission.ACCESS_COARSE_LOCATION },
                     1); }
 
+        final androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(MapsActivity.this);
+        LayoutInflater inflater = MapsActivity.this.getLayoutInflater();
+        builder.setView(inflater.inflate(R.layout.dialog_trip_req, null));
+        final androidx.appcompat.app.AlertDialog dialog = builder.create();
+        ((FrameLayout) dialog.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        dialog.getWindow().setAttributes(lp);
+
         event = new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+
+                Intent homeIntent = new Intent(MapsActivity.this, MapsActivity.class);
+                homeIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(homeIntent);
+
                 String val="";
-                try{ val = value.getString("idCustomer");}
+                try{ val = value.getString("idCustomer"); }
                 catch (Exception ex){}
 
                 if(val!= null){
-                    final androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(MapsActivity.this);
-                    LayoutInflater inflater = MapsActivity.this.getLayoutInflater();
-                    builder.setView(inflater.inflate(R.layout.dialog_trip_req, null));
-                    final androidx.appcompat.app.AlertDialog dialog = builder.create();
-                    ((FrameLayout) dialog.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-                    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-                    lp.copyFrom(dialog.getWindow().getAttributes());
-                    lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-                    lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                    dialog.getWindow().setAttributes(lp);
-                    dialog.show();
+                    if(dialog_count == 0){
+                        dialog_count++;
+                        dialog.show();
+                        InTrip = true;
+                    }
 
                     final TextView t1 = dialog.findViewById(R.id.txvType);
                     final TextView t2 = dialog.findViewById(R.id.txvModel);
                     final TextView t3 = dialog.findViewById(R.id.txvNo);
                     final TextView t4 = dialog.findViewById(R.id.txvColor);
+                    final TextView t5 = dialog.findViewById(R.id.textView11);
+                    final TextView t6 = dialog.findViewById(R.id.textView7);
+                    final ImageView close = dialog.findViewById(R.id.close);
+
+                    t2.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(Intent.ACTION_DIAL);
+                            intent.setData(Uri.parse("tel:"+value.getString("phoneCustomer").replace("+962", "0")));
+                            startActivity(intent);
+                        }
+                    });
+
+                    t4.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            Geocoder coder = new Geocoder(MapsActivity.this);
+                            double lng = 0;
+                            double lat = 0;
+                            try {
+                                ArrayList<Address> adresses = (ArrayList<Address>) coder.getFromLocationName(value.getString("currentAddress"), 1);
+                                for(Address add : adresses){
+                                    lng = add.getLongitude();
+                                    lat = add.getLatitude();
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                                    Uri.parse("http://maps.google.com/maps?saddr="+
+                                            loc.getLatitude()+","+loc.getLongitude()+
+                                            "&daddr="+lat+","+lng));
+                            startActivity(intent);
+                        }
+                    });
+
+                    close.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dialog.dismiss();
+                            dialog_count--;
+                            InTrip = false;
+
+                            FirebaseFirestore.getInstance()
+                                    .collection("driverRequests")
+                                    .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                    .delete();
+
+                        }
+                    });
+
+                    t6.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dialog.dismiss();
+                            dialog_count--;
+                            InTrip = false;
+
+                            FirebaseFirestore.getInstance()
+                                    .collection("driverRequests")
+                                    .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                    .delete();
+
+                        }
+                    });
+
+                    t5.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            InTrip = true;
+                            final Map<String, Object> map = new HashMap<>();
+                            final Map<String, Object> mini_map = new HashMap<>();
+                            final Map<String, Object> mini_map2 = new HashMap<>();
+                            final Map<String, Object> mini_map3 = new HashMap<>();
+
+                            map.put("tripsid", System.currentTimeMillis());
+                            map.put("date", ClassDate.date());
+                            map.put("idCustomer", value.getString("idCustomer"));
+                            map.put("idDriver", UserInfo_sharedPreference.getUser(MapsActivity.this).uid);
+                            map.put("dateStart", FieldValue.serverTimestamp());
+                            map.put("dateAcceptRequest", FieldValue.serverTimestamp());
+                            map.put("state", "active");
+                            map.put("km", 0.0);
+                            map.put("totalPrice", 0.0);
+                            map.put("hours", value.get("hours"));
+                            map.put("typeTrip", value.getString("typeTrip"));
+                            map.put("discount", value.get("discount"));
+                            map.put("addressCurrent", value.getString("currentAddress"));
+
+                            mini_map.put("lat", ((Map<String, Object>) value.get("accessPoint")).get("lat"));
+                            mini_map.put("lng", ((Map<String, Object>) value.get("accessPoint")).get("lng"));
+                            mini_map.put("addressTo", ((Map<String, Object>) value.get("accessPoint")).get("addressTo"));
+                            map.put("accessPoint", mini_map);
+
+                            Geocoder coder = new Geocoder(MapsActivity.this);
+                            double lng = 0;
+                            double lat = 0;
+                            try {
+                                ArrayList<Address> adresses = (ArrayList<Address>) coder.getFromLocationName(value.getString("currentAddress"), 1);
+                                for(Address add : adresses){
+                                    lng = add.getLongitude();
+                                    lat = add.getLatitude();
+                                }
+                            } catch (Exception e) {}
+
+                            mini_map2.put("lat", lng);
+                            mini_map2.put("lng", lat);
+                            map.put("locationCustomer", mini_map2);
+
+                            mini_map3.put("lat", loc.getLatitude());
+                            mini_map3.put("lng", loc.getLongitude());
+                            mini_map3.put("rotateDriver", 0);
+                            map.put("locationDriver", mini_map3);
+
+                            FirebaseFirestore.getInstance()
+                                    .collection("Trips")
+                                    .document().set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+
+                                    FirebaseFirestore.getInstance()
+                                            .collection("driverRequests")
+                                            .whereEqualTo("idCustomer", map.get("idCustomer").toString())
+                                            .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                            List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+                                            for(int i=0; i<list.size(); i++){
+                                                FirebaseFirestore.getInstance()
+                                                        .collection("driverRequests")
+                                                        .document(list.get(i).getId())
+                                                        .delete();
+                                            }
+                                        }
+                                    });
+
+                                    FirebaseFirestore.getInstance()
+                                            .collection("location")
+                                            .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                            .update("available", false);
+
+                                    FirebaseFirestore.getInstance()
+                                            .collection("Users")
+                                            .document(map.get("idCustomer").toString())
+                                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                            SendNoti("الكابتن في الطريق اليك", documentSnapshot.getString("token"));
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
 
                     try{
                         t1.setText("إسم الراكب : "+value.getString("nameCustomer"));
                         t2.setText("هاتف الراكب : "+value.getString("phoneCustomer"));
                         t3.setText("خصم الرحلة : "+value.get("discount").toString());
                         t4.setText("مرجع الخريطة : "+value.getString("currentAddress"));
+//                        MediaPlayer mPlayer = MediaPlayer.create(MapsActivity.this, R.raw.aaanicholas);
                     } catch (Exception ex){}
                 }
-
+                else{
+                    if (dialog_count == 1){
+                        dialog.dismiss();
+                        dialog_count--;
+                        InTrip = false;
+                    }
+                }
             }
         };
         ser_int = new Intent(getApplicationContext(), SimpleService.class);
@@ -309,12 +501,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 toggleButton.setChecked(false);
+                                dialogInterface.dismiss();
                             }
                         });
                         builder.setCancelable(false);
-                        builder.show();
-
-                    }else {
+                        builder.show(); }
+                    else {
                         circleDrawable = getResources().getDrawable(R.drawable.ccc);
                         toggleButton.setBackgroundDrawable(getDrawable(R.drawable.btn_back23));
 
@@ -323,20 +515,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
                                 .addSnapshotListener(event);
 
-                        //add bubble here
                         if (!Settings.canDrawOverlays(MapsActivity.this)) {
                             Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                                     Uri.parse("package:" + getPackageName()));
-                            startActivityForResult(intent, 1234);
-                        }
-                        else{
-//                        startService(ser_int);
-                        }
-
+                            startActivityForResult(intent, 1234); }
                     }
-
-
-
                 }
                 else {
                     circleDrawable = getResources().getDrawable(R.drawable.cc);
@@ -350,18 +533,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             .collection("driverRequests")
                             .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
                             .addSnapshotListener(event).remove();
-
-                    //remove bubble here
-
-//                    stopService(ser_int);
-
                 }
 
 
 
 
                     BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
-//            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_baseline_account_circle_24);
                     mMap.clear();
                     LatLng l =new LatLng(markerLat, markerLng);
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(l,15.0f));
@@ -536,6 +713,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private final LocationListener mLocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(final Location location) {
+            loc = location;
             markerLat = location.getLatitude();
             markerLng = location.getLongitude();
             BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
@@ -636,4 +814,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         UserViewModel vm = ViewModelProviders.of(this).get(UserViewModel.class);
         vm.updateToken(MapsActivity.this);
     }
+
+    public void SendNoti(String note, String token){
+
+        RequestQueue mRequestQue = Volley.newRequestQueue(MapsActivity.this);
+        JSONObject json = new JSONObject();
+        try {
+            json.put("to", token);
+            JSONObject notificationObj = new JSONObject();
+            notificationObj.put("title", "تطبيق رويال رايد");
+            notificationObj.put("body", note);
+            json.put("notification", notificationObj);
+
+            String URL = "https://fcm.googleapis.com/fcm/send";
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL,
+                    json,null, null
+            ) {
+                @Override
+                public Map<String, String> getHeaders() {
+                    Map<String, String> header = new HashMap<>();
+                    header.put("content-type", "application/json");
+                    header.put("Sender", "id=867383388531");
+                    header.put("authorization", "key=AAAAyfQUKXM:APA91bFD2UtTOIvRiiyp56z3XDkPww6df6PR5jLk6n-bzpy17Q5DhAd4uMwFgR_QyjTSDCYBjizDFqlrGGIobtXRkySFaGMadRzTY_JM4ltOexLfPVe5Xq6VLqh4YT2ec41ehoXOCSMD");
+                    return header;
+                }
+            };
+            mRequestQue.add(request);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }

@@ -28,6 +28,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         showNotification(remoteMessage.getNotification().getTitle(),
                 remoteMessage.getNotification().getBody());
+
     }
 
     @Override

@@ -25,7 +25,7 @@
         <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/layout/activity_trip_info_with_map.xml" value="0.2630208333333333" />
         <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/layout/activity_verify_phone.xml" value="0.36974358974358973" />
         <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/layout/activity_wallet.xml" value="0.2630208333333333" />
-        <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/layout/dialog_trip_req.xml" value="0.37552083333333336" />
+        <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/layout/dialog_trip_req.xml" value="0.24074074074074073" />
         <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/layout/floating_bubble.xml" value="0.2630208333333333" />
         <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/layout/floating_bubble2.xml" value="0.2630208333333333" />
         <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/layout/fragment_car_info.xml" value="0.258974358974359" />
@@ -39,6 +39,7 @@
         <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/layout/row_my_trips.xml" value="0.25092592592592594" />
         <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/layout/row_notifications.xml" value="0.36974358974358973" />
         <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/layout/test.xml" value="0.2630208333333333" />
+        <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/layout/z_bobbles.xml" value="0.2630208333333333" />
         <entry key="..\:/Users/a.mahdawi/Desktop/Other/Projects/Android/AbuZeit/AlphaRide/app/src/main/res/menu/nav_drawer.xml" value="0.25092592592592594" />
         <entry key="..\:/android projects/AlphaRide/app/src/main/res/drawable-v24/btn_back.xml" value="0.23055555555555557" />
         <entry key="..\:/android projects/AlphaRide/app/src/main/res/layout/activity_add_new_car.xml" value="0.25416666666666665" />
@@ -66,14 +67,13 @@
         <entry key="..\:/android projects/AlphaRide/app/src/main/res/layout/nav_header_test.xml" value="0.25416666666666665" />
         <entry key="..\:/android projects/AlphaRide/app/src/main/res/layout/row_my_cars.xml" value="0.25416666666666665" />
         <entry key="..\:/android projects/AlphaRide/app/src/main/res/layout/row_notifications.xml" value="0.25416666666666665" />
-        <entry key="..\:/android projects/AlphaRide/app/src/main/res/layout/z_bobbles.xml" value="0.2" />
         <entry key="..\:/android projects/AlphaRide/app/src/main/res/menu/nav_drawer.xml" value="0.25416666666666665" />
         <entry key="..\:/android projects/AlphaRide/bubbles/src/main/res/layout/floating_bubble_view.xml" value="0.11302083333333333" />
         <entry key="..\:/android projects/AlphaRide/bubbles/src/main/res/layout/floating_expandable_view.xml" value="0.11302083333333333" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
