@@ -167,7 +167,7 @@
         android:layout_marginLeft="25dp"
         android:layout_marginTop="35dp"
         android:layout_marginRight="25dp"
-        android:isIndicator="true"
+        android:isIndicator="false"
         android:numStars="5"
         android:progressBackgroundTint="@color/colorPrimaryDark"
         android:progressTint="@color/white"

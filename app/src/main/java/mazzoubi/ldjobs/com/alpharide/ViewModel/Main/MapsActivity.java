@@ -132,8 +132,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     TextView txvAccountState ;
 
     boolean isConnected = false;
+    boolean DrawPoly = false;
     public static boolean InTrip = false;
     Drawable circleDrawable ;
+    Polyline polyline;
 
     EventListener<DocumentSnapshot> event;
     Intent ser_int;
@@ -419,6 +421,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                             }
                                         });
 
+                                        DrawPoly = true;
+                                        DrawPolyLine();
+
                                         findViewById(R.id.card_default).setVisibility(View.INVISIBLE);
                                         findViewById(R.id.card_default2).setVisibility(View.VISIBLE);
 
@@ -465,9 +470,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                 startActivity(intent);
                                             }
                                         });
-
-                                        //draw line ()------------------------------------------------------------------------
-//                                        DrawPolyLine();
 
                                         arrive.setOnClickListener(new View.OnClickListener() {
                                             @Override
@@ -519,6 +521,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                     });
                                                 }
                                                 else if(arrive.getText().toString().equals("بدء الرحلة")){
+                                                    DrawPoly = false;
+                                                    polyline.remove();
                                                     FirebaseFirestore.getInstance()
                                                             .collection("Trips")
                                                             .document(map.get("tripsid").toString())
@@ -535,7 +539,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                             });
                                                 }
                                                 else if(arrive.getText().toString().equals("إنهاء الرحلة")){
-                                                    StartedTripAt = 0;
                                                     FirebaseFirestore.getInstance()
                                                             .collection("Trips")
                                                             .document(map.get("tripsid").toString())
@@ -570,7 +573,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                                                                             BigDecimal TripDistance = new BigDecimal("0");
                                                                             for(int i=0; i<TripDistanceCalc.size()-1; i++)
-                                                                                TripDistance.add(new BigDecimal(GetDistanceFromLatLonInKm(
+                                                                                TripDistance = TripDistance.add(new BigDecimal(GetDistanceFromLatLonInKm(
                                                                                         TripDistanceCalc.get(i).getLatitude(), TripDistanceCalc.get(i).getLongitude(),
                                                                                         TripDistanceCalc.get(i+1).getLatitude(), TripDistanceCalc.get(i+1).getLongitude())));
 
@@ -588,8 +591,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                 driver_fee = Double.parseDouble(documentSnapshot.getString("driver_fee")); }
                                                                             catch (Exception ex){}
 
-                                                                            long time = (System.currentTimeMillis()/1000 - StartedTripAt/1000)/60;
+                                                                            long time = ((System.currentTimeMillis()/1000) - (StartedTripAt/1000))/60;
+                                                                            StartedTripAt = 0;
                                                                             BigDecimal TotalTripPrice = new BigDecimal("-1");
+
+                                                                            BigDecimal disc = new BigDecimal(Snap_data.get("discount").toString()).divide(new BigDecimal("100"));
 
                                                                             if(TripDistance.doubleValue() <= 4)
                                                                                 TotalTripPrice = new BigDecimal(base_price)
@@ -624,9 +630,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                         }
                                                                                     });
 
+                                                                            Map<String, Object> ups = new HashMap<>();
+                                                                            ups.put("km", String.format("%.3f", TripDistance.doubleValue()));
+                                                                            ups.put("hours", time);
+                                                                            ups.put("totalPrice", String.format("%.3f", TotalTripPrice.doubleValue()));
+
+                                                                            FirebaseFirestore.getInstance()
+                                                                                    .collection("Trips")
+                                                                                    .document(map.get("tripsid").toString())
+                                                                                    .update(ups);
+
                                                                             t1.setText(Snap_data.getString("nameCustomer"));
-                                                                            t2.setText(TripDistance.doubleValue()+" Km | "+time+" min");
-                                                                            t3.setText(TotalTripPrice.doubleValue()+" JD");
+                                                                            t2.setText(String.format("%.3f", TripDistance.doubleValue())+" Km | "+time+" min");
+                                                                            t3.setText(String.format("%.3f", TotalTripPrice.subtract(TotalTripPrice.multiply(disc)).doubleValue())+" JD | "+Snap_data.get("discount")+"% Dis.");
 
                                                                             t4.setOnClickListener(new View.OnClickListener() {
                                                                                 @Override
@@ -787,7 +803,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         PolylineOptions polylineOptions = new PolylineOptions()
                 .add(new LatLng(lat, lng))
                 .add(new LatLng(loc.getLatitude(), loc.getLongitude()));
-        Polyline polyline = mMap.addPolyline(polylineOptions);
+        polyline = mMap.addPolyline(polylineOptions);
 
     }
 
@@ -1099,15 +1115,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
                         .set(map);
 
-                if(InTrip && Snap_data != null){
+                if(InTrip && Snap_data != null && DrawPoly){
                     DrawPolyLine();
+                    HashMap<String, Object> mini_map3 = new HashMap<>();
+                    mini_map3.put("lat", loc.getLatitude());
+                    mini_map3.put("lng", loc.getLongitude());
+                    mini_map3.put("rotateDriver", 0);
+
+                    try{
+                        FirebaseFirestore.getInstance()
+                                .collection("Trips")
+                                .document(Snap_data.getString("tripsid"))
+                                .update("locationDriver", mini_map3);
+                    }
+                    catch (Exception ex){
+
+                    }
+
                 }
             }
             else{
-                FirebaseFirestore.getInstance()
-                        .collection("locations")
-                        .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                        .delete(); }
+                if(!UserInfo_sharedPreference.getUser(MapsActivity.this).uid.equals("")){
+                    FirebaseFirestore.getInstance()
+                            .collection("locations")
+                            .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                            .delete();
+                } }
 
         }
     };
