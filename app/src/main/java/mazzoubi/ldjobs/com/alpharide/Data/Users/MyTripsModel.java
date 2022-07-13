@@ -14,7 +14,7 @@ public class MyTripsModel {
     public String date="";
 
 
-    public int tripsid=0;
+    public long tripsid=0;
 
     public double totalPrice=0;
     public double km=0;

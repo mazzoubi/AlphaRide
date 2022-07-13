@@ -631,9 +631,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                     });
 
                                                                             Map<String, Object> ups = new HashMap<>();
-                                                                            ups.put("km", String.format("%.3f", TripDistance.doubleValue()));
+                                                                            ups.put("km", Double.parseDouble(String.format("%.3f", TripDistance.doubleValue())));
                                                                             ups.put("hours", time);
-                                                                            ups.put("totalPrice", String.format("%.3f", TotalTripPrice.doubleValue()));
+                                                                            ups.put("totalPrice", Double.parseDouble(String.format("%.3f", TotalTripPrice.doubleValue())));
 
                                                                             FirebaseFirestore.getInstance()
                                                                                     .collection("Trips")

@@ -29,7 +29,7 @@ public class ContactUsActivity extends AppCompatActivity {
 
     public void onClickSendEmail(View view) {
         Intent email= new Intent(Intent.ACTION_SENDTO);
-        email.setData(Uri.parse("mailto:almabdallah48@gmail.com"));
+        email.setData(Uri.parse("mailto:royal.ride.app@gmail.com"));
         email.putExtra(Intent.EXTRA_SUBJECT, "Subject");
         email.putExtra(Intent.EXTRA_TEXT, "My Email message");
         startActivity(email);
