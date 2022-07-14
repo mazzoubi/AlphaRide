@@ -65,6 +65,7 @@ import com.bumptech.glide.Glide;
 import com.firebase.geofire.GeoFireUtils;
 import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.CurrentLocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -97,6 +98,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import mazzoubi.ldjobs.com.alpharide.ApplicationLifecycleHandler;
@@ -660,10 +662,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                         TextView t4 = dialog2.findViewById(R.id.textView11);
 
                                                                                         BigDecimal TripDistance = new BigDecimal("0");
-                                                                                        for(int i=0; i<TripDistanceCalc.size()-1; i++)
+                                                                                        for(int i=0; i<TripDistanceCalc.size()-1; i++){
+
                                                                                             TripDistance = TripDistance.add(new BigDecimal(GetDistanceFromLatLonInKm(
                                                                                                     TripDistanceCalc.get(i).getLatitude(), TripDistanceCalc.get(i).getLongitude(),
                                                                                                     TripDistanceCalc.get(i+1).getLatitude(), TripDistanceCalc.get(i+1).getLongitude())));
+
+                                                                                        }
 
                                                                                         double base_price = 0, below_4_km = 0, between_4n5_km = 0, between_5n8_km = 0,
                                                                                                 more_8_km = 0, minute_price = 0, minimum_trip_cost = 0, driver_fee = 0;
@@ -718,15 +723,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                     }
                                                                                                 });
 
+                                                                                        double km = Double.parseDouble(String.format(Locale.ENGLISH,"%.3f", TripDistance.doubleValue()));
+                                                                                        double totalPrice =Double.parseDouble(String.format(Locale.ENGLISH,"%.3f", TotalTripPrice.doubleValue()));
                                                                                         Map<String, Object> ups = new HashMap<>();
-                                                                                        ups.put("km", Double.parseDouble(String.format("%.3f", TripDistance.doubleValue())));
+                                                                                        ups.put("km",km );
                                                                                         ups.put("hours", time);
-                                                                                        ups.put("totalPrice", Double.parseDouble(String.format("%.3f", TotalTripPrice.doubleValue())));
-
+                                                                                        ups.put("totalPrice",totalPrice );
                                                                                         FirebaseFirestore.getInstance()
                                                                                                 .collection("Trips")
                                                                                                 .document(map.get("tripsid").toString())
                                                                                                 .update(ups);
+
 
                                                                                         t1.setText(Snap_data.getString("nameCustomer"));
                                                                                         t2.setText(String.format("%.3f", TripDistance.doubleValue())+" Km | "+time+" min");
