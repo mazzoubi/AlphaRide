@@ -954,6 +954,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         registerActivityLifecycleCallbacks(handler);
         registerComponentCallbacks(handler);
 
+
         circleDrawable= getResources().getDrawable(R.drawable.cc);
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
