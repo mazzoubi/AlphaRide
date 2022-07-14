@@ -16,6 +16,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.Context;
 import android.content.Context;
@@ -165,6 +166,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             builder.setCancelable(false);
             builder.show();
         }
+
+        ProgressDialog progressDialog = new ProgressDialog(MapsActivity.this);
+        progressDialog.setTitle("النظام...");
+        progressDialog.setMessage("الرجاء الإنتظار...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+        FirebaseFirestore.getInstance().collection("BlockUsers")
+                .whereEqualTo("idUser",UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                progressDialog.dismiss();
+                if (queryDocumentSnapshots.getDocuments().size()>0){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+                    builder.setTitle("النظام...");
+                    builder.setMessage("عزيزي المستخدم, لقد تم حظرك من إستخدام التطبيق يمكنك التواصل معنا");
+                    builder.setPositiveButton("تواصل", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            startActivity(new Intent(getApplicationContext(),ContactUsActivity.class));
+                        }
+                    });
+//                    builder.setNegativeButton("", new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialogInterface, int i) {
+//
+//                        }
+//                    });
+
+                    builder.setCancelable(false);
+                    builder.show();
+                }
+            }
+        });
     }
 
     int dialog_count = 0;
@@ -318,17 +353,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         t6.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                dialog.dismiss();
-                                dialog_count = 0;
-                                InTrip = false;
-                                isConnected = true;
-                                findViewById(R.id.card_default).setVisibility(View.VISIBLE);
-                                findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
 
-                                FirebaseFirestore.getInstance()
-                                        .collection("driverRequests")
-                                        .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                                        .delete();
+                                AlertDialog.Builder d = new AlertDialog.Builder(MapsActivity.this);
+                                d.setCancelable(false);
+                                d.setTitle("النظام...");
+                                d.setMessage("هل تريد تأكيد رفض الطلب؟");
+                                d.setPositiveButton("تأكيد", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialog.dismiss();
+                                        dialog_count = 0;
+                                        InTrip = false;
+                                        isConnected = true;
+                                        findViewById(R.id.card_default).setVisibility(View.VISIBLE);
+                                        findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
+
+                                        FirebaseFirestore.getInstance()
+                                                .collection("driverRequests")
+                                                .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                                .delete();
+                                    }
+                                });
+                                d.setNegativeButton("الغاء", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                                    }
+                                });
+                                d.show();
+
+
 
                             }
                         });
@@ -382,6 +436,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 mini_map3.put("rotateDriver", 0);
                                 map.put("locationDriver", mini_map3);
 
+                                ProgressDialog progressDialog = new ProgressDialog(MapsActivity.this);
+                                progressDialog.setCancelable(false);
+                                progressDialog.setTitle("النظام...");
+                                progressDialog.setMessage("الرجاء الإنتظار...");
+                                progressDialog.show();
                                 FirebaseFirestore.getInstance()
                                         .collection("Trips")
                                         .document(map.get("tripsid").toString())
@@ -389,7 +448,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-
+                                        progressDialog.dismiss();
                                         FirebaseFirestore.getInstance()
                                                 .collection("driverRequests")
                                                 .whereEqualTo("idCustomer", map.get("idCustomer").toString())
@@ -476,12 +535,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                             public void onClick(View view) {
 
                                                 if(arrive.getText().toString().equals("لقد وصلت")){
+                                                    ProgressDialog progressDialog = new ProgressDialog(MapsActivity.this);
+                                                    progressDialog.setCancelable(false);
+                                                    progressDialog.setTitle("النظام...");
+                                                    progressDialog.setMessage("الرجاء الإنتظار...");
+                                                    progressDialog.show();
                                                     FirebaseFirestore.getInstance()
                                                             .collection("Users")
                                                             .document(map.get("idCustomer").toString())
                                                             .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                                         @Override
                                                         public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                            progressDialog.dismiss();
                                                             arrive.setText("بدء الرحلة");
                                                             SendNoti("لقد وصل الكابتن للموقع.", documentSnapshot.getString("token"));
 
@@ -523,6 +588,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                 else if(arrive.getText().toString().equals("بدء الرحلة")){
                                                     DrawPoly = false;
                                                     polyline.remove();
+                                                    ProgressDialog progressDialog = new ProgressDialog(MapsActivity.this);
+                                                    progressDialog.setCancelable(false);
+                                                    progressDialog.setTitle("النظام...");
+                                                    progressDialog.setMessage("الرجاء الإنتظار...");
+                                                    progressDialog.show();
                                                     FirebaseFirestore.getInstance()
                                                             .collection("Trips")
                                                             .document(map.get("tripsid").toString())
@@ -530,164 +600,193 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                 @Override
                                                                 public void onComplete(@NonNull Task<Void> task) {
+                                                                    progressDialog.dismiss();
                                                                     arrive.setText("إنهاء الرحلة");
                                                                     StartedTripAt = System.currentTimeMillis();
                                                                     TripDistanceCalc = new ArrayList<>();
                                                                     canc.setText("إلغاء");
+                                                                    canc.setVisibility(View.INVISIBLE);
                                                                     cd.cancel();
                                                                 }
                                                             });
                                                 }
                                                 else if(arrive.getText().toString().equals("إنهاء الرحلة")){
-                                                    FirebaseFirestore.getInstance()
-                                                            .collection("Trips")
-                                                            .document(map.get("tripsid").toString())
-                                                            .update("state", "StateTrip.needRatingByDriver")
-                                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                @Override
-                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    AlertDialog.Builder d = new AlertDialog.Builder(MapsActivity.this);
+                                                    d.setTitle("النظام...");
+                                                    d.setMessage("هل تريد تأكيد انهاء الرحلة؟");
+                                                    d.setPositiveButton("تأكيد", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                                            {
+                                                                ProgressDialog progressDialog = new ProgressDialog(MapsActivity.this);
+                                                                progressDialog.setCancelable(false);
+                                                                progressDialog.setTitle("النظام...");
+                                                                progressDialog.setMessage("الرجاء الإنتظار...");
+                                                                progressDialog.show();
 
-                                                                    FirebaseFirestore.getInstance()
-                                                                            .collection("AdminDataConfig")
-                                                                            .document("Data")
-                                                                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                                                        @Override
-                                                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                                            final androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(MapsActivity.this);
-                                                                            LayoutInflater inflater = MapsActivity.this.getLayoutInflater();
-                                                                            builder.setView(inflater.inflate(R.layout.dialog_trip_req2, null));
-                                                                            final androidx.appcompat.app.AlertDialog dialog2 = builder.create();
-                                                                            ((FrameLayout) dialog2.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-                                                                            WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-                                                                            lp.copyFrom(dialog2.getWindow().getAttributes());
-                                                                            lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-                                                                            lp.height = Math.round(TypedValue.applyDimension(
-                                                                                    TypedValue.COMPLEX_UNIT_DIP, 400, getResources().getDisplayMetrics()));
-                                                                            dialog2.getWindow().setAttributes(lp);
-                                                                            dialog2.show();
+                                                                FirebaseFirestore.getInstance()
+                                                                        .collection("Trips")
+                                                                        .document(map.get("tripsid").toString())
+                                                                        .update("state", "StateTrip.needRatingByDriver")
+                                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                            @Override
+                                                                            public void onComplete(@NonNull Task<Void> task) {
 
-                                                                            TextView t1 = dialog2.findViewById(R.id.txvType);
-                                                                            TextView t2 = dialog2.findViewById(R.id.txvColor);
-                                                                            TextView t3 = dialog2.findViewById(R.id.txvNo);
-                                                                            TextView t4 = dialog2.findViewById(R.id.textView11);
+                                                                                FirebaseFirestore.getInstance()
+                                                                                        .collection("AdminDataConfig")
+                                                                                        .document("Data")
+                                                                                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                                    @Override
+                                                                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                                                                            BigDecimal TripDistance = new BigDecimal("0");
-                                                                            for(int i=0; i<TripDistanceCalc.size()-1; i++)
-                                                                                TripDistance = TripDistance.add(new BigDecimal(GetDistanceFromLatLonInKm(
-                                                                                        TripDistanceCalc.get(i).getLatitude(), TripDistanceCalc.get(i).getLongitude(),
-                                                                                        TripDistanceCalc.get(i+1).getLatitude(), TripDistanceCalc.get(i+1).getLongitude())));
+                                                                                        progressDialog.dismiss();
 
-                                                                            double base_price = 0, below_4_km = 0, between_4n5_km = 0, between_5n8_km = 0,
-                                                                                    more_8_km = 0, minute_price = 0, minimum_trip_cost = 0, driver_fee = 0;
+                                                                                        final androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(MapsActivity.this);
+                                                                                        LayoutInflater inflater = MapsActivity.this.getLayoutInflater();
+                                                                                        builder.setView(inflater.inflate(R.layout.dialog_trip_req2, null));
+                                                                                        final androidx.appcompat.app.AlertDialog dialog2 = builder.create();
+                                                                                        ((FrameLayout) dialog2.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                                                                                        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                                                                                        lp.copyFrom(dialog2.getWindow().getAttributes());
+                                                                                        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                                                                                        lp.height = Math.round(TypedValue.applyDimension(
+                                                                                                TypedValue.COMPLEX_UNIT_DIP, 400, getResources().getDisplayMetrics()));
+                                                                                        dialog2.getWindow().setAttributes(lp);
+                                                                                        dialog2.show();
 
-                                                                            try{
-                                                                                base_price = Double.parseDouble(documentSnapshot.getString("base_price"));
-                                                                                below_4_km = Double.parseDouble(documentSnapshot.getString("below_4_km"));
-                                                                                between_4n5_km = Double.parseDouble(documentSnapshot.getString("between_4n5_km"));
-                                                                                between_5n8_km = Double.parseDouble(documentSnapshot.getString("between_5n8_km"));
-                                                                                more_8_km = Double.parseDouble(documentSnapshot.getString("more_8_km"));
-                                                                                minute_price = Double.parseDouble(documentSnapshot.getString("minute_price"));
-                                                                                minimum_trip_cost = Double.parseDouble(documentSnapshot.getString("minimum_trip_cost"));
-                                                                                driver_fee = Double.parseDouble(documentSnapshot.getString("driver_fee")); }
-                                                                            catch (Exception ex){}
+                                                                                        TextView t1 = dialog2.findViewById(R.id.txvType);
+                                                                                        TextView t2 = dialog2.findViewById(R.id.txvColor);
+                                                                                        TextView t3 = dialog2.findViewById(R.id.txvNo);
+                                                                                        TextView t4 = dialog2.findViewById(R.id.textView11);
 
-                                                                            long time = ((System.currentTimeMillis()/1000) - (StartedTripAt/1000))/60;
-                                                                            StartedTripAt = 0;
-                                                                            BigDecimal TotalTripPrice = new BigDecimal("-1");
+                                                                                        BigDecimal TripDistance = new BigDecimal("0");
+                                                                                        for(int i=0; i<TripDistanceCalc.size()-1; i++)
+                                                                                            TripDistance = TripDistance.add(new BigDecimal(GetDistanceFromLatLonInKm(
+                                                                                                    TripDistanceCalc.get(i).getLatitude(), TripDistanceCalc.get(i).getLongitude(),
+                                                                                                    TripDistanceCalc.get(i+1).getLatitude(), TripDistanceCalc.get(i+1).getLongitude())));
 
-                                                                            BigDecimal disc = new BigDecimal(Snap_data.get("discount").toString()).divide(new BigDecimal("100"));
+                                                                                        double base_price = 0, below_4_km = 0, between_4n5_km = 0, between_5n8_km = 0,
+                                                                                                more_8_km = 0, minute_price = 0, minimum_trip_cost = 0, driver_fee = 0;
 
-                                                                            if(TripDistance.doubleValue() <= 4)
-                                                                                TotalTripPrice = new BigDecimal(base_price)
-                                                                                        .add(new BigDecimal(below_4_km).multiply(TripDistance))
-                                                                                        .add(new BigDecimal(minute_price).multiply(new BigDecimal(time)));
-                                                                            else if(TripDistance.doubleValue() > 4 && TripDistance.doubleValue() <= 5)
-                                                                                TotalTripPrice = new BigDecimal(base_price)
-                                                                                        .add(new BigDecimal(between_4n5_km).multiply(TripDistance))
-                                                                                        .add(new BigDecimal(minute_price).multiply(new BigDecimal(time)));
-                                                                            else if(TripDistance.doubleValue() > 5 && TripDistance.doubleValue() <= 8)
-                                                                                TotalTripPrice = new BigDecimal(base_price)
-                                                                                        .add(new BigDecimal(between_5n8_km).multiply(TripDistance))
-                                                                                        .add(new BigDecimal(minute_price).multiply(new BigDecimal(time)));
-                                                                            else if(TripDistance.doubleValue() > 8)
-                                                                                TotalTripPrice = new BigDecimal(base_price)
-                                                                                        .add(new BigDecimal(more_8_km).multiply(TripDistance))
-                                                                                        .add(new BigDecimal(minute_price).multiply(new BigDecimal(time)));
+                                                                                        try{
+                                                                                            base_price = Double.parseDouble(documentSnapshot.getString("base_price"));
+                                                                                            below_4_km = Double.parseDouble(documentSnapshot.getString("below_4_km"));
+                                                                                            between_4n5_km = Double.parseDouble(documentSnapshot.getString("between_4n5_km"));
+                                                                                            between_5n8_km = Double.parseDouble(documentSnapshot.getString("between_5n8_km"));
+                                                                                            more_8_km = Double.parseDouble(documentSnapshot.getString("more_8_km"));
+                                                                                            minute_price = Double.parseDouble(documentSnapshot.getString("minute_price"));
+                                                                                            minimum_trip_cost = Double.parseDouble(documentSnapshot.getString("minimum_trip_cost"));
+                                                                                            driver_fee = Double.parseDouble(documentSnapshot.getString("driver_fee")); }
+                                                                                        catch (Exception ex){}
 
-                                                                            if(TotalTripPrice.doubleValue() < minimum_trip_cost)
-                                                                                TotalTripPrice = new BigDecimal(minimum_trip_cost);
+                                                                                        long time = ((System.currentTimeMillis()/1000) - (StartedTripAt/1000))/60;
+                                                                                        StartedTripAt = 0;
+                                                                                        BigDecimal TotalTripPrice = new BigDecimal("-1");
 
-                                                                            BigDecimal fee = TotalTripPrice.multiply(new BigDecimal(driver_fee).divide(new BigDecimal("100")));
-                                                                            BigDecimal final_fee = new BigDecimal("0").subtract(fee);
-                                                                            FirebaseFirestore.getInstance()
-                                                                                    .collection("Users")
-                                                                                    .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                                                                                    .update("balance", FieldValue.increment(final_fee.doubleValue()))
-                                                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                                        @Override
-                                                                                        public void onComplete(@NonNull Task<Void> task) {
-                                                                                            Toast.makeText(MapsActivity.this, "تم إقتطاع مبلغ "+final_fee.doubleValue(), Toast.LENGTH_SHORT).show();
-                                                                                        }
-                                                                                    });
+                                                                                        BigDecimal disc = new BigDecimal(Snap_data.get("discount").toString()).divide(new BigDecimal("100"));
 
-                                                                            Map<String, Object> ups = new HashMap<>();
-                                                                            ups.put("km", Double.parseDouble(String.format("%.3f", TripDistance.doubleValue())));
-                                                                            ups.put("hours", time);
-                                                                            ups.put("totalPrice", Double.parseDouble(String.format("%.3f", TotalTripPrice.doubleValue())));
+                                                                                        if(TripDistance.doubleValue() <= 4)
+                                                                                            TotalTripPrice = new BigDecimal(base_price)
+                                                                                                    .add(new BigDecimal(below_4_km).multiply(TripDistance))
+                                                                                                    .add(new BigDecimal(minute_price).multiply(new BigDecimal(time)));
+                                                                                        else if(TripDistance.doubleValue() > 4 && TripDistance.doubleValue() <= 5)
+                                                                                            TotalTripPrice = new BigDecimal(base_price)
+                                                                                                    .add(new BigDecimal(between_4n5_km).multiply(TripDistance))
+                                                                                                    .add(new BigDecimal(minute_price).multiply(new BigDecimal(time)));
+                                                                                        else if(TripDistance.doubleValue() > 5 && TripDistance.doubleValue() <= 8)
+                                                                                            TotalTripPrice = new BigDecimal(base_price)
+                                                                                                    .add(new BigDecimal(between_5n8_km).multiply(TripDistance))
+                                                                                                    .add(new BigDecimal(minute_price).multiply(new BigDecimal(time)));
+                                                                                        else if(TripDistance.doubleValue() > 8)
+                                                                                            TotalTripPrice = new BigDecimal(base_price)
+                                                                                                    .add(new BigDecimal(more_8_km).multiply(TripDistance))
+                                                                                                    .add(new BigDecimal(minute_price).multiply(new BigDecimal(time)));
 
-                                                                            FirebaseFirestore.getInstance()
-                                                                                    .collection("Trips")
-                                                                                    .document(map.get("tripsid").toString())
-                                                                                    .update(ups);
+                                                                                        if(TotalTripPrice.doubleValue() < minimum_trip_cost)
+                                                                                            TotalTripPrice = new BigDecimal(minimum_trip_cost);
 
-                                                                            t1.setText(Snap_data.getString("nameCustomer"));
-                                                                            t2.setText(String.format("%.3f", TripDistance.doubleValue())+" Km | "+time+" min");
-                                                                            t3.setText(String.format("%.3f", TotalTripPrice.subtract(TotalTripPrice.multiply(disc)).doubleValue())+" JD | "+Snap_data.get("discount")+"% Dis.");
+                                                                                        BigDecimal fee = TotalTripPrice.multiply(new BigDecimal(driver_fee).divide(new BigDecimal("100")));
+                                                                                        BigDecimal final_fee = new BigDecimal("0").subtract(fee);
+                                                                                        FirebaseFirestore.getInstance()
+                                                                                                .collection("Users")
+                                                                                                .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                                                                                .update("balance", FieldValue.increment(final_fee.doubleValue()))
+                                                                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                                    @Override
+                                                                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                                                                        Toast.makeText(MapsActivity.this, "تم إقتطاع مبلغ "+final_fee.doubleValue(), Toast.LENGTH_SHORT).show();
+                                                                                                    }
+                                                                                                });
 
-                                                                            t4.setOnClickListener(new View.OnClickListener() {
-                                                                                @Override
-                                                                                public void onClick(View view) {
+                                                                                        Map<String, Object> ups = new HashMap<>();
+                                                                                        ups.put("km", Double.parseDouble(String.format("%.3f", TripDistance.doubleValue())));
+                                                                                        ups.put("hours", time);
+                                                                                        ups.put("totalPrice", Double.parseDouble(String.format("%.3f", TotalTripPrice.doubleValue())));
 
-                                                                                    RatingBar rate = dialog2.findViewById(R.id.rating);
-                                                                                    double rating = rate.getRating();
+                                                                                        FirebaseFirestore.getInstance()
+                                                                                                .collection("Trips")
+                                                                                                .document(map.get("tripsid").toString())
+                                                                                                .update(ups);
 
-                                                                                    Map<String, Object> ra = new HashMap<>();
-                                                                                    ra.put("rating", FieldValue.increment(rating));
-                                                                                    ra.put("countRating", FieldValue.increment(1));
-                                                                                    FirebaseFirestore.getInstance()
-                                                                                            .collection("Users")
-                                                                                            .document(Snap_data.getString("idCustomer"))
-                                                                                            .update(ra).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                                        @Override
-                                                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                                                        t1.setText(Snap_data.getString("nameCustomer"));
+                                                                                        t2.setText(String.format("%.3f", TripDistance.doubleValue())+" Km | "+time+" min");
+                                                                                        t3.setText(String.format("%.3f", TotalTripPrice.subtract(TotalTripPrice.multiply(disc)).doubleValue())+" JD | "+Snap_data.get("discount")+"% Dis.");
 
-                                                                                            FirebaseFirestore.getInstance()
-                                                                                                    .collection("Trips")
-                                                                                                    .document(map.get("tripsid").toString())
-                                                                                                    .update("state", "StateTrip.needRatingByCustomer")
-                                                                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                                                        @Override
-                                                                                                        public void onComplete(@NonNull Task<Void> task) {
-                                                                                                            dialog2.dismiss();
-                                                                                                        }
-                                                                                                    });
+                                                                                        t4.setOnClickListener(new View.OnClickListener() {
+                                                                                            @Override
+                                                                                            public void onClick(View view) {
 
-                                                                                        }
-                                                                                    });
-                                                                                }
-                                                                            });
-                                                                        }
-                                                                    });
+                                                                                                RatingBar rate = dialog2.findViewById(R.id.rating);
+                                                                                                double rating = rate.getRating();
 
-                                                                    arrive.setText("لقد وصلت");
-                                                                    canc.setText("إلغاء");
-                                                                    dialog_count = 0;
-                                                                    InTrip = false;
-                                                                    isConnected = true;
-                                                                    findViewById(R.id.card_default).setVisibility(View.VISIBLE);
-                                                                    findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
-                                                                }
-                                                            });
+                                                                                                Map<String, Object> ra = new HashMap<>();
+                                                                                                ra.put("rating", FieldValue.increment(rating));
+                                                                                                ra.put("countRating", FieldValue.increment(1));
+                                                                                                FirebaseFirestore.getInstance()
+                                                                                                        .collection("Users")
+                                                                                                        .document(Snap_data.getString("idCustomer"))
+                                                                                                        .update(ra).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                                    @Override
+                                                                                                    public void onComplete(@NonNull Task<Void> task) {
+
+                                                                                                        FirebaseFirestore.getInstance()
+                                                                                                                .collection("Trips")
+                                                                                                                .document(map.get("tripsid").toString())
+                                                                                                                .update("state", "StateTrip.needRatingByCustomer")
+                                                                                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                                                    @Override
+                                                                                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                                                                                        dialog2.dismiss();
+                                                                                                                    }
+                                                                                                                });
+
+                                                                                                    }
+                                                                                                });
+                                                                                            }
+                                                                                        });
+                                                                                    }
+                                                                                });
+
+                                                                                arrive.setText("لقد وصلت");
+                                                                                canc.setText("إلغاء");
+                                                                                dialog_count = 0;
+                                                                                InTrip = false;
+                                                                                isConnected = true;
+                                                                                findViewById(R.id.card_default).setVisibility(View.VISIBLE);
+                                                                                findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
+                                                                            }
+                                                                        });
+                                                            }
+                                                        }
+                                                    });
+                                                    d.setNegativeButton("الغاء", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                                                        }
+                                                    });
+                                                    d.setCancelable(false);
+                                                    d.show();
                                                 }
                                             }
                                         });
@@ -710,11 +809,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                     isConnected = true;
                                                                     findViewById(R.id.card_default).setVisibility(View.VISIBLE);
                                                                     findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
+                                                                    ProgressDialog progressDialog = new ProgressDialog(MapsActivity.this);
+                                                                    progressDialog.setCancelable(false);
+                                                                    progressDialog.setTitle("النظام...");
+                                                                    progressDialog.setMessage("الرجاء الإنتظار...");
+                                                                    progressDialog.show();
 
                                                                     FirebaseFirestore.getInstance()
                                                                             .collection("driverRequests")
                                                                             .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                                                                            .delete();
+                                                                            .delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                        @Override
+                                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                                            progressDialog.dismiss();
+                                                                        }
+                                                                    });
 
                                                                     FirebaseFirestore.getInstance()
                                                                             .collection("Trips")
@@ -737,24 +846,52 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                     }).setCancelable(false).create().show();
                                                 }
                                                 else{
-                                                    findViewById(R.id.card_default).setVisibility(View.VISIBLE);
-                                                    findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
 
-                                                    dialog_count = 0;
-                                                    InTrip = false;
-                                                    isConnected = true;
-                                                    findViewById(R.id.card_default).setVisibility(View.VISIBLE);
-                                                    findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
+                                                    AlertDialog.Builder d = new AlertDialog.Builder(MapsActivity.this);
+                                                    d.setCancelable(false);
+                                                    d.setTitle("النظام...");
+                                                    d.setMessage("هل تريد تأكيد الإلغاء؟");
+                                                    d.setPositiveButton("تأكيد", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                                            findViewById(R.id.card_default).setVisibility(View.VISIBLE);
+                                                            findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
 
-                                                    FirebaseFirestore.getInstance()
-                                                            .collection("driverRequests")
-                                                            .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                                                            .delete();
+                                                            dialog_count = 0;
+                                                            InTrip = false;
+                                                            isConnected = true;
+                                                            findViewById(R.id.card_default).setVisibility(View.VISIBLE);
+                                                            findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
 
-                                                    FirebaseFirestore.getInstance()
-                                                            .collection("Trips")
-                                                            .document(map.get("tripsid").toString())
-                                                            .update("state", "StateTrip.rejected");
+                                                            ProgressDialog progressDialog = new ProgressDialog(MapsActivity.this);
+                                                            progressDialog.setCancelable(false);
+                                                            progressDialog.setTitle("النظام...");
+                                                            progressDialog.setMessage("الرجاء الإنتظار...");
+                                                            progressDialog.show();
+
+                                                            FirebaseFirestore.getInstance()
+                                                                    .collection("driverRequests")
+                                                                    .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                                                    .delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                                    progressDialog.dismiss();
+                                                                }
+                                                            });
+
+                                                            FirebaseFirestore.getInstance()
+                                                                    .collection("Trips")
+                                                                    .document(map.get("tripsid").toString())
+                                                                    .update("state", "StateTrip.rejected");
+                                                        }
+                                                    });
+                                                    d.setNegativeButton("الغاء", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                                                        }
+                                                    });
+                                                    d.show();
 
                                                 }
                                             }

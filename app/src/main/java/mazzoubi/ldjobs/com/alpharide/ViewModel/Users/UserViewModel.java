@@ -383,24 +383,29 @@ public class UserViewModel extends ViewModel {
     }
 
     public void updateToken(Activity c){
-        FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(new OnCompleteListener<String>() {
-                    @Override
-                    public void onComplete(@NonNull Task<String> task) {
-                        if (task.isSuccessful()) {
-                            String token = task.getResult();
-                            Map<String,Object> map = new HashMap<>();
-                            map.put("token",token);
-                            FirebaseFirestore.getInstance().collection(userCollection)
-                                    .document(UserInfo_sharedPreference.getUser(c).uid)
-                                    .update(map).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
+        try {
+            FirebaseMessaging.getInstance().getToken()
+                    .addOnCompleteListener(new OnCompleteListener<String>() {
+                        @Override
+                        public void onComplete(@NonNull Task<String> task) {
+                            if (task.isSuccessful()) {
+                                String token = task.getResult();
+                                Map<String,Object> map = new HashMap<>();
+                                map.put("token",token);
+                                FirebaseFirestore.getInstance().collection(userCollection)
+                                        .document(UserInfo_sharedPreference.getUser(c).uid)
+                                        .update(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
 
-                                }
-                            });
+                                    }
+                                });
+                            }
                         }
-                    }
-                });
+                    });
+        }catch (Exception e){
+
+        }
+
     }
 }

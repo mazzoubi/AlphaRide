@@ -46,7 +46,7 @@ public class ApplicationLifecycleHandler implements Application.ActivityLifecycl
     @Override
     public void onActivityPaused(Activity activity) {
         ser_int = new Intent(activity, SimpleService.class);
-        activity.startService(ser_int);
+//        activity.startService(ser_int);
     }
 
     @Override
