@@ -9,7 +9,7 @@ android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "mazzoubi.ldjobs.com.alpharide"
+        applicationId "com.app.alpha_ride"
         minSdk 23
         targetSdk 31
         versionCode 1
