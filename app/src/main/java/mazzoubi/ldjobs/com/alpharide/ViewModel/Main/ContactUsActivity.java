@@ -36,6 +36,13 @@ public class ContactUsActivity extends AppCompatActivity {
     }
 
     public void onClickLiveChat(View view) {
-        startActivity(new Intent(getApplicationContext(),LiveChatActivity.class));
+//        startActivity(new Intent(getApplicationContext(),LiveChatActivity.class));
+        openWhatsappContact("00962791720743");
+    }
+    void openWhatsappContact(String number) {
+        Uri uri = Uri.parse("smsto:" + number);
+        Intent i = new Intent(Intent.ACTION_SENDTO, uri);
+        i.setPackage("com.whatsapp");
+        startActivity(Intent.createChooser(i, ""));
     }
 }

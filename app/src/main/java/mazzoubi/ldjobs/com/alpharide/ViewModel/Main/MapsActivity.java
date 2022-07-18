@@ -100,6 +100,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import mazzoubi.ldjobs.com.alpharide.ApplicationLifecycleHandler;
 import mazzoubi.ldjobs.com.alpharide.ClassDate;
@@ -132,7 +134,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     LocationManager mLocationManager;
 
     ToggleButton toggleButton ;
-    TextView txvAccountState ;
+    TextView txvAccountState, m, k ;
 
     boolean isConnected = false;
     boolean DrawPoly = false;
@@ -168,45 +170,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             builder.setCancelable(false);
             builder.show();
         }
-
-        ProgressDialog progressDialog = new ProgressDialog(MapsActivity.this);
-        progressDialog.setTitle("النظام...");
-        progressDialog.setMessage("الرجاء الإنتظار...");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-        FirebaseFirestore.getInstance().collection("BlockUsers")
-                .whereEqualTo("idUser",UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                progressDialog.dismiss();
-                if (queryDocumentSnapshots.getDocuments().size()>0){
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
-                    builder.setTitle("النظام...");
-                    builder.setMessage("عزيزي المستخدم, لقد تم حظرك من إستخدام التطبيق يمكنك التواصل معنا");
-                    builder.setPositiveButton("تواصل", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            startActivity(new Intent(getApplicationContext(),ContactUsActivity.class));
-                        }
-                    });
-//                    builder.setNegativeButton("", new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialogInterface, int i) {
-//
-//                        }
-//                    });
-
-                    builder.setCancelable(false);
-                    builder.show();
-                }
-            }
-        });
     }
 
     int dialog_count = 0;
     CountDownTimer cd;
+    Timer T=new Timer();
+    int Tsec = 0, Tmin = 0, Thour = 0;
     DocumentSnapshot Snap_data;
+    ProgressDialog progressDialogLoad;
+    BigDecimal CustomerBalance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -215,6 +187,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(binding.getRoot());
+
+        CustomerBalance = new BigDecimal("0");
+        progressDialogLoad = new ProgressDialog(MapsActivity.this);
+        progressDialogLoad.setCancelable(false);
+        progressDialogLoad.setMessage("الرجاء الإنتظار...");
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -393,6 +370,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             @Override
                             public void onClick(View view) {
 
+                                progressDialogLoad.show();
+                                findViewById(R.id.textView7).setVisibility(View.VISIBLE);
+                                k.setText("0.000 Km");
+                                m.setText("00:00:00");
                                 InTrip = true;
                                 final Map<String, Object> map = new HashMap<>();
                                 final Map<String, Object> mini_map = new HashMap<>();
@@ -438,11 +419,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 mini_map3.put("rotateDriver", 0);
                                 map.put("locationDriver", mini_map3);
 
-                                ProgressDialog progressDialog = new ProgressDialog(MapsActivity.this);
-                                progressDialog.setCancelable(false);
-                                progressDialog.setTitle("النظام...");
-                                progressDialog.setMessage("الرجاء الإنتظار...");
-                                progressDialog.show();
                                 FirebaseFirestore.getInstance()
                                         .collection("Trips")
                                         .document(map.get("tripsid").toString())
@@ -450,7 +426,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        progressDialog.dismiss();
                                         FirebaseFirestore.getInstance()
                                                 .collection("driverRequests")
                                                 .whereEqualTo("idCustomer", map.get("idCustomer").toString())
@@ -479,6 +454,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                             @Override
                                             public void onSuccess(DocumentSnapshot documentSnapshot) {
                                                 SendNoti("الكابتن في الطريق اليك", documentSnapshot.getString("token"));
+                                                progressDialogLoad.dismiss();
                                             }
                                         });
 
@@ -537,21 +513,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                             public void onClick(View view) {
 
                                                 if(arrive.getText().toString().equals("لقد وصلت")){
-                                                    ProgressDialog progressDialog = new ProgressDialog(MapsActivity.this);
-                                                    progressDialog.setCancelable(false);
-                                                    progressDialog.setTitle("النظام...");
-                                                    progressDialog.setMessage("الرجاء الإنتظار...");
-                                                    progressDialog.show();
+                                                    progressDialogLoad.show();
                                                     FirebaseFirestore.getInstance()
                                                             .collection("Users")
                                                             .document(map.get("idCustomer").toString())
                                                             .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                                         @Override
                                                         public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                            progressDialog.dismiss();
                                                             arrive.setText("بدء الرحلة");
                                                             SendNoti("لقد وصل الكابتن للموقع.", documentSnapshot.getString("token"));
-
+                                                            progressDialogLoad.dismiss();
                                                             cd = new CountDownTimer(300000, 1000) {
 
                                                                 public void onTick(long millisUntilFinished) {
@@ -590,11 +561,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                 else if(arrive.getText().toString().equals("بدء الرحلة")){
                                                     DrawPoly = false;
                                                     polyline.remove();
-                                                    ProgressDialog progressDialog = new ProgressDialog(MapsActivity.this);
-                                                    progressDialog.setCancelable(false);
-                                                    progressDialog.setTitle("النظام...");
-                                                    progressDialog.setMessage("الرجاء الإنتظار...");
-                                                    progressDialog.show();
+                                                    progressDialogLoad.show();
                                                     FirebaseFirestore.getInstance()
                                                             .collection("Trips")
                                                             .document(map.get("tripsid").toString())
@@ -602,10 +569,45 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                 @Override
                                                                 public void onComplete(@NonNull Task<Void> task) {
-                                                                    progressDialog.dismiss();
+                                                                    progressDialogLoad.dismiss();
+
+                                                                    T.schedule(new TimerTask() {
+                                                                        @Override
+                                                                        public void run() {
+                                                                            runOnUiThread(new Runnable()
+                                                                            {
+                                                                                @Override
+                                                                                public void run()
+                                                                                {
+                                                                                    Tsec += 1;
+                                                                                    String hour_msg = "0"+Thour+":";
+                                                                                    String hour_msg2 = Thour+":";
+                                                                                    String min_msg = "0"+Tmin+":";
+                                                                                    String min_msg2 = Tmin+":";
+                                                                                    String sec_msg = "0"+Tsec;
+                                                                                    String sec_msg2 = ""+Tsec;
+
+                                                                                    if(Tsec == 59){ Tsec = 0; Tmin += 1; }
+                                                                                    if(Tmin == 59){ Tmin = 0; Thour += 1; }
+
+                                                                                    String final_msg = "";
+                                                                                    if(Thour >= 10) final_msg += hour_msg2;
+                                                                                    else final_msg += hour_msg;
+                                                                                    if(Tmin >= 10) final_msg += min_msg2;
+                                                                                    else final_msg += min_msg;
+                                                                                    if(Tsec >= 10) final_msg += sec_msg2;
+                                                                                    else final_msg += sec_msg;
+
+                                                                                    m.setText(final_msg);
+                                                                                }
+                                                                            });
+                                                                        }
+                                                                    }, 1000, 1000);
+
                                                                     arrive.setText("إنهاء الرحلة");
                                                                     StartedTripAt = System.currentTimeMillis();
                                                                     TripDistanceCalc = new ArrayList<>();
+                                                                    k.setText("0.0 Km");
                                                                     canc.setText("إلغاء");
                                                                     canc.setVisibility(View.INVISIBLE);
                                                                     cd.cancel();
@@ -614,17 +616,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                 }
                                                 else if(arrive.getText().toString().equals("إنهاء الرحلة")){
                                                     AlertDialog.Builder d = new AlertDialog.Builder(MapsActivity.this);
-                                                    d.setTitle("النظام...");
                                                     d.setMessage("هل تريد تأكيد انهاء الرحلة؟");
                                                     d.setPositiveButton("تأكيد", new DialogInterface.OnClickListener() {
                                                         @Override
                                                         public void onClick(DialogInterface dialogInterface, int i) {
                                                             {
-                                                                ProgressDialog progressDialog = new ProgressDialog(MapsActivity.this);
-                                                                progressDialog.setCancelable(false);
-                                                                progressDialog.setTitle("النظام...");
-                                                                progressDialog.setMessage("الرجاء الإنتظار...");
-                                                                progressDialog.show();
+
+                                                                FirebaseFirestore.getInstance()
+                                                                        .collection("Users")
+                                                                        .document(Snap_data.getString("idCustomer"))
+                                                                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                    @Override
+                                                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                        CustomerBalance = new BigDecimal(documentSnapshot.get("balance").toString());
+                                                                    }
+                                                                });
+
+                                                                T.cancel();
+                                                                Tsec = 0;
+                                                                Tmin = 0;
+                                                                Thour = 0;
+                                                                m.setText("00:00:00");
+
+                                                                progressDialogLoad.show();
 
                                                                 FirebaseFirestore.getInstance()
                                                                         .collection("Trips")
@@ -641,8 +655,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                     @Override
                                                                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                                                                                        progressDialog.dismiss();
-
                                                                                         final androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(MapsActivity.this);
                                                                                         LayoutInflater inflater = MapsActivity.this.getLayoutInflater();
                                                                                         builder.setView(inflater.inflate(R.layout.dialog_trip_req2, null));
@@ -656,10 +668,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                         dialog2.getWindow().setAttributes(lp);
                                                                                         dialog2.show();
 
-                                                                                        TextView t1 = dialog2.findViewById(R.id.txvType);
-                                                                                        TextView t2 = dialog2.findViewById(R.id.txvColor);
-                                                                                        TextView t3 = dialog2.findViewById(R.id.txvNo);
-                                                                                        TextView t4 = dialog2.findViewById(R.id.textView11);
+                                                                                        final TextView t1 = dialog2.findViewById(R.id.txvType);
+                                                                                        final TextView t2 = dialog2.findViewById(R.id.txvColor);
+                                                                                        final TextView t3 = dialog2.findViewById(R.id.txvNo);
+                                                                                        final TextView t4 = dialog2.findViewById(R.id.textView11);
+                                                                                        final TextView t5 = dialog2.findViewById(R.id.txvNo5);
 
                                                                                         BigDecimal TripDistance = new BigDecimal("0");
                                                                                         for(int i=0; i<TripDistanceCalc.size()-1; i++){
@@ -709,6 +722,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                                                                                         if(TotalTripPrice.doubleValue() < minimum_trip_cost)
                                                                                             TotalTripPrice = new BigDecimal(minimum_trip_cost);
+                                                                                        if(TotalTripPrice.subtract(TotalTripPrice.multiply(disc)).doubleValue() >= minimum_trip_cost)
+                                                                                            TotalTripPrice = TotalTripPrice.subtract(TotalTripPrice.multiply(disc));
 
                                                                                         BigDecimal fee = TotalTripPrice.multiply(new BigDecimal(driver_fee).divide(new BigDecimal("100")));
                                                                                         BigDecimal final_fee = new BigDecimal("0").subtract(fee);
@@ -719,7 +734,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                                                     @Override
                                                                                                     public void onComplete(@NonNull Task<Void> task) {
-                                                                                                        Toast.makeText(MapsActivity.this, "تم إقتطاع مبلغ "+final_fee.doubleValue(), Toast.LENGTH_SHORT).show();
+                                                                                                        Toast.makeText(MapsActivity.this, "تم إقتطاع مبلغ "+String.format(Locale.ENGLISH,"%.3f", final_fee.doubleValue()), Toast.LENGTH_SHORT).show();
                                                                                                     }
                                                                                                 });
 
@@ -734,10 +749,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                 .document(map.get("tripsid").toString())
                                                                                                 .update(ups);
 
-
                                                                                         t1.setText(Snap_data.getString("nameCustomer"));
                                                                                         t2.setText(String.format("%.3f", TripDistance.doubleValue())+" Km | "+time+" min");
-                                                                                        t3.setText(String.format("%.3f", TotalTripPrice.subtract(TotalTripPrice.multiply(disc)).doubleValue())+" JD | "+Snap_data.get("discount")+"% Dis.");
+                                                                                        if(CustomerBalance.subtract(TotalTripPrice).doubleValue() >= 0){
+                                                                                            t3.setText("قيمة الرحلة: "+String.format("%.3f", TotalTripPrice.subtract(TotalTripPrice.multiply(disc)).doubleValue())+" بخصم "+Snap_data.get("discount")+"%");
+                                                                                            t5.setText("تم خصم الرحلة من محفظة الراكب والمطلوب 0.0 دينار");
+                                                                                            Map<String, Object> dada = new HashMap<>();
+                                                                                            dada.put("balance",Double.parseDouble(String.format(Locale.ENGLISH,"%.3f", CustomerBalance.subtract(TotalTripPrice))));
+                                                                                            FirebaseFirestore.getInstance()
+                                                                                                    .collection("Users")
+                                                                                                    .document(Snap_data.getString("idCustomer"))
+                                                                                                    .update(dada); }
+                                                                                        else{
+                                                                                            t3.setText("قيمة الرحلة: "+String.format("%.3f", TotalTripPrice.doubleValue())+" بخصم "+Snap_data.get("discount")+"%");
+                                                                                            t5.setText("سعر الرحلةالنهائي: "+String.format(Locale.ENGLISH,"%.3f", TotalTripPrice));
+                                                                                        }
+
+                                                                                        progressDialogLoad.dismiss();
 
                                                                                         t4.setOnClickListener(new View.OnClickListener() {
                                                                                             @Override
@@ -766,7 +794,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                                         dialog2.dismiss();
                                                                                                                     }
                                                                                                                 });
-
                                                                                                     }
                                                                                                 });
                                                                                             }
@@ -810,27 +837,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                 public void onClick(DialogInterface dialogInterface, int i) {
                                                                     findViewById(R.id.card_default).setVisibility(View.VISIBLE);
                                                                     findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
-
+                                                                    progressDialogLoad.show();
                                                                     dialog_count = 0;
                                                                     InTrip = false;
                                                                     isConnected = true;
                                                                     findViewById(R.id.card_default).setVisibility(View.VISIBLE);
                                                                     findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
-                                                                    ProgressDialog progressDialog = new ProgressDialog(MapsActivity.this);
-                                                                    progressDialog.setCancelable(false);
-                                                                    progressDialog.setTitle("النظام...");
-                                                                    progressDialog.setMessage("الرجاء الإنتظار...");
-                                                                    progressDialog.show();
 
                                                                     FirebaseFirestore.getInstance()
                                                                             .collection("driverRequests")
                                                                             .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                                                                            .delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                        @Override
-                                                                        public void onComplete(@NonNull Task<Void> task) {
-                                                                            progressDialog.dismiss();
-                                                                        }
-                                                                    });
+                                                                            .delete();
 
                                                                     FirebaseFirestore.getInstance()
                                                                             .collection("Trips")
@@ -843,7 +860,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                             .collection("Users")
                                                                             .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
                                                                             .update("balance", bal.doubleValue());
-
+                                                                    progressDialogLoad.dismiss();
                                                                 }
                                                             }).setNegativeButton("لا", new DialogInterface.OnClickListener() {
                                                         @Override
@@ -870,11 +887,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                             findViewById(R.id.card_default).setVisibility(View.VISIBLE);
                                                             findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
 
-                                                            ProgressDialog progressDialog = new ProgressDialog(MapsActivity.this);
-                                                            progressDialog.setCancelable(false);
-                                                            progressDialog.setTitle("النظام...");
-                                                            progressDialog.setMessage("الرجاء الإنتظار...");
-                                                            progressDialog.show();
+                                                            progressDialogLoad.show();
 
                                                             FirebaseFirestore.getInstance()
                                                                     .collection("driverRequests")
@@ -882,7 +895,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                     .delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                 @Override
                                                                 public void onComplete(@NonNull Task<Void> task) {
-                                                                    progressDialog.dismiss();
+                                                                    progressDialogLoad.dismiss();
                                                                 }
                                                             });
 
@@ -895,7 +908,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                     d.setNegativeButton("الغاء", new DialogInterface.OnClickListener() {
                                                         @Override
                                                         public void onClick(DialogInterface dialogInterface, int i) {
-
+                                                            dialogInterface.dismiss();
                                                         }
                                                     });
                                                     d.show();
@@ -996,6 +1009,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         toggleButton = findViewById(R.id.toggleButton);
         txvAccountState = findViewById(R.id.textView10);
+        m = findViewById(R.id.textView511);
+        k = findViewById(R.id.textView57);
 
         toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -1227,8 +1242,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         @Override
         public void onLocationChanged(final Location location) {
             loc = location;
-            if(StartedTripAt != 0)
+            if(StartedTripAt != 0){
                 TripDistanceCalc.add(loc);
+                BigDecimal TripDistance = new BigDecimal("0");
+                for(int i=0; i<TripDistanceCalc.size()-1; i++)
+                    TripDistance = TripDistance.add(new BigDecimal(GetDistanceFromLatLonInKm(
+                            TripDistanceCalc.get(i).getLatitude(), TripDistanceCalc.get(i).getLongitude(),
+                            TripDistanceCalc.get(i+1).getLatitude(), TripDistanceCalc.get(i+1).getLongitude())));
+                k.setText(String.format(Locale.ENGLISH,"%.3f", TripDistance.doubleValue())+" Km");//findme
+            }
+
 
             markerLat = location.getLatitude();
             markerLng = location.getLongitude();
@@ -1273,10 +1296,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 .document(Snap_data.getString("tripsid"))
                                 .update("locationDriver", mini_map3);
                     }
-                    catch (Exception ex){
-
-                    }
-
+                    catch (Exception ex){}
                 }
             }
             else{

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.provider.Settings;
 import android.widget.Toast;
 
@@ -383,29 +384,27 @@ public class UserViewModel extends ViewModel {
     }
 
     public void updateToken(Activity c){
-        try {
-            FirebaseMessaging.getInstance().getToken()
-                    .addOnCompleteListener(new OnCompleteListener<String>() {
-                        @Override
-                        public void onComplete(@NonNull Task<String> task) {
-                            if (task.isSuccessful()) {
-                                String token = task.getResult();
-                                Map<String,Object> map = new HashMap<>();
-                                map.put("token",token);
-                                FirebaseFirestore.getInstance().collection(userCollection)
-                                        .document(UserInfo_sharedPreference.getUser(c).uid)
-                                        .update(map).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
 
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if(UserInfo_sharedPreference.getUser(c).uid != null && !UserInfo_sharedPreference.getUser(c).uid.equals(""))
+                    FirebaseMessaging.getInstance().getToken()
+                            .addOnCompleteListener(new OnCompleteListener<String>() {
+                                @Override
+                                public void onComplete(@NonNull Task<String> task) {
+                                    if (task.isSuccessful()) {
+                                        String token = task.getResult();
+                                        Map<String,Object> map = new HashMap<>();
+                                        map.put("token",token);
+                                        FirebaseFirestore.getInstance().collection(userCollection)
+                                                .document(UserInfo_sharedPreference.getUser(c).uid)
+                                                .update(map);
                                     }
-                                });
-                            }
-                        }
-                    });
-        }catch (Exception e){
-
-        }
+                                }
+                            });
+            }
+        }, 5000);
 
     }
 }

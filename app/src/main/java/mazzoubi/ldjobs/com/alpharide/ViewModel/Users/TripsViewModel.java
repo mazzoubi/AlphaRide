@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import mazzoubi.ldjobs.com.alpharide.Data.Users.MyTripsModel;
+import mazzoubi.ldjobs.com.alpharide.Data.Users.UserInfo_sharedPreference;
+import mazzoubi.ldjobs.com.alpharide.ViewModel.Users.ui.ProfileActivity;
 
 public class TripsViewModel extends ViewModel {
     private static final String tripsCollection = "Trips" ;
@@ -25,7 +27,8 @@ public class TripsViewModel extends ViewModel {
         listOfMyTrips = new MutableLiveData<>();
         ArrayList<MyTripsModel> temp = new ArrayList<>();
 
-        FirebaseFirestore.getInstance().collection(tripsCollection).get()
+        FirebaseFirestore.getInstance().collection(tripsCollection).whereEqualTo("idDriver", UserInfo_sharedPreference
+                .getUser(c).uid).get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {

@@ -135,7 +135,7 @@
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="160dp"
+            android:layout_height="220dp"
             android:layout_marginBottom="15dp"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
@@ -247,12 +247,12 @@
                 <LinearLayout
                     android:id="@+id/lin3"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_alignParentBottom="true"
+                    android:layout_height="60dp"
+                    android:layout_below="@+id/lin5"
                     android:layout_marginLeft="15dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="15dp"
                     android:layout_marginRight="15dp"
+                    android:layout_marginBottom="5dp"
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:weightSum="2">
@@ -283,6 +283,52 @@
                         android:fontFamily="serif"
                         android:gravity="center"
                         android:text="لقد وصلت"
+                        android:textColor="@color/black"
+                        android:textSize="18dp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/lin5"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_below="@+id/card3"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="15dp"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <TextView
+                        android:id="@+id/textView57"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_marginRight="12dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/btn_back"
+                        android:fontFamily="serif"
+                        android:gravity="center"
+                        android:text="0.0 Km"
+                        android:textColor="@color/black"
+                        android:textSize="18dp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/textView511"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_marginLeft="13dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/btn_back"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:fontFamily="serif"
+                        android:gravity="center"
+                        android:text="00:00:00"
                         android:textColor="@color/black"
                         android:textSize="18dp"
                         android:textStyle="bold" />
@@ -463,7 +509,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="120dp"
                         android:background="@drawable/logo3"
-                        android:scaleType="fitXY"/>
+                        android:scaleType="fitXY" />
 
                 </RelativeLayout>
 

@@ -164,7 +164,7 @@
             android:background="@drawable/btn_back22"
             android:backgroundTint="@color/font"
             android:onClick="onClickLiveChat"
-            android:text="دردشة (قريبا)"
+            android:text="دردشة (واتس)"
             android:textColor="@color/white"
             android:textSize="14dp"
             app:layout_constraintBottom_toBottomOf="parent"
