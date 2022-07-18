@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background2"
+    android:background="@color/white"
     tools:context=".ViewModel.Users.ui.LoginActivity">
 
     <TextView
@@ -70,10 +70,10 @@
                 android:layout_alignEnd="@+id/edtPassword"
                 android:layout_marginTop="12dp"
                 android:layout_marginEnd="0dp"
-                android:textSize="18dp"
                 android:onClick="onClickForgotPassword"
                 android:text="هل نسيت كلمة المرور؟"
-                android:textColor="@color/white" />
+                android:textColor="@color/colorPrimary"
+                android:textSize="18dp" />
 
             <com.hbb20.CountryCodePicker
                 android:id="@+id/countryCode_picker"
@@ -122,11 +122,15 @@
             <Button
                 android:id="@+id/button"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="60dp"
                 android:layout_below="@+id/textView8"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="25dp"
+                android:textSize="18dp"
+                android:textStyle="bold"
+                android:fontFamily="serif"
                 android:layout_marginRight="15dp"
+                android:textColor="@color/white"
                 android:background="@drawable/btn_back22"
                 android:onClick="onClickLogin"
                 android:text="تسجيل الدخول" />

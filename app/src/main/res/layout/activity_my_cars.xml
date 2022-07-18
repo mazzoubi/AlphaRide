@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background2"
+    android:background="@color/white"
     tools:context=".ViewModel.Users.Cars.MyCarsActivity">
 
     <TextView
@@ -143,7 +143,7 @@
             android:fontFamily="serif"
             android:gravity="center"
             android:text="صورة أمامية"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="16dp"
             android:textStyle="bold" />
 
@@ -158,7 +158,7 @@
             android:fontFamily="serif"
             android:gravity="center"
             android:text="رخصة السائق"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="16dp"
             android:textStyle="bold" />
 
@@ -172,7 +172,7 @@
             android:fontFamily="serif"
             android:gravity="center"
             android:text="رخصة المركبة"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="16dp"
             android:textStyle="bold" />
 
@@ -188,6 +188,7 @@
         android:layout_marginEnd="15dp"
         android:background="@drawable/btn_back22"
         android:fontFamily="serif"
+        android:textColor="@color/white"
         android:onClick="onClickChangeMainCar"
         android:text="تعديل صور المركبة الرئيسية"
         android:textSize="16dp"
@@ -229,6 +230,7 @@
         android:layout_marginBottom="15dp"
         android:background="@drawable/btn_back22"
         android:fontFamily="serif"
+        android:textColor="@color/white"
         android:onClick="onClickAddCar"
         android:text="+إضافة مركبة+"
         android:textSize="18dp"

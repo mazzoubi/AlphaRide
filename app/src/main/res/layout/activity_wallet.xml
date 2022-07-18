@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background2"
+    android:background="@color/white"
     tools:context=".ViewModel.Wallet.ui.WalletActivity">
 
     <ImageView
@@ -49,7 +49,7 @@
             android:fontFamily="serif"
             android:gravity="right"
             android:text="الرصيد الحالي : 0.00 دينار"
-            android:textColor="@color/white"
+            android:textColor="@color/colorPrimary"
             android:textSize="26dp"
             android:textStyle="bold" />
 
@@ -63,7 +63,7 @@
             android:fontFamily="serif"
             android:gravity="right"
             android:text="لشحن المحفظة يرجى إدخال رقم بطاقة الخدش"
-            android:textColor="@color/white"
+            android:textColor="@color/colorPrimary"
             android:textSize="18dp"
             android:textStyle="bold" />
         <TextView
@@ -76,7 +76,7 @@
             android:fontFamily="serif"
             android:gravity="center"
             android:text="لإضافة رصيد لحسابك, بإمكانك الحصول على بطاقات الخدش بزيارة موقعنا الواقع في X-X-X-X"
-            android:textColor="@color/white"
+            android:textColor="@color/colorPrimary"
             android:textSize="18dp"
             android:textStyle="bold" />
 
@@ -111,6 +111,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
+                android:backgroundTint="@color/colorPrimary"
                 android:background="@drawable/ic_baseline_check_circle_24"
                 android:onClick="CheckCard" />
 

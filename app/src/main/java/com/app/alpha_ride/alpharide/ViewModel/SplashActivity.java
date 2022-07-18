@@ -31,22 +31,23 @@ public class SplashActivity extends AppCompatActivity {
 
 
         String msg = "Whenever you want. Wherever you are";
-        final TextView tv = findViewById(R.id.intro);
+
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             new Thread(new Runnable() {
                 public void run() {
                     try {
+                        TextView tv = findViewById(R.id.intro);
                         tv.setText("");
                         tv.setTextColor(Color.parseColor("#AE994C"));
                         for (int i = 0; i < msg.length(); i++) {
                             sleep(80);
                             tv.setText(tv.getText().toString() + msg.charAt(i));
                         }
-                        sleep(2000);
+                        sleep(3500);
                         logTo();
-                    } catch (InterruptedException e) {
                     }
+                    catch (Exception e) {}
                 }
             }).start();
         } else {

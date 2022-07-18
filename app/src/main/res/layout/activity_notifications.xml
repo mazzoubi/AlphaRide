@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background2"
+    android:background="@color/white"
     tools:context=".ViewModel.Notifications.ui.NotificationsActivity">
 
     <TextView
@@ -40,6 +40,6 @@
         android:text="الرجاء الإنتظار ...."
         android:layout_centerInParent="true"
         android:fontFamily="serif"
-        android:textColor="@color/white"/>
+        android:textColor="@color/colorPrimary"/>
 
 </RelativeLayout>

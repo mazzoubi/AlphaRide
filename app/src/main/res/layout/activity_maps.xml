@@ -359,11 +359,11 @@
         android:id="@+id/navView"
         android:layout_width="230dp"
         android:layout_height="match_parent"
-        android:background="@drawable/background2"
+        android:background="@color/white"
         map:headerLayout="@layout/nav_header_test"
         android:layout_gravity="left"
-        app:itemTextColor="#ffffff"
-        app:itemIconTint="#ffffff"
+        app:itemTextColor="@color/colorPrimary"
+        app:itemIconTint="@color/colorPrimary"
         android:fitsSystemWindows="true">
 
         <RelativeLayout
@@ -376,7 +376,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="ملفي الشخصي"
-                android:textColor="@color/white"
+                android:textColor="@color/colorPrimary"
                 android:fontFamily="serif"
                 android:layout_alignParentRight="true"
                 android:layout_marginTop="15dp"
@@ -388,7 +388,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="المحفظة"
-                android:textColor="@color/white"
+                android:textColor="@color/colorPrimary"
                 android:layout_below="@+id/textView3"
                 android:fontFamily="serif"
                 android:layout_alignParentRight="true"
@@ -401,7 +401,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="إدارة السيارات"
-                android:textColor="@color/white"
+                android:textColor="@color/colorPrimary"
                 android:layout_below="@+id/textView9"
                 android:fontFamily="serif"
                 android:layout_alignParentRight="true"
@@ -414,7 +414,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="رحلاتي السابقة"
-                android:textColor="@color/white"
+                android:textColor="@color/colorPrimary"
                 android:layout_below="@+id/textView20"
                 android:fontFamily="serif"
                 android:layout_alignParentRight="true"
@@ -427,7 +427,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="الإشعارات"
-                android:textColor="@color/white"
+                android:textColor="@color/colorPrimary"
                 android:layout_below="@+id/textView21"
                 android:fontFamily="serif"
                 android:layout_alignParentRight="true"
@@ -440,7 +440,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="الإعدادات"
-                android:textColor="@color/white"
+                android:textColor="@color/colorPrimary"
                 android:layout_below="@+id/textView22"
                 android:fontFamily="serif"
                 android:layout_alignParentRight="true"
@@ -453,7 +453,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="تواصل معنا"
-                android:textColor="@color/white"
+                android:textColor="@color/colorPrimary"
                 android:layout_below="@+id/textView23"
                 android:fontFamily="serif"
                 android:layout_alignParentRight="true"
@@ -472,7 +472,7 @@
                 android:layout_marginRight="15dp"
                 android:fontFamily="serif"
                 android:text="تسجيل الخروج"
-                android:textColor="@color/white"
+                android:textColor="@color/colorPrimary"
                 android:textSize="16dp"
                 android:textStyle="bold" />
             <TextView
@@ -480,7 +480,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="منطقة إعلانية"
-                android:textColor="@color/white"
+                android:textColor="@color/colorPrimary"
                 android:layout_above="@+id/card"
                 android:layout_centerHorizontal="true"
                 android:fontFamily="serif"
@@ -501,7 +501,7 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:background="@color/white"
+                    android:background="@color/colorPrimary"
                     android:layout_height="match_parent">
 
                     <ImageView

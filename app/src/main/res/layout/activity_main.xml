@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background2"
+    android:background="@color/white"
     tools:context=".MainActivity">
 
     <TextView
@@ -63,12 +63,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_centerInParent="true"
-                    android:background="@drawable/back4"
+                    android:background="@drawable/btn_back22"
                     android:fontFamily="serif"
                     android:gravity="center"
                     android:onClick="Login"
                     android:text="تسجيل الدخول"
-                    android:textColor="@color/font"
+                    android:textColor="@color/white"
                     android:textSize="18dp"
                     android:textStyle="bold" />
 
@@ -96,12 +96,12 @@
                     android:id="@+id/register"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/back4"
+                    android:background="@drawable/btn_back22"
                     android:fontFamily="serif"
                     android:gravity="center"
                     android:onClick="Register"
                     android:text="سجل مجانا"
-                    android:textColor="@color/font"
+                    android:textColor="@color/white"
                     android:textSize="18dp"
                     android:textStyle="bold" />
 

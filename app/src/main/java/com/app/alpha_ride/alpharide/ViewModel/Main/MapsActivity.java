@@ -759,9 +759,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                         double km = Double.parseDouble(String.format(Locale.ENGLISH,"%.3f", TripDistance.doubleValue()));
                                                                                         double totalPrice =Double.parseDouble(String.format(Locale.ENGLISH,"%.3f", TotalTripPrice.doubleValue()));
                                                                                         Map<String, Object> ups = new HashMap<>();
-                                                                                        ups.put("km",km );
+                                                                                        Map<String, Object> mini_locs = new HashMap<>();
+                                                                                        mini_locs.put("addressTo","");
+                                                                                        mini_locs.put("lat",loc.getLatitude());
+                                                                                        mini_locs.put("lng",loc.getLongitude());
+                                                                                        ups.put("accessPoint",mini_locs);
+                                                                                        ups.put("km",km);
                                                                                         ups.put("hours", time);
-                                                                                        ups.put("totalPrice",totalPrice );
+                                                                                        ups.put("totalPrice",totalPrice);
                                                                                         FirebaseFirestore.getInstance()
                                                                                                 .collection("Trips")
                                                                                                 .document(map.get("tripsid").toString())

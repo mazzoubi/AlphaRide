@@ -123,7 +123,7 @@
             android:fontFamily="serif"
             android:gravity="center"
             android:text="صورة أمامية"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="14dp"
             android:textStyle="bold" />
 
@@ -138,7 +138,7 @@
             android:fontFamily="serif"
             android:gravity="center"
             android:text="رخصة السائق"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="14dp"
             android:textStyle="bold" />
 
@@ -152,7 +152,7 @@
             android:fontFamily="serif"
             android:gravity="center"
             android:text="رخصة المركبة"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="14dp"
             android:textStyle="bold" />
 

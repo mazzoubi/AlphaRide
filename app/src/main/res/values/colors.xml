@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<color name="colorPrimary">#FAC303</color>
+<color name="colorPrimary">#cd951a</color>
 <color name="colorPrimaryDark">#FFDE4D</color>
 <color name="colorAccent">#8C6E21</color>
 <color name="green1">#06F106</color>
 <color name="green2">#009900</color>
+<color name="grey">#424242</color>
 <color name="red">#F92B2A</color>
 <color name="yellow">#FAC303</color>
 <color name="yellow2">#FFDE4D</color>
-<color name="font">#8C6E21</color>
-<color name="white">#ECECEC</color>
+<color name="font">#cd951a</color>
+<color name="white">#ffffff</color>
     <color name="black">#000000</color>
 
     <color name="black2">#9C000000</color>

@@ -67,13 +67,13 @@ public class TripInfoWithMapActivity extends FragmentActivity implements OnMapRe
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng customerLatlng = new LatLng(Double.parseDouble(MyTripsActivity.tripsObject.locationCustomer.get("lat")+""),
-                Double.parseDouble(MyTripsActivity.tripsObject.locationCustomer.get("lng")+""));
+        LatLng customerLatlng = new LatLng(Double.parseDouble(MyTripsActivity.tripsObject.locationCustomer.get("lng")+""),
+                Double.parseDouble(MyTripsActivity.tripsObject.locationCustomer.get("lat")+""));
         MarkerOptions m = new MarkerOptions().position(customerLatlng).title("موقع الإنطلاق");
         mMap.addMarker(m);
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(customerLatlng));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(customerLatlng,17.0f));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(customerLatlng,15.0f));
 
         if (Double.parseDouble(MyTripsActivity.tripsObject.accessPoint.get("lat")+"")==0){
             LatLng driverLatlng = new LatLng(Double.parseDouble(MyTripsActivity.tripsObject.locationDriver.get("lat")+""),

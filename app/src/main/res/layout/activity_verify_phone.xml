@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background2">
+    android:background="@color/white">
 
     <TextView
         android:id="@+id/welcome4"
@@ -50,6 +50,9 @@
                     android:layout_width="280dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
+                    android:textSize="18dp"
+                    android:textStyle="bold"
+                    android:fontFamily="serif"
                     android:gravity="center"
                     android:text="تم ارسال رمز التأكد الى رقم هاتفك الرجاء ادخال الرمز في الحقل في الأسفل"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
@@ -88,11 +91,18 @@
                     android:background="@drawable/btn_back22"
                     android:gravity="center"
                     android:text="تأكيد"
-                    android:textColor="@color/black" />
+                    android:textSize="18dp"
+                    android:textStyle="bold"
+                    android:fontFamily="serif"
+                    android:textColor="@color/white" />
 
                 <ProgressBar
                     android:id="@+id/progressbar"
                     android:layout_width="match_parent"
+                    android:textSize="18dp"
+                    android:textStyle="bold"
+                    android:fontFamily="serif"
+                    android:textColor="@color/colorPrimary"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/buttonSignIn"
                     android:layout_centerHorizontal="true"
