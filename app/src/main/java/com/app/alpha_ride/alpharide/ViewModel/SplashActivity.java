@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.WindowManager;
 import android.widget.TextView;
 
@@ -30,37 +31,43 @@ public class SplashActivity extends AppCompatActivity {
         registerComponentCallbacks(handler);
 
 
-        String msg = "Whenever you want. Wherever you are";
+//        String msg = "Whenever you want. Wherever you are";
 
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                logTo();
+            }
+        }, 3000);
 
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        TextView tv = findViewById(R.id.intro);
-                        tv.setText("");
-                        tv.setTextColor(Color.parseColor("#AE994C"));
-                        for (int i = 0; i < msg.length(); i++) {
-                            sleep(80);
-                            tv.setText(tv.getText().toString() + msg.charAt(i));
-                        }
-                        sleep(3500);
-                        logTo();
-                    }
-                    catch (Exception e) {}
-                }
-            }).start();
-        } else {
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        sleep(3000);
-                        logTo();
-                    } catch (InterruptedException e) {
-                    }
-                }
-            }).start();
-        }
+//        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            new Thread(new Runnable() {
+//                public void run() {
+//                    try {
+//                        TextView tv = findViewById(R.id.intro);
+//                        tv.setText("");
+//                        tv.setTextColor(Color.parseColor("#AE994C"));
+//                        for (int i = 0; i < msg.length(); i++) {
+//                            sleep(80);
+//                            tv.setText(tv.getText().toString() + msg.charAt(i));
+//                        }
+//                        sleep(3500);
+//                        logTo();
+//                    }
+//                    catch (Exception e) {}
+//                }
+//            }).start();
+//        } else {
+//            new Thread(new Runnable() {
+//                public void run() {
+//                    try {
+//                        sleep(3000);
+//                        logTo();
+//                    } catch (InterruptedException e) {
+//                    }
+//                }
+//            }).start();
+//        }
     }
 
     private void logTo() {

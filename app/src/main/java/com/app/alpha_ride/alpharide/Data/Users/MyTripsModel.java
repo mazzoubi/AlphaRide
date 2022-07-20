@@ -8,6 +8,8 @@ public class MyTripsModel {
     public String state="";
     public String idDriver="";
     public String idCustomer="";
+    public String phoneCustomer="";
+    public String nameCustomer="";
     public String addressCurrent="";
     public String date="";
 
