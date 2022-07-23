@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.app.alpha_ride.alpharide">
+    package="com.nova.alpha_ride.alpharide">
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -27,13 +27,13 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.app.alpha_ride.alpharide.ViewModel.Users.Cars.ChangeImagesActivity"
+            android:name="com.nova.royalrideapp.alpharide.ViewModel.Users.Cars.ChangeImagesActivity"
             android:exported="true" />
         <activity
-            android:name="com.app.alpha_ride.alpharide.ViewModel.Main.LiveChatActivity"
+            android:name="com.nova.royalrideapp.alpharide.ViewModel.Main.LiveChatActivity"
             android:exported="true" />
         <activity
-            android:name="com.app.alpha_ride.alpharide.RequestUserPermissions"
+            android:name="com.nova.royalrideapp.alpharide.RequestUserPermissions"
             android:exported="false" />
 
         <meta-data
@@ -41,60 +41,60 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name="com.app.alpha_ride.alpharide.ViewModel.Users.ui.TripInfoWithMapActivity"
+            android:name="com.nova.royalrideapp.alpharide.ViewModel.Users.ui.TripInfoWithMapActivity"
             android:exported="true"
             android:label="@string/title_activity_trip_info_with_map" />
         <activity
-            android:name="com.app.alpha_ride.alpharide.ViewModel.Users.ui.ForgotPasswordActivity"
+            android:name="com.nova.royalrideapp.alpharide.ViewModel.Users.ui.ForgotPasswordActivity"
             android:exported="true" />
         <activity
-            android:name="com.app.alpha_ride.alpharide.MainActivity"
+            android:name="com.nova.royalrideapp.alpharide.MainActivity"
             android:exported="true" />
         <activity
-            android:name="com.app.alpha_ride.alpharide.ViewModel.Users.ui.TripInfoActivity"
+            android:name="com.nova.royalrideapp.alpharide.ViewModel.Users.ui.TripInfoActivity"
             android:exported="true" />
         <activity
-            android:name="com.app.alpha_ride.alpharide.ViewModel.Notifications.ui.NotificationsActivity"
+            android:name="com.nova.royalrideapp.alpharide.ViewModel.Notifications.ui.NotificationsActivity"
             android:exported="true" />
         <activity
-            android:name="com.app.alpha_ride.alpharide.ViewModel.Users.ui.MyTripsActivity"
+            android:name="com.nova.royalrideapp.alpharide.ViewModel.Users.ui.MyTripsActivity"
             android:exported="true" />
         <activity
-            android:name="com.app.alpha_ride.alpharide.ViewModel.Wallet.ui.WalletActivity"
+            android:name="com.nova.royalrideapp.alpharide.ViewModel.Wallet.ui.WalletActivity"
             android:exported="true" />
         <activity
-            android:name="com.app.alpha_ride.alpharide.ViewModel.Main.ContactUsActivity"
+            android:name="com.nova.royalrideapp.alpharide.ViewModel.Main.ContactUsActivity"
             android:exported="true" />
         <activity
-            android:name="com.app.alpha_ride.alpharide.ViewModel.Users.Cars.AddNewCarActivity"
+            android:name="com.nova.royalrideapp.alpharide.ViewModel.Users.Cars.AddNewCarActivity"
             android:exported="true" />
         <activity
-            android:name="com.app.alpha_ride.alpharide.ViewModel.Users.Cars.MyCarsActivity"
+            android:name="com.nova.royalrideapp.alpharide.ViewModel.Users.Cars.MyCarsActivity"
             android:exported="true" />
         <activity
-            android:name="com.app.alpha_ride.alpharide.ViewModel.Users.ui.ProfileActivity"
+            android:name="com.nova.royalrideapp.alpharide.ViewModel.Users.ui.ProfileActivity"
             android:exported="true" />
         <activity
-            android:name="com.app.alpha_ride.alpharide.ViewModel.Main.MapsActivity"
+            android:name="com.nova.royalrideapp.alpharide.ViewModel.Main.MapsActivity"
             android:exported="true"
             android:label="@string/title_activity_maps" />
         <activity
-            android:name="com.app.alpha_ride.alpharide.ViewModel.Main.Dashboard2Activity"
+            android:name="com.nova.royalrideapp.alpharide.ViewModel.Main.Dashboard2Activity"
             android:exported="true" />
         <activity
-            android:name="com.app.alpha_ride.alpharide.ViewModel.Main.DashboardActivity"
+            android:name="com.nova.royalrideapp.alpharide.ViewModel.Main.DashboardActivity"
             android:exported="false" />
         <activity
-            android:name="com.app.alpha_ride.alpharide.ViewModel.Users.ui.LoginActivity"
+            android:name="com.nova.royalrideapp.alpharide.ViewModel.Users.ui.LoginActivity"
             android:exported="false" />
         <activity
-            android:name="com.app.alpha_ride.alpharide.ViewModel.Users.ui.VerifyPhoneActivity"
+            android:name="com.nova.royalrideapp.alpharide.ViewModel.Users.ui.VerifyPhoneActivity"
             android:exported="false" />
         <activity
-            android:name="com.app.alpha_ride.alpharide.ViewModel.Users.ui.RegisterActivity"
+            android:name="com.nova.royalrideapp.alpharide.ViewModel.Users.ui.RegisterActivity"
             android:exported="false" />
         <activity
-            android:name="com.app.alpha_ride.alpharide.ViewModel.SplashActivity"
+            android:name="com.nova.royalrideapp.alpharide.ViewModel.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -104,7 +104,7 @@
         </activity>
 
         <service
-            android:name="com.app.alpha_ride.alpharide.MyFirebaseMessagingService"
+            android:name="com.nova.royalrideapp.alpharide.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -115,7 +115,7 @@
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/logo5" />
 
-        <service android:name="com.app.alpha_ride.alpharide.SimpleService" />
+        <service android:name="com.nova.royalrideapp.alpharide.SimpleService" />
     </application>
 
 </manifest>

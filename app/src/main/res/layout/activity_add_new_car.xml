@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ViewModel.Users.Cars.AddNewCarActivity">
+    tools:context="com.nova.royalrideapp.alpharide.ViewModel.Users.Cars.AddNewCarActivity">
 
     <FrameLayout
         android:id="@+id/frameLayout"
