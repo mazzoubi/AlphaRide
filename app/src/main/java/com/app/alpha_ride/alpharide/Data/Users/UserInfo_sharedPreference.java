@@ -136,13 +136,14 @@ public class UserInfo_sharedPreference {
         editor.putString("frontCar" , "");
         editor.putString("token" , "");
         editor.putString("AID" , "");
+        editor.clear();
 
         editor.commit();
         editor.apply();
 
         try {
             FirebaseAuth.getInstance().signOut();
-            c.startActivity(new Intent(c, MainActivity.class));
+//            c.startActivity(new Intent(c, MainActivity.class));
         }catch (Exception e){ }
 
     }

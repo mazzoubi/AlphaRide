@@ -22,9 +22,9 @@ public class ContactUsActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_contact_us);
 
-        ApplicationLifecycleHandler handler = new ApplicationLifecycleHandler();
-        registerActivityLifecycleCallbacks(handler);
-        registerComponentCallbacks(handler);
+//        ApplicationLifecycleHandler handler = new ApplicationLifecycleHandler();
+//        registerActivityLifecycleCallbacks(handler);
+//        registerComponentCallbacks(handler);
     }
 
     public void onClickSendEmail(View view) {
@@ -37,12 +37,13 @@ public class ContactUsActivity extends AppCompatActivity {
 
     public void onClickLiveChat(View view) {
 //        startActivity(new Intent(getApplicationContext(),LiveChatActivity.class));
-        openWhatsappContact("00962791720743");
+        openWhatsappContact("+962791720743");
     }
     void openWhatsappContact(String number) {
-        Uri uri = Uri.parse("smsto:" + number);
-        Intent i = new Intent(Intent.ACTION_SENDTO, uri);
-        i.setPackage("com.whatsapp");
-        startActivity(Intent.createChooser(i, ""));
+        Uri uri = Uri.parse("https://api.whatsapp.com/send?phone=" + number + "&text=" + "مرحبا ");
+
+        Intent sendIntent = new Intent(Intent.ACTION_VIEW, uri);
+
+        ContactUsActivity.this.startActivity(sendIntent);
     }
 }

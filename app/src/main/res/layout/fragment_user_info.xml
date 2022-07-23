@@ -20,6 +20,7 @@
         android:fontFamily="serif"
         android:gravity="right"
         android:text="تحتاج لمساعدة ؟"
+        android:visibility="invisible"
         android:textColor="@color/colorPrimary"
         android:textSize="18dp"
         android:textStyle="bold" />

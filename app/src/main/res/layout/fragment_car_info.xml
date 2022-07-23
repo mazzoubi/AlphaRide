@@ -17,6 +17,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginRight="25dp"
         android:fontFamily="serif"
+        android:visibility="invisible"
         android:gravity="right"
         android:text="تحتاج لمساعدة ؟"
         android:textColor="@color/colorPrimary"

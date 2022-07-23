@@ -53,9 +53,9 @@ public class VerifyPhoneActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_verify_phone);
-        ApplicationLifecycleHandler handler = new ApplicationLifecycleHandler();
-        registerActivityLifecycleCallbacks(handler);
-        registerComponentCallbacks(handler);
+//        ApplicationLifecycleHandler handler = new ApplicationLifecycleHandler();
+//        registerActivityLifecycleCallbacks(handler);
+//        registerComponentCallbacks(handler);
         mAuth = FirebaseAuth.getInstance();
 
         progressBar = findViewById(R.id.progressbar);

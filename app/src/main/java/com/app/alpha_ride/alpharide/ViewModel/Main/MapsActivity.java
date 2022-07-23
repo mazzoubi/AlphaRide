@@ -49,6 +49,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.app.alpha_ride.alpharide.Data.Users.MyTripsModel;
+import com.app.alpha_ride.alpharide.MainActivity;
+import com.app.alpha_ride.alpharide.ScratchCardsClass;
 import com.bumptech.glide.Glide;
 import com.firebase.geofire.GeoFireUtils;
 import com.firebase.geofire.GeoLocation;
@@ -1166,7 +1168,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                 }
                                                 else if(arrive.getText().toString().equals("بدء الرحلة")){
                                                     DrawPoly = false;
-                                                    polyline.remove();
+                                                    try{
+                                                        polyline.remove();
+                                                    }
+                                                    catch (Exception ex){}
                                                     progressDialogLoad.show();
                                                     FirebaseFirestore.getInstance()
                                                             .collection("Trips")
@@ -1619,7 +1624,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         k.setText("0.0 Km");
                         canc.setText("إلغاء");
                         canc.setVisibility(View.INVISIBLE);
-                        cd.cancel();
+                        try{cd.cancel();} catch (Exception ex){}
 
                         progressDialogLoad.dismiss();
 
@@ -2184,7 +2189,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         });
+        FirebaseFirestore.getInstance()
+                .collection("locations")
+                .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                String iduser = "";
+                try{
+                    iduser = documentSnapshot.getString("idUser");
+                } catch (Exception ex){}
 
+                if(iduser != null && !iduser.equals("")){
+                    toggleButton.setChecked(true);
+                }
+
+            }
+        });
     }
 
     private void DrawPolyLine() {
@@ -2201,10 +2222,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } catch (Exception e) {
             e.printStackTrace();
         }
-        PolylineOptions polylineOptions = new PolylineOptions()
+        try{PolylineOptions polylineOptions = new PolylineOptions()
                 .add(new LatLng(lat, lng))
                 .add(new LatLng(loc.getLatitude(), loc.getLongitude()));
-        polyline = mMap.addPolyline(polylineOptions);
+            polyline = mMap.addPolyline(polylineOptions);}
+        catch (Exception ex){}
 
     }
 
@@ -2214,9 +2236,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
         updateToken();
 
-        ApplicationLifecycleHandler handler = new ApplicationLifecycleHandler();
-        registerActivityLifecycleCallbacks(handler);
-        registerComponentCallbacks(handler);
+//        ApplicationLifecycleHandler handler = new ApplicationLifecycleHandler();
+//        registerActivityLifecycleCallbacks(handler);
+//        registerComponentCallbacks(handler);
 
 
         circleDrawable= getResources().getDrawable(R.drawable.cc);
@@ -2313,13 +2335,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             .addSnapshotListener(event).remove();
                 }
 
-                    BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
-                    mMap.clear();
-                    LatLng l =new LatLng(markerLat, markerLng);
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(l,15.0f));
-                    mMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(markerLat, markerLng))
-                            .icon(markerIcon));
+//                    BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
+//                    mMap.clear();
+//                    LatLng l =new LatLng(loc.getLatitude(), loc.getLatitude());
+//                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(l,15.0f));
+//                    mMap.addMarker(new MarkerOptions()
+//                            .position(new LatLng(loc.getLatitude(), loc.getLatitude()))
+//                            .icon(markerIcon));
 
             }
         });
@@ -2405,29 +2427,49 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         nav_logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                UserInfo_sharedPreference.logout(MapsActivity.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+                builder.setTitle("النظام ...");
+                builder.setMessage("هل تريد تسجيل الخروج؟");
+                builder.setPositiveButton("نعم", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        startActivity(new Intent(MapsActivity.this, MainActivity.class)
+                        .putExtra("exit", "1"));
+                        finish();
+                    }
+                });
+                builder.setNegativeButton("الغاء", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                builder.show();
             }
         });
 
 
-        FirebaseFirestore.getInstance().collection("Users")
-                .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                        nav_wallet.setText("المحفظة" + "   "+UserInfo_sharedPreference
-                                .round(value.getDouble("balance"),2) + "   " + "دينار");
-                        nav_wallet.setTextColor(Color.WHITE);
-                        if(UserInfo_sharedPreference
-                                .round(value.getDouble("balance"),2)>0){
-                            nav_wallet.setTextColor(Color.GREEN);
-                        }else if(UserInfo_sharedPreference
-                                .round(value.getDouble("balance"),2)<0){
-                            nav_wallet.setTextColor(Color.RED);
-                        }
+        try{
+            FirebaseFirestore.getInstance().collection("Users")
+                    .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                    .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                            nav_wallet.setText("المحفظة" + "   "+UserInfo_sharedPreference
+                                    .round(value.getDouble("balance"),2) + "   " + "دينار");
+                            nav_wallet.setTextColor(Color.WHITE);
+                            if(UserInfo_sharedPreference
+                                    .round(value.getDouble("balance"),2)>0){
+                                nav_wallet.setTextColor(Color.GREEN);
+                            }else if(UserInfo_sharedPreference
+                                    .round(value.getDouble("balance"),2)<0){
+                                nav_wallet.setTextColor(Color.RED);
+                            }
 
-                    }
-                });
+                        }
+                    });
+        }
+        catch (Exception ex){}
     }
 
 
@@ -2496,7 +2538,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     TripDistance = TripDistance.add(new BigDecimal(GetDistanceFromLatLonInKm(
                             TripDistanceCalc.get(i).getLatitude(), TripDistanceCalc.get(i).getLongitude(),
                             TripDistanceCalc.get(i+1).getLatitude(), TripDistanceCalc.get(i+1).getLongitude())));
-                k.setText(String.format(Locale.ENGLISH,"%.3f", TripDistance.doubleValue())+" Km");//findme
+                k.setText(String.format(Locale.ENGLISH,"%.3f", TripDistance.doubleValue())+" Km");
             }
 
             mMap.clear();
@@ -2505,7 +2547,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
 
             LatLng l =new LatLng(location.getLatitude(), location.getLongitude());
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(l,15.0f));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(l,15.0f));
             mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(location.getLatitude(), location.getLongitude()))
                     .icon(markerIcon));
@@ -2524,10 +2566,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 map.put("idUser", UserInfo_sharedPreference.getUser(MapsActivity.this).uid);
                 map.put("position", mini_map);
 
-                FirebaseFirestore.getInstance()
-                        .collection("locations")
-                        .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                        .set(map);
+                try{
+                    FirebaseFirestore.getInstance()
+                            .collection("locations")
+                            .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                            .set(map);
+                }
+                catch (Exception ex){}
 
                 if(InTrip && Snap_data != null && DrawPoly){
                     DrawPolyLine();

@@ -18,6 +18,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginRight="25dp"
         android:fontFamily="serif"
+        android:onClick="support"
         android:gravity="right"
         android:text="تحتاج لمساعدة ؟"
         android:textColor="@color/colorPrimary"
@@ -126,14 +127,14 @@
                 android:layout_below="@+id/textView8"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="25dp"
-                android:textSize="18dp"
-                android:textStyle="bold"
-                android:fontFamily="serif"
                 android:layout_marginRight="15dp"
-                android:textColor="@color/white"
                 android:background="@drawable/btn_back22"
+                android:fontFamily="serif"
                 android:onClick="onClickLogin"
-                android:text="تسجيل الدخول" />
+                android:text="تسجيل الدخول"
+                android:textColor="@color/white"
+                android:textSize="18dp"
+                android:textStyle="bold" />
 
         </RelativeLayout>
 

@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 
+import com.app.alpha_ride.alpharide.MainActivity;
+import com.app.alpha_ride.alpharide.ViewModel.Main.ContactUsActivity;
 import com.hbb20.CountryCodePicker;
 
 import com.app.alpha_ride.alpharide.ApplicationLifecycleHandler;
@@ -29,9 +31,9 @@ public class LoginActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_login);
 
-        ApplicationLifecycleHandler handler = new ApplicationLifecycleHandler();
-        registerActivityLifecycleCallbacks(handler);
-        registerComponentCallbacks(handler);
+//        ApplicationLifecycleHandler handler = new ApplicationLifecycleHandler();
+//        registerActivityLifecycleCallbacks(handler);
+//        registerComponentCallbacks(handler);
 
         edtPassword = findViewById(R.id.edtPassword);
         edtPhone = findViewById(R.id.edtPhone);
@@ -62,5 +64,9 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(new Intent(getApplicationContext(), VerifyPhoneActivity.class)
             .putExtra("fromWhere","forgotPassword"));
         }
+    }
+
+    public void support(View view) {
+        startActivity(new Intent(LoginActivity.this, ContactUsActivity.class));
     }
 }

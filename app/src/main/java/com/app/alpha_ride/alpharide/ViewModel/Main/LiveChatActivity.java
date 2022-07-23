@@ -17,9 +17,9 @@ public class LiveChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_live_chat);
 
-        ApplicationLifecycleHandler handler = new ApplicationLifecycleHandler();
-        registerActivityLifecycleCallbacks(handler);
-        registerComponentCallbacks(handler);
+//        ApplicationLifecycleHandler handler = new ApplicationLifecycleHandler();
+//        registerActivityLifecycleCallbacks(handler);
+//        registerComponentCallbacks(handler);
 
     }
 }

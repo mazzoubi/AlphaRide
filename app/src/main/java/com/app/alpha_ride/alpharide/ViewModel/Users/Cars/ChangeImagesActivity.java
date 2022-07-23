@@ -62,9 +62,9 @@ public class ChangeImagesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_change_images);
         init();
 
-        ApplicationLifecycleHandler handler = new ApplicationLifecycleHandler();
-        registerActivityLifecycleCallbacks(handler);
-        registerComponentCallbacks(handler);
+//        ApplicationLifecycleHandler handler = new ApplicationLifecycleHandler();
+//        registerActivityLifecycleCallbacks(handler);
+//        registerComponentCallbacks(handler);
 
         from = getIntent().getStringExtra("from");
 

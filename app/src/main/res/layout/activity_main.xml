@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@drawable/background2"
     tools:context=".MainActivity">
 
     <TextView
@@ -17,6 +17,7 @@
         android:layout_marginLeft="25dp"
         android:layout_marginTop="20dp"
         android:layout_marginRight="25dp"
+        android:onClick="support"
         android:fontFamily="serif"
         android:gravity="right"
         android:text="تحتاج لمساعدة ؟"
@@ -126,32 +127,37 @@
         android:textStyle="bold" />
 
     <ImageView
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="15dp"
-        android:layout_alignParentBottom="true"
         android:id="@+id/insta"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:onClick="insta"
         android:layout_marginTop="5dp"
+        android:layout_marginBottom="15dp"
         android:src="@drawable/insta" />
+
     <ImageView
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_toLeftOf="@+id/insta"
         android:id="@+id/face"
-        android:layout_marginBottom="15dp"
-        android:layout_marginRight="25dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="5dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginBottom="15dp"
+        android:onClick="face"
+        android:layout_toLeftOf="@+id/insta"
         android:src="@drawable/face" />
+
     <ImageView
         android:layout_width="35dp"
         android:layout_height="35dp"
-        android:layout_toRightOf="@id/insta"
-        android:layout_marginLeft="25dp"
-        android:layout_marginBottom="15dp"
         android:layout_alignParentBottom="true"
+        android:layout_marginLeft="25dp"
         android:layout_marginTop="5dp"
+        android:onClick="twit"
+        android:layout_marginBottom="15dp"
+        android:layout_toRightOf="@id/insta"
         android:src="@drawable/twitter" />
 
 </RelativeLayout>

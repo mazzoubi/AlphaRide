@@ -379,6 +379,39 @@ public class UserViewModel extends ViewModel {
         });
     }
 
+    public void login2(Activity c , String phone,String password){
+
+        FirebaseFirestore.getInstance()
+                .collection(userCollection)
+                .whereEqualTo("phoneNumber",phone)
+                .whereEqualTo("password",password)
+                .whereEqualTo("typeUser", "TypeAccount.driver")
+                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+
+                if (queryDocumentSnapshots.getDocuments().size()<1){
+                    Toast.makeText(c, "خطأ في اسم المستخدم او كلمة المرور!", Toast.LENGTH_SHORT).show();
+                }else {
+                    UserModel a = queryDocumentSnapshots.getDocuments().get(0).toObject(UserModel.class);
+                    String AID = Settings.Secure.getString(c.getContentResolver(), Settings.Secure.ANDROID_ID);
+
+                    UserInfo_sharedPreference.setInfo(c,a);
+                    if (a.AID.isEmpty()||a.AID.equals(AID)){
+                        UpdateAID(c,AID);
+                        c.startActivity(new Intent(c,DashboardActivity.class));
+                        c.finish();
+                    }else {
+                        Toast.makeText(c, "تم تسجيل خروجك من الجهاز القديم..", Toast.LENGTH_SHORT).show();
+                        c.startActivity(new Intent(c, DashboardActivity.class));
+                        c.finish();
+                    }
+
+                }
+            }
+        });
+    }
+
     public void updateToken(Activity c){
 
         new Handler().postDelayed(new Runnable() {
