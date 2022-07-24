@@ -60,6 +60,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "867383388531-sl5vuhup7iajahh2rqdq79rune8bd6t0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nova.royalrideapp",
+            "certificate_hash": "d25e924197dfbfd00ab44889c2d7064587cbb3a0"
+          }
+        },
+        {
           "client_id": "867383388531-nfn7u0cqnnkjbrhon20b1i810tmdmcmh.apps.googleusercontent.com",
           "client_type": 3
         }

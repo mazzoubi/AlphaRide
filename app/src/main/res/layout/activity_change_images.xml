@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
-        tools:context="com.nova.royalrideapp.alpharide.ViewModel.Users.Cars.ChangeImagesActivity">
+        tools:context=".ViewModel.Users.Cars.ChangeImagesActivity">
 
     <TextView
         android:id="@+id/welcome"
@@ -58,7 +58,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context="com.nova.royalrideapp.alpharide.ViewModel.Users.ui.DocumentFragment">
+                tools:context=".ViewModel.Users.ui.DocumentFragment">
 
 
                 <Button

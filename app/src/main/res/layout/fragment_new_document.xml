@@ -57,7 +57,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:context="com.nova.royalrideapp.alpharide.ViewModel.Users.ui.DocumentFragment">
+            tools:context=".ViewModel.Users.ui.DocumentFragment">
 
 
             <Button

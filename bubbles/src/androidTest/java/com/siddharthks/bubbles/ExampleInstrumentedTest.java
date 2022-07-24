@@ -18,7 +18,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 public class ExampleInstrumentedTest {
     @Test
     public void useAppContext() {
-        // Context of the app under test.
+        // Context of the nova under test.
         //Context appContext = InstrumentationRegistry.getTargetContext();
 
      //   assertEquals("com.siddharthks.bubbles.test", appContext.getPackageName());
