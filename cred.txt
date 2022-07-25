@@ -1,0 +1,6 @@
+release {
+            storeFile file('alpha_ride.jks')
+            storePassword 'hh0788051422**@@'
+            keyAlias 'key0'
+            keyPassword 'hh0788051422**@@'
+        }
