@@ -27,6 +27,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
@@ -142,6 +143,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     ProgressDialog progressDialogLoad;
     BigDecimal CustomerBalance;
     boolean StartGetLoc = false;
+    MediaPlayer mp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,6 +152,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(binding.getRoot());
+
+        mp = new MediaPlayer();
+        Uri mediaPath = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.carhorn);
+
+        try {
+            mp.setAudioStreamType(AudioManager.STREAM_RING);
+            mp.setDataSource(MapsActivity.this, mediaPath);
+            mp.setLooping(true);
+            mp.prepare(); }
+        catch (Exception e) {}
 
         ProgressDialog progressDialog = new ProgressDialog(MapsActivity.this);
         progressDialog.setTitle("النظام...");
@@ -257,7 +269,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         lp.height = Math.round(TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, 400, getResources().getDisplayMetrics()));
         dialog.getWindow().setAttributes(lp);
-        final MediaPlayer mp = MediaPlayer.create(MapsActivity.this, R.raw.car_horn2);
+        //findme
 
         event = new EventListener<DocumentSnapshot>() {
             @Override
@@ -274,6 +286,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if(val!= null && isConnected){
                     if(dialog_count == 0){
                         dialog_count = 1;
+                        mp.start();
                         dialog.show();
                         InTrip = true;
                         Snap_data = value;
@@ -324,8 +337,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
                                         .delete();
                                 try{
-                                    mp.stop();
-                                    mp.release();
+                                    mp.pause();
+                                    mp.seekTo(0);
                                 } catch (Exception ex){}
                             }
                         });
@@ -343,8 +356,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     public void onClick(DialogInterface dialogInterface, int i) {
                                         dialog.dismiss();
                                         try{
-                                            mp.stop();
-                                            mp.release();
+                                            mp.pause();
+                                            mp.seekTo(0);
                                         } catch (Exception ex){}
                                         dialog_count = 0;
                                         InTrip = false;
@@ -373,8 +386,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             public void onClick(View view) {
 
                                 try{
-                                    mp.stop();
-                                    mp.release();
+                                    mp.pause();
+                                    mp.seekTo(0);
                                 } catch (Exception ex){}
                                 progressDialogLoad.show();
                                 findViewById(R.id.textView7).setVisibility(View.VISIBLE);
@@ -972,17 +985,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             t3.setText("خصم الرحلة : "+value.get("discount").toString());
                             t4.setText("مرجع الخريطة : "+value.getString("currentAddress"));
 
-                            mp.start();
-
                         } catch (Exception ex){}
 
                     }
                 }
                 else{
+                    FirebaseFirestore.getInstance()
+                            .collection("driverRequests")
+                            .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                            .delete();
                     if (dialog_count == 1){
+                        InTrip = false;
+                        isConnected = true;
+                        dialog_count = 0;
                         try{
-                            mp.stop();
-                            mp.release();
+                            mp.pause();
+                            mp.seekTo(0);
                         } catch (Exception ex){}
                         dialog.dismiss();
                     }
@@ -2246,8 +2264,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
                     }
                 }
+                else{
+                    InTrip = false;
+                    isConnected = true;
+                }
             }
         });
+
         FirebaseFirestore.getInstance()
                 .collection("locations")
                 .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
@@ -2261,6 +2284,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 if(iduser != null && !iduser.equals("")){
                     toggleButton.setChecked(true);
+                    InTrip = false;
+                    isConnected = true;
                 }
 
             }
@@ -2314,10 +2339,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setZoomGesturesEnabled(true);
         mMap.getUiSettings().setCompassEnabled(true);
+        try{
+            mMap.setMyLocationEnabled(true);
+        }
+        catch (Exception ex){}
         mMap.setIndoorEnabled(true);
         mMap.setTrafficEnabled(true);
-
-        Toast.makeText(getApplicationContext(), "الرجاء انتظار تحميل الخريطة....", Toast.LENGTH_LONG).show();
 
 //        mMap.clear();
 //        markerLat = loc.getLatitude();
@@ -2329,19 +2356,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        mMap.addMarker(new MarkerOptions()
 //                .position(new LatLng(loc.getLatitude(), loc.getLongitude()))
 //                .icon(markerIcon));
-
-        //Initialize Google Play Services
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED) {
-                buildGoogleApiClient();
-                mMap.setMyLocationEnabled(true);
-            }
-        } else {
-            buildGoogleApiClient();
-            mMap.setMyLocationEnabled(true);
-        }
 
         toggleButton = findViewById(R.id.toggleButton);
         txvAccountState = findViewById(R.id.textView10);

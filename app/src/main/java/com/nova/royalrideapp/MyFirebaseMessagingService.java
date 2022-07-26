@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.AudioAttributes;
+import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
@@ -75,12 +76,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     public void showNotification2(String heading, String description){
 
+        final MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.carhorn);
+        mp.start();
+
         String CHANNEL_ID="1234";
 
         Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://"+ getApplicationContext().getPackageName() + "/" + R.raw.carhorn);
         NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 1,
-                new Intent(getApplicationContext(), MapsActivity.class), PendingIntent.FLAG_ONE_SHOT);
+                new Intent(getApplicationContext(), MapsActivity.class), PendingIntent.FLAG_IMMUTABLE);
         NotificationChannel mChannel;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

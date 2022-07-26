@@ -3,14 +3,20 @@ package com.nova.royalrideapp.ViewModel;
 import static java.lang.Thread.sleep;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
+import android.text.TextUtils;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.nova.royalrideapp.Data.Users.UserInfo_sharedPreference;
 import com.nova.royalrideapp.MainActivity;
@@ -28,48 +34,18 @@ public class SplashActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_splash);
 
-//        ApplicationLifecycleHandler handler = new ApplicationLifecycleHandler();
-//        registerActivityLifecycleCallbacks(handler);
-//        registerComponentCallbacks(handler);
+        if(isLocationEnabled(SplashActivity.this))
+            logTo();
+        else
+            new AlertDialog.Builder(SplashActivity.this)
+                    .setMessage("يرجى تفعيل الموقع GPS و المحاولة مجددا..")
+            .setPositiveButton("حسنا", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    SplashActivity.this.finishAffinity();
+                }
+            }).setCancelable(false).create().show();
 
-
-//        String msg = "Whenever you want. Wherever you are";
-
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-                logTo();
-//            }
-//        }, 3000);
-
-//        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            new Thread(new Runnable() {
-//                public void run() {
-//                    try {
-//                        TextView tv = findViewById(R.id.intro);
-//                        tv.setText("");
-//                        tv.setTextColor(Color.parseColor("#AE994C"));
-//                        for (int i = 0; i < msg.length(); i++) {
-//                            sleep(80);
-//                            tv.setText(tv.getText().toString() + msg.charAt(i));
-//                        }
-//                        sleep(3500);
-//                        logTo();
-//                    }
-//                    catch (Exception e) {}
-//                }
-//            }).start();
-//        } else {
-//            new Thread(new Runnable() {
-//                public void run() {
-//                    try {
-//                        sleep(3000);
-//                        logTo();
-//                    } catch (InterruptedException e) {
-//                    }
-//                }
-//            }).start();
-//        }
     }
 
     private void logTo() {
@@ -92,4 +68,28 @@ public class SplashActivity extends AppCompatActivity {
         }catch (Exception e){}
 
     }
+
+    public boolean isLocationEnabled(Context context) {
+        int locationMode = 0;
+        String locationProviders;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+            try {
+                locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
+
+            } catch (Settings.SettingNotFoundException e) {
+                e.printStackTrace();
+                return false;
+            }
+
+            return locationMode != Settings.Secure.LOCATION_MODE_OFF;
+
+        }else{
+            locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+            return !TextUtils.isEmpty(locationProviders);
+        }
+
+
+    }
+
 }
