@@ -235,6 +235,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         .getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
                                 if(!AID.equals(value.getString("AID"))
                                 && !value.getString("AID").equals("")){
+
+                                    FirebaseFirestore.getInstance()
+                                            .collection("Users")
+                                            .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                            .update("token", "")
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    Toast.makeText(MapsActivity.this, "", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+
+                                    FirebaseFirestore.getInstance()
+                                            .collection("locations")
+                                            .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                            .delete()
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    Toast.makeText(MapsActivity.this, "", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+
                                     Toast.makeText(MapsActivity.this, "تم تسجيل الدخول من جهاز اخر", Toast.LENGTH_SHORT).show();
                                     UserInfo_sharedPreference.logout(MapsActivity.this);
                                 }
@@ -284,11 +307,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 catch (Exception ex){}
 
                 if(val!= null && isConnected){
-                    if(dialog_count == 0){
+                    if(dialog_count == 0 && !InTrip){
                         dialog_count = 1;
                         mp.start();
                         dialog.show();
-                        InTrip = true;
                         Snap_data = value;
                         final TextView t1 = dialog.findViewById(R.id.txvType);
                         final TextView t3 = dialog.findViewById(R.id.txvNo);
@@ -384,7 +406,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         t5.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-
+                                InTrip = true;
                                 try{
                                     mp.pause();
                                     mp.seekTo(0);
@@ -997,7 +1019,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
                             .delete();
                     if (dialog_count == 1){
-                        InTrip = false;
+//                        InTrip = false;
                         isConnected = true;
                         dialog_count = 0;
                         try{
@@ -1036,6 +1058,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
 
                 List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+                List<DocumentSnapshot> list2 = queryDocumentSnapshots.getDocuments();
+                list.clear();
+
+                for(int i=0; i<list2.size(); i++)
+                    if(list2.get(i).toObject(MyTripsModel.class).state.contains("StateTrip.active") ||
+                            list2.get(i).toObject(MyTripsModel.class).state.contains("StateTrip.started") ||
+                            list2.get(i).toObject(MyTripsModel.class).state.contains("StateTrip.needRatingByDriver"))
+                        list.add(list2.get(i));
 
                 if(list.size() > 0){
 

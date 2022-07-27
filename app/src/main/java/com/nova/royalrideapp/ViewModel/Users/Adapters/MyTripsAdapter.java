@@ -32,11 +32,17 @@ public class MyTripsAdapter extends ArrayAdapter<MyTripsModel> {
         TextView txvDatetime = myView.findViewById(R.id.txt3);
         TextView txvAddress = myView.findViewById(R.id.txt5);
         TextView txvTripState = myView.findViewById(R.id.txt1);
+        TextView distance = myView.findViewById(R.id.txt54);
+        TextView time = myView.findViewById(R.id.txt544);
+        TextView tid = myView.findViewById(R.id.txt5414);
 
         a= getItem(position);
 
         txvDatetime.setText(a.date + " "+ ClassDate.timeByDate(a.dateStart));
         txvAddress.setText(a.addressCurrent);
+        distance.setText(a.km+" Km. ");
+        time.setText(a.hours+" Min. ");
+        tid.setText(a.tripsid+"");
 
         if (a.state.equals("StateTrip.cancelByCustomer")){
             txvTripState.setText("تم الغاء الرحلة");
