@@ -118,17 +118,17 @@
             android:id="@+id/btnNext"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:textSize="18dp"
-            android:textStyle="bold"
-            android:fontFamily="serif"
-            android:textColor="@color/white"
             android:layout_below="@+id/edtCarNumber"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="5dp"
             android:layout_marginRight="15dp"
             android:background="@drawable/btn_back22"
+            android:fontFamily="serif"
             android:onClick="onClickLogin"
-            android:text="التالي" />
+            android:text="التالي"
+            android:textColor="@color/white"
+            android:textSize="18dp"
+            android:textStyle="bold" />
 
     </RelativeLayout>
 

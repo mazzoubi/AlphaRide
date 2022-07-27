@@ -375,12 +375,12 @@
                 android:id="@+id/textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ملفي الشخصي"
-                android:textColor="@color/colorPrimary"
-                android:fontFamily="serif"
                 android:layout_alignParentRight="true"
                 android:layout_marginTop="15dp"
                 android:layout_marginRight="15dp"
+                android:fontFamily="serif"
+                android:text="ملفي الشخصي"
+                android:textColor="@color/colorPrimary"
                 android:textSize="16dp"
                 android:textStyle="bold" />
             <TextView
@@ -392,7 +392,7 @@
                 android:layout_below="@+id/textView3"
                 android:fontFamily="serif"
                 android:layout_alignParentRight="true"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="15dp"
                 android:layout_marginRight="15dp"
                 android:textSize="16dp"
                 android:textStyle="bold" />
@@ -403,7 +403,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/textView9"
                 android:layout_alignParentRight="true"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="15dp"
                 android:layout_marginRight="15dp"
                 android:fontFamily="serif"
                 android:text="إدارة السيارات"
@@ -419,7 +419,7 @@
                 android:layout_below="@+id/textView20"
                 android:fontFamily="serif"
                 android:layout_alignParentRight="true"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="15dp"
                 android:layout_marginRight="15dp"
                 android:textSize="16dp"
                 android:textStyle="bold" />
@@ -432,7 +432,7 @@
                 android:layout_below="@+id/textView21"
                 android:fontFamily="serif"
                 android:layout_alignParentRight="true"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="15dp"
                 android:layout_marginRight="15dp"
                 android:textSize="16dp"
                 android:textStyle="bold" />
@@ -445,7 +445,7 @@
                 android:layout_below="@+id/textView22"
                 android:fontFamily="serif"
                 android:layout_alignParentRight="true"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="15dp"
                 android:layout_marginRight="15dp"
                 android:textSize="16dp"
                 android:textStyle="bold" />
@@ -458,7 +458,7 @@
                 android:layout_below="@+id/textView23"
                 android:fontFamily="serif"
                 android:layout_alignParentRight="true"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="15dp"
                 android:layout_marginRight="15dp"
                 android:textSize="16dp"
                 android:textStyle="bold" />
@@ -469,7 +469,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/textView24"
                 android:layout_alignParentRight="true"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="15dp"
                 android:layout_marginRight="15dp"
                 android:fontFamily="serif"
                 android:text="تسجيل الخروج"
@@ -485,7 +485,7 @@
                 android:layout_above="@+id/card"
                 android:layout_centerHorizontal="true"
                 android:fontFamily="serif"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="15dp"
                 android:layout_marginRight="15dp"
                 android:textSize="12dp"
                 android:textStyle="bold" />
@@ -496,7 +496,7 @@
                 android:layout_marginBottom="10dp"
                 android:id="@+id/card"
                 android:layout_marginEnd="10dp"
-                map:cardCornerRadius="25dp"
+                map:cardCornerRadius="15dp"
                 android:layout_alignParentBottom="true"
                 android:layout_height="120dp">
 

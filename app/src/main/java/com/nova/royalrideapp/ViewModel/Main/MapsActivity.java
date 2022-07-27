@@ -142,7 +142,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     DocumentSnapshot Snap_data;
     ProgressDialog progressDialogLoad;
     BigDecimal CustomerBalance;
-    boolean StartGetLoc = false;
+    boolean StartGetLoc = true;
     MediaPlayer mp;
 
     @Override
@@ -152,6 +152,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(binding.getRoot());
+
 
         mp = new MediaPlayer();
         Uri mediaPath = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.carhorn);
@@ -269,7 +270,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         lp.height = Math.round(TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, 400, getResources().getDisplayMetrics()));
         dialog.getWindow().setAttributes(lp);
-        //findme
 
         event = new EventListener<DocumentSnapshot>() {
             @Override
@@ -706,7 +706,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                         lp.copyFrom(dialog2.getWindow().getAttributes());
                                                                                         lp.width = WindowManager.LayoutParams.MATCH_PARENT;
                                                                                         lp.height = Math.round(TypedValue.applyDimension(
-                                                                                                TypedValue.COMPLEX_UNIT_DIP, 400, getResources().getDisplayMetrics()));
+                                                                                                TypedValue.COMPLEX_UNIT_DIP, 440, getResources().getDisplayMetrics()));
                                                                                         dialog2.getWindow().setAttributes(lp);
                                                                                         dialog2.show();
 
@@ -830,6 +830,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                         .update(ra).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                                                     @Override
                                                                                                     public void onComplete(@NonNull Task<Void> task) {
+
+                                                                                                        SendNoti("عميلنا العزيز شكرا لاستخدامكم تطبيق رويال رايد, نتمنى لك يوما سعيدا", documentSnapshot.getString("token"));
 
                                                                                                         FirebaseFirestore.getInstance()
                                                                                                                 .collection("Trips")
@@ -1037,7 +1039,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 if(list.size() > 0){
 
-                    MyTripsModel obj = list.get(0).toObject(MyTripsModel.class);
+                    MyTripsModel obj = list.get(list.size()-1).toObject(MyTripsModel.class);
 
                     FirebaseFirestore.getInstance()
                             .collection("Trips")
@@ -1323,7 +1325,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                         lp.copyFrom(dialog2.getWindow().getAttributes());
                                                                                         lp.width = WindowManager.LayoutParams.MATCH_PARENT;
                                                                                         lp.height = Math.round(TypedValue.applyDimension(
-                                                                                                TypedValue.COMPLEX_UNIT_DIP, 400, getResources().getDisplayMetrics()));
+                                                                                                TypedValue.COMPLEX_UNIT_DIP, 440, getResources().getDisplayMetrics()));
                                                                                         dialog2.getWindow().setAttributes(lp);
                                                                                         dialog2.show();
 
@@ -1763,7 +1765,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                         lp.copyFrom(dialog2.getWindow().getAttributes());
                                                                         lp.width = WindowManager.LayoutParams.MATCH_PARENT;
                                                                         lp.height = Math.round(TypedValue.applyDimension(
-                                                                                TypedValue.COMPLEX_UNIT_DIP, 400, getResources().getDisplayMetrics()));
+                                                                                TypedValue.COMPLEX_UNIT_DIP, 440, getResources().getDisplayMetrics()));
                                                                         dialog2.getWindow().setAttributes(lp);
                                                                         dialog2.show();
 
@@ -2110,7 +2112,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 lp.copyFrom(dialog2.getWindow().getAttributes());
                                 lp.width = WindowManager.LayoutParams.MATCH_PARENT;
                                 lp.height = Math.round(TypedValue.applyDimension(
-                                        TypedValue.COMPLEX_UNIT_DIP, 400, getResources().getDisplayMetrics()));
+                                        TypedValue.COMPLEX_UNIT_DIP, 440, getResources().getDisplayMetrics()));
                                 dialog2.getWindow().setAttributes(lp);
                                 dialog2.show();
 
@@ -2291,12 +2293,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        new Handler().postDelayed(new Runnable() {
+        EventListener<DocumentSnapshot> docsn = new EventListener<DocumentSnapshot>() {
             @Override
-            public void run() {
-                StartGetLoc = true;
+            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                String AID = Settings.Secure.getString(
+                        getApplicationContext().getContentResolver(),
+                        Settings.Secure.ANDROID_ID);
+                String other = value.getString("AID");
+                if(!other.equals(AID) && !other.equals("")){
+                    startActivity(new Intent(MapsActivity.this, MainActivity.class)
+                            .putExtra("exit", "1"));
+                    finish();
+                }
             }
-        }, 5000);
+        };
+
+        FirebaseFirestore.getInstance()
+                .collection("Users")
+                .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                .addSnapshotListener(docsn);
 
     }
 
@@ -2400,6 +2415,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                                     Uri.parse("package:" + getPackageName()));
                             startActivityForResult(intent, 1234); }
+
+                       try{
+                           mMap.clear();
+                           markerLat = loc.getLatitude();
+                           markerLng = loc.getLongitude();
+                           BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
+                           LatLng l =new LatLng(loc.getLatitude(), loc.getLongitude());
+                           mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(l,15.0f));
+                           mMap.addMarker(new MarkerOptions()
+                                   .position(new LatLng(loc.getLatitude(), loc.getLongitude()))
+                                   .icon(markerIcon));
+                       }catch (Exception ex){}
                     }
                 }
                 else {
@@ -2414,6 +2441,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             .collection("driverRequests")
                             .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
                             .addSnapshotListener(event).remove();
+
+                    try{
+                        mMap.clear();
+                        markerLat = loc.getLatitude();
+                        markerLng = loc.getLongitude();
+                        BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
+                        LatLng l =new LatLng(loc.getLatitude(), loc.getLongitude());
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(l,15.0f));
+                        mMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(loc.getLatitude(), loc.getLongitude()))
+                                .icon(markerIcon));
+                    }catch (Exception ex){}
                 }
 
 //                    BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
@@ -2678,6 +2717,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
                             .delete();
                 } }
+
+            //findme
 
         }
     };
