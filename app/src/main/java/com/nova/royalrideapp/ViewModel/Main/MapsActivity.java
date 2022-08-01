@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -136,14 +137,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     ArrayList<Location> TripDistanceCalc;
 
     int dialog_count = 0;
-    CountDownTimer cd;
-    Timer timer;
+    CountDownTimer cd, cd2;
+    Timer timer, timer2;
     int Tsec = 0, Tmin = 0, Thour = 0;
     DocumentSnapshot Snap_data;
     ProgressDialog progressDialogLoad;
     BigDecimal CustomerBalance;
-    boolean StartGetLoc = true;
     MediaPlayer mp;
+    ProgressDialog progressDialog;
+    String TripObjTid = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,17 +166,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mp.prepare(); }
         catch (Exception e) {}
 
-        ProgressDialog progressDialog = new ProgressDialog(MapsActivity.this);
+        progressDialog = new ProgressDialog(MapsActivity.this);
         progressDialog.setTitle("النظام...");
         progressDialog.setMessage("الرجاء الإنتظار...");
         progressDialog.setCancelable(false);
         progressDialog.show();
+
         FirebaseFirestore.getInstance().collection("BlockUsers")
                 .whereEqualTo("idUser",UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                progressDialog.dismiss();
+
                 if (queryDocumentSnapshots.getDocuments().size()>0){
                     AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
                     builder.setTitle("النظام...");
@@ -236,30 +239,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 if(!AID.equals(value.getString("AID"))
                                 && !value.getString("AID").equals("")){
 
-                                    FirebaseFirestore.getInstance()
-                                            .collection("Users")
-                                            .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                                            .update("token", "")
-                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    Toast.makeText(MapsActivity.this, "", Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
+                                    try{
+                                        FirebaseFirestore.getInstance()
+                                                .collection("Users")
+                                                .document(getSharedPreferences("User", Context.MODE_PRIVATE).getString("uid",""))
+                                                .update("token", "");
+                                    }
+                                    catch (Exception ex){}
 
-                                    FirebaseFirestore.getInstance()
-                                            .collection("locations")
-                                            .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                                            .delete()
-                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    Toast.makeText(MapsActivity.this, "", Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
+                                    try{
+                                        FirebaseFirestore.getInstance()
+                                                .collection("locations")
+                                                .document(getSharedPreferences("User", Context.MODE_PRIVATE).getString("uid",""))
+                                                .delete();
+                                    }
+                                    catch (Exception ex){}
 
-                                    Toast.makeText(MapsActivity.this, "تم تسجيل الدخول من جهاز اخر", Toast.LENGTH_SHORT).show();
-                                    UserInfo_sharedPreference.logout(MapsActivity.this);
+                                    try{
+                                        Toast.makeText(MapsActivity.this, "تم تسجيل الدخول من جهاز اخر", Toast.LENGTH_SHORT).show();
+                                        UserInfo_sharedPreference.logout(MapsActivity.this);
+                                    }
+                                    catch (Exception ex){}
                                 }
                             }
                         });
@@ -318,6 +318,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         final TextView t5 = dialog.findViewById(R.id.textView11);
                         final TextView t6 = dialog.findViewById(R.id.textView7);
                         final ImageView close = dialog.findViewById(R.id.close);
+
+                        cd2 = new CountDownTimer(17000, 1000) {
+                            public void onTick(long millisUntilFinished) {
+
+                                t6.setText("الرفض ("+(millisUntilFinished/1000)+")");
+
+                            }
+                            public void onFinish() {
+                                isConnected = true;
+                                dialog_count = 0;
+                                try{ mp.pause(); mp.seekTo(0); } catch (Exception ex){}
+                                FirebaseFirestore.getInstance()
+                                        .collection("driverRequests")
+                                        .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                        .delete();
+                                dialog.dismiss(); }
+                        };
+                        cd2.start();
 
                         t4.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -416,12 +434,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 k.setText("0.000 Km");
                                 m.setText("00:00:00");
                                 InTrip = true;
+
                                 final Map<String, Object> map = new HashMap<>();
                                 final Map<String, Object> mini_map = new HashMap<>();
                                 final Map<String, Object> mini_map2 = new HashMap<>();
                                 final Map<String, Object> mini_map3 = new HashMap<>();
 
                                 map.put("tripsid", System.currentTimeMillis());
+                                TripObjTid = map.get("tripsid").toString();
                                 map.put("date", ClassDate.date());
                                 map.put("nameCustomer", value.getString("nameCustomer"));
                                 map.put("phoneCustomer", value.getString("phoneCustomer"));
@@ -654,9 +674,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                             }
                                                                         }, 1000, 1000);
                                                                     }
-                                                                    catch (Exception ex){
-                                                                        Toast.makeText(MapsActivity.this, "", Toast.LENGTH_SHORT).show();
-                                                                    }
+                                                                    catch (Exception ex){}
 
                                                                     arrive.setText("إنهاء الرحلة");
                                                                     StartedTripAt = System.currentTimeMillis();
@@ -1019,7 +1037,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
                             .delete();
                     if (dialog_count == 1){
-//                        InTrip = false;
                         isConnected = true;
                         dialog_count = 0;
                         try{
@@ -1287,9 +1304,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                             }
                                                                         }, 1000, 1000);
                                                                     }
-                                                                    catch (Exception ex){
-                                                                        Toast.makeText(MapsActivity.this, "", Toast.LENGTH_SHORT).show();
-                                                                    }
+                                                                    catch (Exception ex){}
 
                                                                     arrive.setText("إنهاء الرحلة");
                                                                     StartedTripAt = System.currentTimeMillis();
@@ -1654,9 +1669,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 }
                             }, 1000, 1000);
                         }
-                        catch (Exception ex){
-                            Toast.makeText(MapsActivity.this, "", Toast.LENGTH_SHORT).show();
-                        }
+                        catch (Exception ex){}
 
                         progressDialogLoad.show();
 
@@ -1666,6 +1679,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         final Map<String, Object> mini_map3 = new HashMap<>();
 
                         map.put("tripsid", obj.tripsid);
+                        TripObjTid = obj.tripsid+"";
                         map.put("date", obj.date);
                         map.put("idCustomer", obj.idCustomer);
                         map.put("idDriver", obj.idDriver);
@@ -2065,6 +2079,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         final Map<String, Object> mini_map3 = new HashMap<>();
 
                         map.put("tripsid", obj.tripsid);
+                        TripObjTid = obj.tripsid+"";
                         map.put("date", obj.date);
                         map.put("idCustomer", obj.idCustomer);
                         map.put("idDriver", obj.idDriver);
@@ -2371,12 +2386,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-        updateToken();
-
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 //        ApplicationLifecycleHandler handler = new ApplicationLifecycleHandler();
 //        registerActivityLifecycleCallbacks(handler);
 //        registerComponentCallbacks(handler);
-
 
         circleDrawable= getResources().getDrawable(R.drawable.cc);
         mMap = googleMap;
@@ -2498,6 +2511,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         setNavView();
         getUserInfo();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try{progressDialog.dismiss();}catch (Exception ex){}
+            }
+        }, 5000);
     }
 
     void setNavView(){
@@ -2680,8 +2699,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private final LocationListener mLocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(final Location location) {
+
+
+            mMap.clear();
+            markerLat = location.getLatitude();
+            markerLng = location.getLongitude();
+            BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
+
+            if(loc == null)
+                loc = location;
+
+            float bearing = loc.bearingTo(location) ;
+
+            LatLng l =new LatLng(location.getLatitude(), location.getLongitude());
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(l,15.0f));
+            mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(location.getLatitude(), location.getLongitude()))
+                    .icon(markerIcon)
+                    .anchor(0.5f, 0.5f)
+                    .rotation(bearing));
+
             loc = location;
-            if(StartedTripAt != 0 && InTrip && StartGetLoc){
+
+            if(StartedTripAt != 0 && InTrip){
                 TripDistanceCalc.add(loc);
                 BigDecimal TripDistance = new BigDecimal("0");
                 for(int i=0; i<TripDistanceCalc.size()-1; i++)
@@ -2691,18 +2731,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 k.setText(String.format(Locale.ENGLISH,"%.3f", TripDistance.doubleValue())+" Km");
             }
 
-            mMap.clear();
-            markerLat = location.getLatitude();
-            markerLng = location.getLongitude();
-            BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
-
-            LatLng l =new LatLng(location.getLatitude(), location.getLongitude());
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(l,15.0f));
-            mMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(location.getLatitude(), location.getLongitude()))
-                    .icon(markerIcon));
-
             if(isConnected){
+                updateToken();
                 Map<String, Object> map = new HashMap<>();
                 Map<String, Object> mini_map = new HashMap<>();
                 String geohash = GeoFireUtils.getGeoHashForLocation(new GeoLocation(location.getLatitude(), location.getLongitude()));
@@ -2724,8 +2754,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
                 catch (Exception ex){}
 
-                if(InTrip && Snap_data != null && DrawPoly){
+                if(InTrip && Snap_data != null && DrawPoly)
                     DrawPolyLine();
+                if(InTrip && Snap_data != null){
                     HashMap<String, Object> mini_map3 = new HashMap<>();
                     mini_map3.put("lat", loc.getLatitude());
                     mini_map3.put("lng", loc.getLongitude());
@@ -2734,7 +2765,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     try{
                         FirebaseFirestore.getInstance()
                                 .collection("Trips")
-                                .document(Snap_data.getString("tripsid"))
+                                .document(TripObjTid)//findme
                                 .update("locationDriver", mini_map3);
                     }
                     catch (Exception ex){}
@@ -2746,10 +2777,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             .collection("locations")
                             .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
                             .delete();
+                    FirebaseFirestore.getInstance()
+                            .collection("Users")
+                            .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                            .update("token", "");
                 } }
-
-            //findme
-
         }
     };
 
