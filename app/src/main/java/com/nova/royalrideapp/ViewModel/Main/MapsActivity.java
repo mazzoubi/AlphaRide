@@ -50,6 +50,8 @@ import android.widget.ToggleButton;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.nova.royalrideapp.Data.Users.MyTripsModel;
@@ -156,7 +158,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(binding.getRoot());
 
-
         mp = new MediaPlayer();
         Uri mediaPath = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.carhorn);
 
@@ -171,7 +172,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         progressDialog.setTitle("النظام...");
         progressDialog.setMessage("الرجاء الإنتظار...");
         progressDialog.setCancelable(false);
-        progressDialog.show();
+        try{progressDialog.show();}
+        catch (Exception ex){}
 
         FirebaseFirestore.getInstance().collection("BlockUsers")
                 .whereEqualTo("idUser",UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
@@ -294,6 +296,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         lp.height = Math.round(TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, 400, getResources().getDisplayMetrics()));
         dialog.getWindow().setAttributes(lp);
+        dialog.setCancelable(false);
 
         event = new EventListener<DocumentSnapshot>() {
             @Override
@@ -628,6 +631,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                     });
                                                 }
                                                 else if(arrive.getText().toString().equals("بدء الرحلة")){
+                                                    FirebaseFirestore.getInstance()
+                                                            .collection("Users")
+                                                            .document(map.get("idCustomer").toString())
+                                                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                        @Override
+                                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                            SendNoti("لقد بدأت الرحلة.", documentSnapshot.getString("token"));
+                                                        }
+                                                    });
+
                                                     DrawPoly = false;
                                                     polyline.remove();
                                                     progressDialogLoad.show();
@@ -694,12 +707,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                         @Override
                                                         public void onClick(DialogInterface dialogInterface, int i) {
                                                             {
-
                                                                 FirebaseFirestore.getInstance()
                                                                         .collection("Trips")
                                                                         .document(map.get("tripsid")+"")
                                                                         .addSnapshotListener(event2).remove();
-
 
                                                                 FirebaseFirestore.getInstance()
                                                                         .collection("Users")
@@ -872,7 +883,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                     @Override
                                                                                                     public void onComplete(@NonNull Task<Void> task) {
 
-                                                                                                        SendNoti("عميلنا العزيز شكرا لاستخدامكم تطبيق رويال رايد, نتمنى لك يوما سعيدا", documentSnapshot.getString("token"));
+                                                                                                        FirebaseFirestore.getInstance()
+                                                                                                                .collection("Users")
+                                                                                                                .document(Snap_data.getString("idCustomer"))
+                                                                                                                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                                                            @Override
+                                                                                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                                                                SendNoti("عميلنا العزيز شكرا لاستخدامكم تطبيق رويال رايد, نتمنى لك يوما سعيدا", documentSnapshot.getString("token"));
+                                                                                                                toggleButton.setChecked(true);
+                                                                                                            }
+                                                                                                        });
 
                                                                                                         FirebaseFirestore.getInstance()
                                                                                                                 .collection("Trips")
@@ -1475,7 +1495,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 map.put("position", mini_map);
 
                 try{
-                    FirebaseFirestore.getInstance()
+                    FirebaseFirestore.getInstance()//findme
                             .collection("locations")
                             .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
                             .set(map);
@@ -1493,7 +1513,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     try{
                         FirebaseFirestore.getInstance()
                                 .collection("Trips")
-                                .document(TripObjTid)//findme
+                                .document(TripObjTid)
                                 .update("locationDriver", mini_map3);
                     }
                     catch (Exception ex){}
@@ -1675,7 +1695,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                 @Override
                                                                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                                                                     arrive.setText("بدء الرحلة");
-                                                                    SendNoti("لقد وصل الكابتن للموقع.", documentSnapshot.getString("token"));
+                                                                    FirebaseFirestore.getInstance()
+                                                                            .collection("Users")
+                                                                            .document(map.get("idCustomer").toString())
+                                                                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                        @Override
+                                                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                            SendNoti("لقد وصل الكابتن للموقع.", documentSnapshot.getString("token"));
+                                                                            progressDialogLoad.dismiss();
+                                                                        }
+                                                                    });
+
                                                                     progressDialogLoad.dismiss();
                                                                     cd = new CountDownTimer(300000, 1000) {
 
@@ -1713,6 +1743,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                             });
                                                         }
                                                         else if(arrive.getText().toString().equals("بدء الرحلة")){
+                                                            FirebaseFirestore.getInstance()
+                                                                    .collection("Users")
+                                                                    .document(map.get("idCustomer").toString())
+                                                                    .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                @Override
+                                                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                    SendNoti("لقد بدأت الرحلة.", documentSnapshot.getString("token"));
+                                                                }
+                                                            });
                                                             DrawPoly = false;
                                                             try{
                                                                 polyline.remove();
@@ -1914,6 +1953,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                         .collection("Trips")
                                                                                                         .document(map.get("tripsid").toString())
                                                                                                         .update(ups);
+
+                                                                                                FirebaseFirestore.getInstance()
+                                                                                                        .collection("Users")
+                                                                                                        .document(map.get("idCustomer").toString())
+                                                                                                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                                                    @Override
+                                                                                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                                                        SendNoti("عميلنا العزيز شكرا لاستخدامكم تطبيق رويال رايد, نتمنى لك يوما سعيدا", documentSnapshot.getString("token"));
+                                                                                                        toggleButton.setChecked(true);
+                                                                                                    }
+                                                                                                });
 
                                                                                                 t1.setText(obj.nameCustomer);
                                                                                                 t2.setText(String.format("%.3f", TripDistance.doubleValue())+" Km | "+time+" min");
@@ -2364,7 +2414,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                     FirebaseFirestore.getInstance()
                                                                                             .collection("Users")
                                                                                             .document(obj.idCustomer)
-                                                                                            .update(dada); }
+                                                                                            .update(dada);
+
+                                                                                    FirebaseFirestore.getInstance()
+                                                                                            .collection("Users")
+                                                                                            .document(obj.idCustomer)
+                                                                                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                                        @Override
+                                                                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                                            SendNoti("عميلنا العزيز شكرا لاستخدامكم تطبيق رويال رايد, نتمنى لك يوما سعيدا", documentSnapshot.getString("token"));
+                                                                                            toggleButton.setChecked(true);
+                                                                                        }
+                                                                                    });
+
+                                                                                }
                                                                                 else{
                                                                                     t3.setText("قيمة الرحلة: "+String.format("%.3f", TotalTripPrice.doubleValue())+" بخصم "+obj.discount+"%");
                                                                                     t5.setText("سعر الرحلةالنهائي: "+String.format(Locale.ENGLISH,"%.3f", TotalTripPrice));
@@ -2773,30 +2836,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         }
                         else{
                             InTrip = false;
-                            isConnected = true;
+//                            isConnected = true;
                         }
                     }
                 });
 
-                FirebaseFirestore.getInstance()
-                        .collection("locations")
-                        .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                new Handler().postDelayed(new Runnable() {
                     @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        String iduser = "";
+                    public void run() {
                         try{
-                            iduser = documentSnapshot.getString("idUser");
+                            FirebaseFirestore.getInstance()
+                                    .collection("locations")
+                                    .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                    .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    String iduser = "";
+                                    try{
+                                        iduser = documentSnapshot.getString("idUser");
+                                    } catch (Exception ex){}
+
+                                    if(iduser != null && !iduser.equals("")){
+                                        toggleButton.setChecked(true);
+                                        InTrip = false;
+                                        isConnected = true;
+                                    }
+
+                                }
+                            });
                         } catch (Exception ex){}
-
-                        if(iduser != null && !iduser.equals("")){
-                            toggleButton.setChecked(true);
-                            InTrip = false;
-                            isConnected = true;
-                        }
-
                     }
-                });
+                }, 3000);
             }
 
         }
@@ -2877,7 +2947,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             String URL = "https://fcm.googleapis.com/fcm/send";
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL,
-                    json,null, null
+                    json, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                }
+            }
             ) {
                 @Override
                 public Map<String, String> getHeaders() {

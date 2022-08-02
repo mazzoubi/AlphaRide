@@ -33,7 +33,7 @@ public class TripsViewModel extends ViewModel {
                         for (DocumentSnapshot d: queryDocumentSnapshots.getDocuments()){
                             temp.add(0,d.toObject(MyTripsModel.class));
                         }
-                        Collections.reverse(temp);
+//                        Collections.reverse(temp);
                         listOfMyTrips.setValue(temp);
                     }
                 });

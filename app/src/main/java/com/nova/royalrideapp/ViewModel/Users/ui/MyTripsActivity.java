@@ -7,20 +7,27 @@ import androidx.lifecycle.ViewModelProviders;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.WindowManager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import com.nova.royalrideapp.ClassDate;
 import com.nova.royalrideapp.Data.Users.MyTripsModel;
 import com.nova.royalrideapp.R;
+import com.nova.royalrideapp.ViewModel.Main.MapsActivity;
 import com.nova.royalrideapp.ViewModel.Users.Adapters.MyTripsAdapter;
 import com.nova.royalrideapp.ViewModel.Users.TripsViewModel;
 
@@ -100,5 +107,44 @@ public class MyTripsActivity extends AppCompatActivity {
                 txvDateTo.setText(s);
             }
         });
+    }
+
+    public void Profit(View view) {
+
+        final androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(MyTripsActivity.this);
+        LayoutInflater inflater = MyTripsActivity.this.getLayoutInflater();
+        builder.setView(inflater.inflate(R.layout.dialog_profit, null));
+        final androidx.appcompat.app.AlertDialog dialog = builder.create();
+        ((FrameLayout) dialog.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = Math.round(TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 280, getResources().getDisplayMetrics()));
+        dialog.getWindow().setAttributes(lp);
+        dialog.show();
+
+        TextView t1 = dialog.findViewById(R.id.txvType);
+        TextView t2 = dialog.findViewById(R.id.txvColor);
+        TextView t3 = dialog.findViewById(R.id.txvNo);
+        TextView t4 = dialog.findViewById(R.id.txvNo5);
+
+        int Scount = 0, Ccount = 0;
+        BigDecimal profit = new BigDecimal("0");
+
+        for(int i=0; i<myTrips.size(); i++) {
+            if (myTrips.get(i).state.contains("done") || myTrips.get(i).state.contains("need")) {
+                Scount++;
+                profit = profit.add(new BigDecimal(myTrips.get(i).totalPrice).subtract(new BigDecimal(myTrips.get(i).totalPrice).multiply(new BigDecimal(myTrips.get(i).discount))));
+            }
+            if (myTrips.get(i).state.contains("canc"))
+                Ccount++;
+        }
+
+        t1.setText("إجمالي الرحلات الناجحة : "+Scount+" رحلة");
+        t2.setText("إجمالي الرحلات الملغاة : "+Ccount+" رحلة");
+        t3.setText("إجمالي سعر الرحلات : "+String.format(Locale.ENGLISH,"%.3f", profit.doubleValue())+" دينار");
+        t4.setText("إجمالي أرباح الرحلات : "+String.format(Locale.ENGLISH,"%.3f", profit.subtract(profit.multiply(new BigDecimal("0.1"))).doubleValue())+" دينار");
+
     }
 }
