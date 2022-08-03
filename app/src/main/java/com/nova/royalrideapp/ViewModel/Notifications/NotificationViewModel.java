@@ -11,6 +11,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import com.nova.royalrideapp.Data.Notifications.NotificationModel;
 import com.nova.royalrideapp.Data.Users.UserInfo_sharedPreference;
@@ -35,6 +36,7 @@ public class NotificationViewModel extends ViewModel {
                         temp.add(d.toObject(NotificationModel.class));
                     }
                 }
+                Collections.reverse(temp);
                 listOfNotifications.setValue(temp);
             }
         });
