@@ -193,6 +193,8 @@ public class UserViewModel extends ViewModel {
                         public void onComplete(@NonNull Task<Void> task) {
                             SharedPreferences.Editor editor = c.getSharedPreferences("User", Context.MODE_PRIVATE).edit();
                             editor.putString("AID" , AID);
+                            editor.apply();
+                            editor.commit();
                         }
                     });
         }
@@ -364,14 +366,19 @@ public class UserViewModel extends ViewModel {
                     String AID = Settings.Secure.getString(c.getContentResolver(), Settings.Secure.ANDROID_ID);
 
                     UserInfo_sharedPreference.setInfo(c,a);
-                    UpdateAID(c,AID);
 
-                    if (a.AID.isEmpty()||a.AID.equals(AID)){
+                    if (a.AID.isEmpty()){
+                        UpdateAID(c,AID);
                         c.startActivity(new Intent(c,DashboardActivity.class));
                         c.finish();
-                    }else {
+                    }
+                    else if (!a.AID.equals(AID)){
                         Toast.makeText(c, "تم تسجيل خروجك من الجهاز القديم..", Toast.LENGTH_SHORT).show();
-
+                        UpdateAID(c,AID);
+                        c.startActivity(new Intent(c,DashboardActivity.class));
+                        c.finish();
+                    }
+                        else {
                         c.startActivity(new Intent(c, DashboardActivity.class));
                         c.finish();
                     }
@@ -399,12 +406,11 @@ public class UserViewModel extends ViewModel {
                     String AID = Settings.Secure.getString(c.getContentResolver(), Settings.Secure.ANDROID_ID);
 
                     UserInfo_sharedPreference.setInfo(c,a);
-                    if (a.AID.isEmpty()||a.AID.equals(AID)){
+                    if (a.AID.isEmpty()||!a.AID.equals(AID)){
                         UpdateAID(c,AID);
                         c.startActivity(new Intent(c,DashboardActivity.class));
                         c.finish();
                     }else {
-                        Toast.makeText(c, "تم تسجيل خروجك من الجهاز القديم..", Toast.LENGTH_SHORT).show();
                         c.startActivity(new Intent(c, DashboardActivity.class));
                         c.finish();
                     }

@@ -42,7 +42,7 @@ public class TripInfoActivity extends AppCompatActivity {
         txvRate = findViewById(R.id.txvRate);
         imgDriver = findViewById(R.id.imgDriver);
         UserModel a = UserInfo_sharedPreference.getUser(TripInfoActivity.this);
-        txvPrice.setText(MyTripsActivity.tripsObject.totalPrice+" JD");
+        txvPrice.setText(MyTripsActivity.tripsObject.totalPrice+" دينار "+"\n"+"الربح: "+((MyTripsActivity.tripsObject.totalPrice)-(MyTripsActivity.tripsObject.totalPrice * 0.1)));
         txvDriverName.setText(a.fullName);
         txvRate.setText(a.rating+"");
         txvCarDetail.setText(a.carType+" "+a.carColor +" "+a.carModel + " " + a.numberCar);

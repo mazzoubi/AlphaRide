@@ -6,6 +6,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -34,6 +36,7 @@ import com.nova.royalrideapp.Data.Users.UserInfo_sharedPreference;
 import com.nova.royalrideapp.Data.Users.UserModel;
 import com.nova.royalrideapp.R;
 import com.nova.royalrideapp.ScratchCardsClass;
+import com.nova.royalrideapp.ViewModel.Main.ContactUsActivity;
 
 public class WalletActivity extends AppCompatActivity {
 
@@ -147,5 +150,15 @@ public class WalletActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void press(View view) {
+
+        Uri uri = Uri.parse("https://api.whatsapp.com/send?phone=+962791720743");
+
+        Intent sendIntent = new Intent(Intent.ACTION_VIEW, uri);
+
+        WalletActivity.this.startActivity(sendIntent);
+
     }
 }

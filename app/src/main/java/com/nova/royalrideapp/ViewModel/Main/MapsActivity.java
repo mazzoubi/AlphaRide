@@ -120,8 +120,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     GoogleApiClient mGoogleApiClient;
 
-    int LOCATION_REFRESH_TIME = 1; // 15 seconds to update
-    int LOCATION_REFRESH_DISTANCE = 1; // 500 meters to update
+    int LOCATION_REFRESH_TIME = 0; // 15 seconds to update
+    int LOCATION_REFRESH_DISTANCE = 0; // 500 meters to update
     LocationManager mLocationManager;
 
     ToggleButton toggleButton ;
@@ -230,16 +230,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             checkLocationPermission();
         }
 
-        if(!UserInfo_sharedPreference.getUser(MapsActivity.this).uid.equals("")
-        && UserInfo_sharedPreference.getUser(MapsActivity.this).uid != null){
-            try{
-                FirebaseFirestore.getInstance()
-                        .collection("Users")
-                        .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                        .addSnapshotListener(event3);
-            }
-            catch (Exception ex){}
-        }
+
 
         if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
@@ -1059,10 +1050,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         event3 = new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                String AID = Settings.Secure
-                        .getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
-                if(!AID.equals(value.getString("AID"))
-                        && !value.getString("AID").equals("")){
+                String AID = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+                if(!AID.equals(value.getString("AID")) && !value.getString("AID").equals("")){
 
                     try{
                         FirebaseFirestore.getInstance()
@@ -1088,35 +1077,50 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         .collection("Users")
                                         .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
                                         .addSnapshotListener(event3).remove();
+
+                                try{
+                                    Toast.makeText(MapsActivity.this, "تم تسجيل الدخول من جهاز جديد..", Toast.LENGTH_SHORT).show();
+                                    startActivity(new Intent(MapsActivity.this, MainActivity.class).putExtra("exit", "1"));
+                                    finish();
+                                }
+                                catch (Exception ex){}
+
                             }
                             catch (Exception ex){}
                         }
-                    }, 4000);
-
-                    try{
-                        UserInfo_sharedPreference.logout(MapsActivity.this);
-                    }
-                    catch (Exception ex){}
+                    }, 2000);
                 }
             }
         };
+
+        if(!UserInfo_sharedPreference.getUser(MapsActivity.this).uid.equals("")
+                && UserInfo_sharedPreference.getUser(MapsActivity.this).uid != null){
+            try{
+                FirebaseFirestore.getInstance()
+                        .collection("Users")
+                        .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                        .addSnapshotListener(event3);
+            }
+            catch (Exception ex){}
+        }
+
         ser_int = new Intent(getApplicationContext(), SimpleService.class);
 
-        EventListener<DocumentSnapshot> docsn = new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                String AID = Settings.Secure.getString(
-                        getApplicationContext().getContentResolver(),
-                        Settings.Secure.ANDROID_ID);
-                String other = value.getString("AID");
-                if(!other.equals(AID) && !other.equals("")){
-                    Toast.makeText(MapsActivity.this, "تم تسجيل الدخول من جهاز اخر...", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(MapsActivity.this, MainActivity.class)
-                            .putExtra("exit", "1"));
-                    finish();
-                }
-            }
-        };
+//        EventListener<DocumentSnapshot> docsn = new EventListener<DocumentSnapshot>() {
+//            @Override
+//            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+//                String AID = Settings.Secure.getString(
+//                        getApplicationContext().getContentResolver(),
+//                        Settings.Secure.ANDROID_ID);
+//                String other = value.getString("AID");
+//                if(!other.equals(AID) && !other.equals("")){
+//                    Toast.makeText(MapsActivity.this, "تم تسجيل الدخول من جهاز اخر...", Toast.LENGTH_SHORT).show();
+//                    startActivity(new Intent(MapsActivity.this, MainActivity.class)
+//                            .putExtra("exit", "1"));
+//                    finish();
+//                }
+//            }
+//        };
 
         FirebaseFirestore.getInstance()
                 .collection("locations")
@@ -1137,13 +1141,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         });
-
-        String ud = UserInfo_sharedPreference.getUser(MapsActivity.this).uid;
-
-        FirebaseFirestore.getInstance()
-                .collection("Users")
-                .document(ud)
-                .addSnapshotListener(docsn);
 
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME,
                 LOCATION_REFRESH_DISTANCE, mLocationListener);
@@ -1187,10 +1184,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setZoomGesturesEnabled(true);
         mMap.getUiSettings().setCompassEnabled(true);
-//        try{
-//            mMap.setMyLocationEnabled(true);
-//        }
-//        catch (Exception ex){}
+        try{
+            mMap.setMyLocationEnabled(true);
+        }
+        catch (Exception ex){}
         mMap.setIndoorEnabled(true);
         mMap.setTrafficEnabled(true);
 

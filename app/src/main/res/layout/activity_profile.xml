@@ -37,16 +37,16 @@
         android:layout_below="@+id/welcome4"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
         android:layout_marginTop="15dp"
+        android:layout_marginRight="15dp"
         android:layout_marginBottom="15dp">
 
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentTop="true"
             android:id="@+id/lay"
-            android:layout_height="90dp">
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profile"
@@ -100,8 +100,8 @@
             android:layout_below="@+id/lay"
             android:layout_marginTop="15dp"
             android:background="@drawable/btn_back"
-            android:enabled="false"
             android:ems="10"
+            android:enabled="false"
             android:gravity="center"
             android:hint="رقم الهاتف"
             android:inputType="textPersonName"
@@ -115,9 +115,9 @@
             android:layout_height="40dp"
             android:layout_below="@+id/edtEmail"
             android:layout_marginTop="15dp"
-            android:enabled="false"
             android:background="@drawable/btn_back"
             android:ems="10"
+            android:enabled="false"
             android:gravity="center"
             android:hint="كلمة المرور"
             android:inputType="textPersonName"
@@ -130,16 +130,16 @@
             android:id="@+id/btnSave"
             android:layout_width="match_parent"
             android:layout_height="40dp"
+            android:layout_below="@+id/edtPassword"
+            android:layout_marginTop="15dp"
             android:background="@drawable/btn_back22"
             android:backgroundTint="@color/colorPrimary"
+            android:fontFamily="serif"
             android:onClick="onClickSave"
             android:text="حفظ"
-            android:textStyle="bold"
-            android:fontFamily="serif"
             android:textColor="@color/black"
-            android:layout_marginTop="15dp"
             android:textSize="18dp"
-            android:layout_below="@+id/edtPassword"
+            android:textStyle="bold"
             android:visibility="invisible" />
 
 

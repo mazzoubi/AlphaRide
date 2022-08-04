@@ -38,7 +38,7 @@ public class ContactUsActivity extends AppCompatActivity {
         openWhatsappContact("+962791720743");
     }
     void openWhatsappContact(String number) {
-        Uri uri = Uri.parse("https://api.whatsapp.com/send?phone=" + number + "&text=" + "مرحبا ");
+        Uri uri = Uri.parse("https://api.whatsapp.com/send?phone=" + number);
 
         Intent sendIntent = new Intent(Intent.ACTION_VIEW, uri);
 
