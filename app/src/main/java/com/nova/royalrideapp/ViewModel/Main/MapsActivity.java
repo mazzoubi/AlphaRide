@@ -24,6 +24,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
+import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
@@ -132,7 +133,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Drawable circleDrawable ;
     Polyline polyline;
 
-    EventListener<DocumentSnapshot> event, event2;
+    EventListener<DocumentSnapshot> event, event2, event3;
     Intent ser_int;
     Location loc;
     long StartedTripAt = 0;
@@ -234,38 +235,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 FirebaseFirestore.getInstance()
                         .collection("Users")
                         .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                        .addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                            @Override
-                            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                                String AID = Settings.Secure
-                                        .getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
-                                if(!AID.equals(value.getString("AID"))
-                                && !value.getString("AID").equals("")){
-
-                                    try{
-                                        FirebaseFirestore.getInstance()
-                                                .collection("Users")
-                                                .document(getSharedPreferences("User", Context.MODE_PRIVATE).getString("uid",""))
-                                                .update("token", "");
-                                    }
-                                    catch (Exception ex){}
-
-                                    try{
-                                        FirebaseFirestore.getInstance()
-                                                .collection("locations")
-                                                .document(getSharedPreferences("User", Context.MODE_PRIVATE).getString("uid",""))
-                                                .delete();
-                                    }
-                                    catch (Exception ex){}
-
-                                    try{
-                                        Toast.makeText(MapsActivity.this, "تم تسجيل الدخول من جهاز اخر", Toast.LENGTH_SHORT).show();
-                                        UserInfo_sharedPreference.logout(MapsActivity.this);
-                                    }
-                                    catch (Exception ex){}
-                                }
-                            }
-                        });
+                        .addSnapshotListener(event3);
             }
             catch (Exception ex){}
         }
@@ -1085,6 +1055,45 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         };
 
+        event3 = new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                String AID = Settings.Secure
+                        .getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+                if(!AID.equals(value.getString("AID"))
+                        && !value.getString("AID").equals("")){
+
+                    try{
+                        FirebaseFirestore.getInstance()
+                                .collection("Users")
+                                .document(getSharedPreferences("User", Context.MODE_PRIVATE).getString("uid",""))
+                                .update("token", "");
+                    }
+                    catch (Exception ex){}
+
+                    try{
+                        FirebaseFirestore.getInstance()
+                                .collection("locations")
+                                .document(getSharedPreferences("User", Context.MODE_PRIVATE).getString("uid",""))
+                                .delete();
+                    }
+                    catch (Exception ex){}
+
+                    try{
+                        FirebaseFirestore.getInstance()
+                                .collection("Users")
+                                .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                .addSnapshotListener(event3).remove();
+                    }
+                    catch (Exception ex){}
+
+                    try{
+                        UserInfo_sharedPreference.logout(MapsActivity.this);
+                    }
+                    catch (Exception ex){}
+                }
+            }
+        };
         ser_int = new Intent(getApplicationContext(), SimpleService.class);
 
         EventListener<DocumentSnapshot> docsn = new EventListener<DocumentSnapshot>() {
@@ -1146,23 +1155,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setZoomGesturesEnabled(true);
         mMap.getUiSettings().setCompassEnabled(true);
-        try{
-            mMap.setMyLocationEnabled(true);
-        }
-        catch (Exception ex){}
+//        try{
+//            mMap.setMyLocationEnabled(true);
+//        }
+//        catch (Exception ex){}
         mMap.setIndoorEnabled(true);
         mMap.setTrafficEnabled(true);
 
-//        mMap.clear();
-//        markerLat = loc.getLatitude();
-//        markerLng = loc.getLongitude();
-//        BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
-//
-//        LatLng l =new LatLng(loc.getLatitude(), loc.getLongitude());
-//        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(l,15.0f));
-//        mMap.addMarker(new MarkerOptions()
-//                .position(new LatLng(loc.getLatitude(), loc.getLongitude()))
-//                .icon(markerIcon));
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        String provider = locationManager.getBestProvider(criteria, true);
+        Location location = locationManager.getLastKnownLocation(provider);
+        if(loc == null && location != null){
+            loc = location;
+            markerLat = loc.getLatitude();
+            markerLng = loc.getLongitude();
+            BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
+
+            LatLng l =new LatLng(loc.getLatitude(), loc.getLongitude());
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(l,15.0f));
+            mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(loc.getLatitude(), loc.getLongitude()))
+                    .icon(markerIcon));
+        }
 
         toggleButton = findViewById(R.id.toggleButton);
         txvAccountState = findViewById(R.id.textView10);
@@ -1260,12 +1275,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         setNavView();
         getUserInfo();
+
+        FirebaseFirestore.getInstance()
+                .collection("locations")
+                .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                String iduser = "";
+                try{
+                    iduser = documentSnapshot.getString("idUser");
+                } catch (Exception ex){}
+
+                if(iduser != null && !iduser.equals("")){
+                    toggleButton.setChecked(true);
+                    InTrip = false;
+                    isConnected = true;
+                }
+
+            }
+        });
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                try{progressDialog.dismiss();}catch (Exception ex){}
+                try{
+                    if(loc != null || location != null){
+                        progressDialog.dismiss();
+                    }
+                    else
+                        onMapReady(mMap);
+                }
+                catch (Exception ex){}
             }
-        }, 5000);
+        }, 3000);
     }
 
     void setNavView(){
@@ -1495,7 +1538,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 map.put("position", mini_map);
 
                 try{
-                    FirebaseFirestore.getInstance()//findme
+                    FirebaseFirestore.getInstance()
                             .collection("locations")
                             .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
                             .set(map);
@@ -1564,6 +1607,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 list.add(list2.get(i));
 
                         if(list.size() > 0){
+
+                            circleDrawable = getResources().getDrawable(R.drawable.ccc);
 
                             MyTripsModel obj = list.get(list.size()-1).toObject(MyTripsModel.class);
 
@@ -2841,32 +2886,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 });
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        try{
-                            FirebaseFirestore.getInstance()
-                                    .collection("locations")
-                                    .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                                    .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                @Override
-                                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                    String iduser = "";
-                                    try{
-                                        iduser = documentSnapshot.getString("idUser");
-                                    } catch (Exception ex){}
-
-                                    if(iduser != null && !iduser.equals("")){
-                                        toggleButton.setChecked(true);
-                                        InTrip = false;
-                                        isConnected = true;
-                                    }
-
-                                }
-                            });
-                        } catch (Exception ex){}
-                    }
-                }, 3000);
             }
 
         }
