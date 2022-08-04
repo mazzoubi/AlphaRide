@@ -120,8 +120,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     GoogleApiClient mGoogleApiClient;
 
-    int LOCATION_REFRESH_TIME = 0; // 15 seconds to update
-    int LOCATION_REFRESH_DISTANCE = 0; // 500 meters to update
+    int LOCATION_REFRESH_TIME = 1; // 15 seconds to update
+    int LOCATION_REFRESH_DISTANCE = 1; // 500 meters to update
     LocationManager mLocationManager;
 
     ToggleButton toggleButton ;
@@ -173,7 +173,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         progressDialog.setTitle("النظام...");
         progressDialog.setMessage("الرجاء الإنتظار...");
         progressDialog.setCancelable(false);
-        try{progressDialog.show();}
+        try{
+            if(!progressDialog.isShowing())
+                progressDialog.show();
+        }
         catch (Exception ex){}
 
         FirebaseFirestore.getInstance().collection("BlockUsers")
@@ -222,8 +225,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             return;
         }
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME,
-                LOCATION_REFRESH_DISTANCE, mLocationListener);
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
@@ -1079,13 +1080,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                     catch (Exception ex){}
 
-                    try{
-                        FirebaseFirestore.getInstance()
-                                .collection("Users")
-                                .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                                .addSnapshotListener(event3).remove();
-                    }
-                    catch (Exception ex){}
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            try{
+                                FirebaseFirestore.getInstance()
+                                        .collection("Users")
+                                        .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                        .addSnapshotListener(event3).remove();
+                            }
+                            catch (Exception ex){}
+                        }
+                    }, 4000);
 
                     try{
                         UserInfo_sharedPreference.logout(MapsActivity.this);
@@ -1104,6 +1110,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         Settings.Secure.ANDROID_ID);
                 String other = value.getString("AID");
                 if(!other.equals(AID) && !other.equals("")){
+                    Toast.makeText(MapsActivity.this, "تم تسجيل الدخول من جهاز اخر...", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(MapsActivity.this, MainActivity.class)
                             .putExtra("exit", "1"));
                     finish();
@@ -1112,9 +1119,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         };
 
         FirebaseFirestore.getInstance()
-                .collection("Users")
+                .collection("locations")
                 .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                String iduser = "";
+                try{
+                    iduser = documentSnapshot.getString("idUser");
+                } catch (Exception ex){}
+
+                if(iduser != null && !iduser.equals("")){
+                    toggleButton.setChecked(true);
+                    InTrip = false;
+                    isConnected = true;
+                }
+
+            }
+        });
+
+        String ud = UserInfo_sharedPreference.getUser(MapsActivity.this).uid;
+
+        FirebaseFirestore.getInstance()
+                .collection("Users")
+                .document(ud)
                 .addSnapshotListener(docsn);
+
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME,
+                LOCATION_REFRESH_DISTANCE, mLocationListener);
 
     }
 
@@ -1276,26 +1308,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setNavView();
         getUserInfo();
 
-        FirebaseFirestore.getInstance()
-                .collection("locations")
-                .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                String iduser = "";
-                try{
-                    iduser = documentSnapshot.getString("idUser");
-                } catch (Exception ex){}
-
-                if(iduser != null && !iduser.equals("")){
-                    toggleButton.setChecked(true);
-                    InTrip = false;
-                    isConnected = true;
-                }
-
-            }
-        });
-
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -1308,7 +1320,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
                 catch (Exception ex){}
             }
-        }, 3000);
+        }, 5000);
     }
 
     void setNavView(){
@@ -3039,4 +3051,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    @Override
+    protected void onDestroy() {
+        try{
+            progressDialog.dismiss();
+        }
+        catch (Exception ex){}
+        super.onDestroy();
+    }
 }
