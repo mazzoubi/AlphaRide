@@ -41,6 +41,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -110,6 +111,8 @@ import com.nova.royalrideapp.ViewModel.Users.ui.MyTripsActivity;
 import com.nova.royalrideapp.ViewModel.Users.ui.ProfileActivity;
 import com.nova.royalrideapp.ViewModel.Wallet.ui.WalletActivity;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
     public DrawerLayout drawerLayout;
@@ -158,6 +161,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(binding.getRoot());
+
+        CheckForAppVersion();
+        updateToken();
 
         mp = new MediaPlayer();
         Uri mediaPath = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.carhorn);
@@ -256,7 +262,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         lp.copyFrom(dialog.getWindow().getAttributes());
         lp.width = WindowManager.LayoutParams.MATCH_PARENT;
         lp.height = Math.round(TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, 400, getResources().getDisplayMetrics()));
+                TypedValue.COMPLEX_UNIT_DIP, 440, getResources().getDisplayMetrics()));
         dialog.getWindow().setAttributes(lp);
         dialog.setCancelable(false);
 
@@ -346,6 +352,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     mp.pause();
                                     mp.seekTo(0);
                                 } catch (Exception ex){}
+                                try{
+                                    cd2.cancel();
+                                } catch (Exception ex){}
                             }
                         });
 
@@ -375,6 +384,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                 .collection("driverRequests")
                                                 .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
                                                 .delete();
+                                        try{
+                                            cd2.cancel();
+                                        } catch (Exception ex){}
                                     }
                                 });
                                 d.setNegativeButton("الغاء", new DialogInterface.OnClickListener() {
@@ -1026,6 +1038,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             mp.pause();
                             mp.seekTo(0);
                         } catch (Exception ex){}
+                        try{
+                            cd2.cancel();
+                        } catch (Exception ex){}
                         dialog.dismiss();
                     }
                 }
@@ -1532,7 +1547,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
 
             if(isConnected){
-                updateToken();
                 Map<String, Object> map = new HashMap<>();
                 Map<String, Object> mini_map = new HashMap<>();
                 String geohash = GeoFireUtils.getGeoHashForLocation(new GeoLocation(location.getLatitude(), location.getLongitude()));
@@ -3056,4 +3070,64 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         catch (Exception ex){}
         super.onDestroy();
     }
+
+    private void CheckForAppVersion() {
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("AdminDataConfig")
+                .document("Data")
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                try {
+                    final String url = documentSnapshot.get("DownloadLink").toString();
+                    String ver = documentSnapshot.get("Version").toString();
+                    String ver2 = MapsActivity.this.getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+
+                    if(!ver.equals(ver2)){
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+                        LayoutInflater inflater = MapsActivity.this.getLayoutInflater();
+                        builder.setView(inflater.inflate(R.layout.dialog_info15, null));
+                        final AlertDialog dialog = builder.create();
+                        ((FrameLayout) dialog.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                        lp.copyFrom(dialog.getWindow().getAttributes());
+                        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+                        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+                        dialog.show();
+                        dialog.getWindow().setAttributes(lp);
+                        dialog.setCanceledOnTouchOutside(false);
+                        dialog.setCancelable(false);
+
+                        CircleImageView im = dialog.findViewById(R.id.im);
+                        im.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                MapsActivity.this.finish();
+                                finishAffinity();
+                                dialog.dismiss();
+                            }
+                        });
+                        Button btn = dialog.findViewById(R.id.btn2);
+                        btn.setText("تحميل اخر إصدار");
+                        btn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+
+                            }
+                        });
+                    }
+                } catch (PackageManager.NameNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
+    }
+
 }
