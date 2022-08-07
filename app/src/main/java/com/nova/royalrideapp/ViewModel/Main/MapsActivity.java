@@ -1591,10 +1591,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             .collection("locations")
                             .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
                             .delete();
-                    FirebaseFirestore.getInstance()
-                            .collection("Users")
-                            .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                            .update("token", "");
+//                    FirebaseFirestore.getInstance()
+//                            .collection("Users")
+//                            .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+//                            .update("token", "");
                 } }
 
             if(FirstOpen){
