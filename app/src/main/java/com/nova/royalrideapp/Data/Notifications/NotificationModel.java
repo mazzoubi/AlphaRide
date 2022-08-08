@@ -4,10 +4,11 @@ import androidx.annotation.Keep;
 
 import com.google.firebase.firestore.PropertyName;
 
+import java.util.Comparator;
 import java.util.Date;
 
 @Keep
-public class NotificationModel {
+public class NotificationModel implements Comparator<NotificationModel>{
 
     @PropertyName("uid")
     public String uid = "" ;
@@ -22,4 +23,14 @@ public class NotificationModel {
      @PropertyName("typeUser")
     public String typeUser= "" ;
 
+     public long id = 0;
+
+    @Override
+    public int compare(NotificationModel t1, NotificationModel t2) {
+
+        if(t1.id == t2.id) return 0;
+        else if (t1.id > t2.id) return 1;
+        else return -1;
+
+    }
 }

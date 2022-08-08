@@ -153,6 +153,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     ProgressDialog progressDialog;
     String TripObjTid = "";
     boolean FirstOpen = true;
+    Criteria locationCritera;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -223,8 +224,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -1157,8 +1156,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME,
                 LOCATION_REFRESH_DISTANCE, mLocationListener);
+
+        locationCritera = new Criteria();
+        locationCritera.setAccuracy(Criteria.ACCURACY_FINE);
+        locationCritera.setAltitudeRequired(false);
+        locationCritera.setCostAllowed(true);
+        locationCritera.setPowerRequirement(Criteria.NO_REQUIREMENT);
 
     }
 
@@ -1206,10 +1212,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setIndoorEnabled(true);
         mMap.setTrafficEnabled(true);
 
-        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        String provider = locationManager.getBestProvider(criteria, true);
-        Location location = locationManager.getLastKnownLocation(provider);
+        String providerName = mLocationManager.getBestProvider(locationCritera, true);
+        Location location  = mLocationManager.getLastKnownLocation(providerName);
+
         if(loc == null && location != null){
             loc = location;
             markerLat = loc.getLatitude();
@@ -1233,6 +1238,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 isConnected = b;
                 if (b){
+
+                    String providerName = mLocationManager.getBestProvider(locationCritera, true);
+                    Location location  = mLocationManager.getLastKnownLocation(providerName);
+
+                    if(location != null){
+                        Map<String, Object> map = new HashMap<>();
+                        Map<String, Object> mini_map = new HashMap<>();
+                        String geohash = GeoFireUtils.getGeoHashForLocation(new GeoLocation(location.getLatitude(), location.getLongitude()));
+                        GeoPoint geopoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+
+                        mini_map.put("geohash", geohash);
+                        mini_map.put("geopoint", geopoint);
+
+                        if(!InTrip) map.put("available",true);
+                        else map.put("available",false);
+                        map.put("idUser", UserInfo_sharedPreference.getUser(MapsActivity.this).uid);
+                        map.put("position", mini_map);
+
+                        try{
+                            FirebaseFirestore.getInstance()
+                                    .collection("locations")
+                                    .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                    .set(map);
+                        }
+                        catch (Exception ex){}
+                    }
 
                     if (UserInfo_sharedPreference.getUser(MapsActivity.this).balance<=0){
                         AlertDialog.Builder builder= new AlertDialog.Builder(MapsActivity.this);
