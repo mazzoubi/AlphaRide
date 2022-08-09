@@ -3,6 +3,7 @@ package com.nova.royalrideapp.ViewModel.Main;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -10,6 +11,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.nova.royalrideapp.R;
 public class ContactUsActivity extends AppCompatActivity {
 
@@ -35,13 +39,20 @@ public class ContactUsActivity extends AppCompatActivity {
 
     public void onClickLiveChat(View view) {
 //        startActivity(new Intent(getApplicationContext(),LiveChatActivity.class));
-        openWhatsappContact("+962791720743");
+        openWhatsappContact();
     }
-    void openWhatsappContact(String number) {
-        Uri uri = Uri.parse("https://api.whatsapp.com/send?phone=" + number);
+    void openWhatsappContact() {
 
-        Intent sendIntent = new Intent(Intent.ACTION_VIEW, uri);
-
-        ContactUsActivity.this.startActivity(sendIntent);
+        FirebaseFirestore.getInstance()
+                .collection("AdminDataConfig")
+                .document("Data")
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                Uri uri = Uri.parse("https://api.whatsapp.com/send?phone=" + documentSnapshot.getString("SupportMobile"));
+                Intent sendIntent = new Intent(Intent.ACTION_VIEW, uri);
+                ContactUsActivity.this.startActivity(sendIntent);
+            }
+        });
     }
 }

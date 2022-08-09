@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -154,11 +155,17 @@ public class WalletActivity extends AppCompatActivity {
 
     public void press(View view) {
 
-        Uri uri = Uri.parse("https://api.whatsapp.com/send?phone=+962791720743");
-
-        Intent sendIntent = new Intent(Intent.ACTION_VIEW, uri);
-
-        WalletActivity.this.startActivity(sendIntent);
+        FirebaseFirestore.getInstance()
+                .collection("AdminDataConfig")
+                .document("Data")
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                Uri uri = Uri.parse("https://api.whatsapp.com/send?phone=" + documentSnapshot.getString("SupportMobile"));
+                Intent sendIntent = new Intent(Intent.ACTION_VIEW, uri);
+                WalletActivity.this.startActivity(sendIntent);
+            }
+        });
 
     }
 }

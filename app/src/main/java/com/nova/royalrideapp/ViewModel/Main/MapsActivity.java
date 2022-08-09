@@ -1255,6 +1255,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         else map.put("available",false);
                         map.put("idUser", UserInfo_sharedPreference.getUser(MapsActivity.this).uid);
                         map.put("position", mini_map);
+                        map.put("timems", System.currentTimeMillis());
 
                         try{
                             FirebaseFirestore.getInstance()
@@ -1590,6 +1591,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 else map.put("available",false);
                 map.put("idUser", UserInfo_sharedPreference.getUser(MapsActivity.this).uid);
                 map.put("position", mini_map);
+                map.put("timems", System.currentTimeMillis());
 
                 try{
                     FirebaseFirestore.getInstance()
@@ -3016,7 +3018,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             JSONObject notificationObj = new JSONObject();
             notificationObj.put("title", "تطبيق رويال رايد");
             notificationObj.put("body", note);
-            json.put("notification", notificationObj);
+            json.put("data", notificationObj);
 
             String URL = "https://fcm.googleapis.com/fcm/send";
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL,

@@ -36,10 +36,6 @@
             android:name="com.nova.royalrideapp.RequestUserPermissions"
             android:exported="false" />
 
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
-
         <activity
             android:name="com.nova.royalrideapp.ViewModel.Users.ui.TripInfoWithMapActivity"
             android:exported="true"
@@ -118,6 +114,12 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="1234" />
 
         <service android:name="com.nova.royalrideapp.SimpleService" />
     </application>
