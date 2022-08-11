@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="400dp"
+    android:layout_height="480dp"
     android:background="@drawable/background2">
 
     <TextView
@@ -38,7 +38,7 @@
         app:cardCornerRadius="10dp"
         android:layout_marginLeft="25dp"
         android:elevation="15dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="15dp"
         android:layout_marginRight="25dp"
         android:layout_below="@+id/welcome4"
         android:layout_height="60dp">
@@ -64,8 +64,52 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:layout_toLeftOf="@+id/person"
+                android:text="---"
                 android:fontFamily="serif"
                 android:gravity="center"
+                android:textColor="@color/black"
+                android:textSize="18dp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:id="@+id/card5"
+        app:cardCornerRadius="10dp"
+        android:layout_marginLeft="25dp"
+        android:elevation="15dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="25dp"
+        android:layout_below="@+id/card1"
+        android:layout_height="60dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:background="@color/colorPrimaryDark"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/rate"
+                android:layout_marginRight="5dp"
+                android:id="@+id/rate"
+                android:layout_height="match_parent"
+                app:tint="@color/black" />
+
+            <TextView
+                android:id="@+id/rarate"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_toLeftOf="@+id/rate"
+                android:fontFamily="serif"
+                android:gravity="center"
+                android:text="جاري الإحتساب.."
                 android:textColor="@color/black"
                 android:textSize="18dp"
                 android:textStyle="bold" />
@@ -80,9 +124,9 @@
         app:cardCornerRadius="10dp"
         android:layout_marginLeft="25dp"
         android:elevation="15dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="5dp"
         android:layout_marginRight="25dp"
-        android:layout_below="@+id/card1"
+        android:layout_below="@+id/card5"
         android:layout_height="60dp">
 
         <RelativeLayout
@@ -107,7 +151,51 @@
                 android:layout_marginRight="5dp"
                 android:layout_toLeftOf="@+id/loc"
                 android:fontFamily="serif"
+                android:text="---"
                 android:gravity="center"
+                android:textColor="@color/black"
+                android:textSize="18dp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:id="@+id/card6"
+        app:cardCornerRadius="10dp"
+        android:layout_marginLeft="25dp"
+        android:elevation="15dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="25dp"
+        android:layout_below="@+id/card4"
+        android:layout_height="60dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:background="@color/colorPrimaryDark"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/distance"
+                android:layout_marginRight="5dp"
+                android:id="@+id/dista"
+                android:layout_height="match_parent"
+                app:tint="@color/black" />
+
+            <TextView
+                android:id="@+id/distatxt"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_toLeftOf="@+id/dista"
+                android:fontFamily="serif"
+                android:gravity="center"
+                android:text="جاري الإحتساب.."
                 android:textColor="@color/black"
                 android:textSize="18dp"
                 android:textStyle="bold" />
@@ -122,7 +210,7 @@
         app:cardCornerRadius="10dp"
         android:layout_marginLeft="25dp"
         android:elevation="15dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="5dp"
         android:layout_marginRight="25dp"
         android:layout_below="@+id/card3"
         android:layout_height="60dp">
@@ -150,6 +238,7 @@
                 android:layout_toLeftOf="@+id/disc"
                 android:fontFamily="serif"
                 android:gravity="center"
+                android:text="---"
                 android:textColor="@color/black"
                 android:textSize="18dp"
                 android:textStyle="bold" />
@@ -162,9 +251,9 @@
         android:id="@+id/lin3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/card4"
+        android:layout_below="@+id/card6"
         android:layout_marginLeft="25dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="15dp"
         android:layout_marginRight="25dp"
         android:gravity="center"
         android:orientation="horizontal"

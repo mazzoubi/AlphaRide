@@ -99,6 +99,7 @@ import java.util.TimerTask;
 import com.nova.royalrideapp.ClassDate;
 import com.nova.royalrideapp.Data.Users.UserInfo_sharedPreference;
 import com.nova.royalrideapp.Data.Users.UserModel;
+import com.nova.royalrideapp.MyBackgroundService;
 import com.nova.royalrideapp.R;
 import com.nova.royalrideapp.databinding.ActivityMapsBinding;
 
@@ -140,6 +141,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Intent ser_int;
     Location loc;
     long StartedTripAt = 0;
+    long StartedTripAt2 = 0;
     ArrayList<Location> TripDistanceCalc;
 
     int dialog_count = 0;
@@ -154,6 +156,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     String TripObjTid = "";
     boolean FirstOpen = true;
     Criteria locationCritera;
+    String OldDistance = "0";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -261,7 +264,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         lp.copyFrom(dialog.getWindow().getAttributes());
         lp.width = WindowManager.LayoutParams.MATCH_PARENT;
         lp.height = Math.round(TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, 440, getResources().getDisplayMetrics()));
+                TypedValue.COMPLEX_UNIT_DIP, 500, getResources().getDisplayMetrics()));
         dialog.getWindow().setAttributes(lp);
         dialog.setCancelable(false);
 
@@ -288,6 +291,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         final TextView t4 = dialog.findViewById(R.id.txvColor);
                         final TextView t5 = dialog.findViewById(R.id.textView11);
                         final TextView t6 = dialog.findViewById(R.id.textView7);
+                        final TextView t7 = dialog.findViewById(R.id.rarate);
+                        final TextView t8 = dialog.findViewById(R.id.distatxt);
                         final ImageView close = dialog.findViewById(R.id.close);
 
                         cd2 = new CountDownTimer(17000, 1000) {
@@ -402,6 +407,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             @Override
                             public void onClick(View view) {
                                 InTrip = true;
+
                                 try{
                                     mp.pause();
                                     mp.seekTo(0);
@@ -662,6 +668,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                         }, 1000, 1000);
                                                                     }
                                                                     catch (Exception ex){}
+
+                                                                    //here
 
                                                                     arrive.setText("إنهاء الرحلة");
                                                                     StartedTripAt = System.currentTimeMillis();
@@ -1017,9 +1025,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         });
 
                         try{
-                            t1.setText("إسم الراكب : "+value.getString("nameCustomer"));
+                            t1.setText("الراكب : "+value.getString("nameCustomer"));
                             t3.setText("خصم الرحلة : "+value.get("discount").toString());
                             t4.setText("مرجع الخريطة : "+value.getString("currentAddress"));
+
+                            FirebaseFirestore.getInstance()
+                                    .collection("Users")
+                                    .document(value.getString("idCustomer"))
+                                    .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                    Geocoder coder = new Geocoder(MapsActivity.this);
+                                    double flng = 0;
+                                    double flat = 0;
+                                    try {
+                                        ArrayList<Address> adresses = (ArrayList<Address>) coder.getFromLocationName(value.getString("currentAddress"), 1);
+                                        for(Address add : adresses){
+                                            flng = add.getLongitude();
+                                            flat = add.getLatitude();
+                                        }
+                                    }
+                                    catch (Exception e) {}
+
+                                    try{
+                                        double rate1 = Double.parseDouble(documentSnapshot.get("rating").toString());
+                                        double rate2 = Double.parseDouble(documentSnapshot.get("countRating").toString());
+                                        double fdista = GetDistanceFromLatLonInKm(loc.getLatitude(), loc.getLongitude(), flat, flng);
+                                        t7.setText("تقييم الراكب: "+ String.format("%.3f", (rate1/rate2)));
+                                        t8.setText("يبعد الراكب عنك: "+String.format("%.3f", fdista) + " Km");
+                                    }
+                                    catch (Exception ex){
+                                        Toast.makeText(MapsActivity.this, "", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
 
                         } catch (Exception ex){}
 
@@ -1166,6 +1206,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         locationCritera.setCostAllowed(true);
         locationCritera.setPowerRequirement(Criteria.NO_REQUIREMENT);
 
+        CheckBalance();
+
+    }
+
+    private void CheckBalance(){
+        if (UserInfo_sharedPreference.getUser(MapsActivity.this).balance<=0){
+            AlertDialog.Builder builder= new AlertDialog.Builder(MapsActivity.this);
+            builder.setTitle("رويال رايد");
+            builder.setMessage("لا تمتلك رصيد كافي لاستقبال طلبات, يرجى الشحن لفك حجز الحساب");
+            builder.setPositiveButton("شحن", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    startActivity(new Intent(getApplicationContext(),WalletActivity.class));
+                }
+            });
+            builder.setNegativeButton("الغاء", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                }
+            });
+            builder.setCancelable(false);
+            builder.show();
+        }
     }
 
     private void DrawPolyLine() {
@@ -1393,7 +1457,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                         String Event = value.getString("Event");
                         try {
-                            Glide.with(getApplicationContext()).load(Event).into(nav_imageView);
+                            Glide.with(getApplicationContext()).load(Event.split("!!!")[0]).into(nav_imageView);
+                            nav_imageView.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Event.split("!!!")[1])));
+                                }
+                            });
                         }catch (Exception e){}
                     }
                 });
@@ -1570,12 +1640,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             if(StartedTripAt != 0 && InTrip){
                 TripDistanceCalc.add(loc);
-                BigDecimal TripDistance = new BigDecimal("0");
+                BigDecimal TripDistance = new BigDecimal(OldDistance);
                 for(int i=0; i<TripDistanceCalc.size()-1; i++)
                     TripDistance = TripDistance.add(new BigDecimal(GetDistanceFromLatLonInKm(
                             TripDistanceCalc.get(i).getLatitude(), TripDistanceCalc.get(i).getLongitude(),
                             TripDistanceCalc.get(i+1).getLatitude(), TripDistanceCalc.get(i+1).getLongitude())));
                 k.setText(String.format(Locale.ENGLISH,"%.3f", TripDistance.doubleValue())+" Km");
+
+                Map<String, Object> calc_map = new HashMap<>();
+                calc_map.put("km", TripDistance.doubleValue());
+
+                FirebaseFirestore.getInstance()
+                        .collection("Trips")
+                        .document(TripObjTid+"")
+                        .update(calc_map);
+
             }
 
             if(isConnected){
@@ -1922,7 +2001,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                 @Override
                                                                 public void onClick(DialogInterface dialogInterface, int i) {
                                                                     {
-
                                                                         FirebaseFirestore.getInstance()
                                                                                 .collection("Users")
                                                                                 .document(obj.idCustomer)
@@ -2244,6 +2322,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 k.setText("0.000 Km");
                                 m.setText("00:00:00");
 
+                                StartedTripAt = obj.tripsid;
+                                OldDistance = obj.km+"";
+                                long spent_time = (System.currentTimeMillis() - StartedTripAt)/1000;
+
+                                try{
+                                    Thour =  Integer.parseInt((spent_time/3600)+"");
+                                    spent_time -= Integer.parseInt((Thour*3600)+"");
+                                } catch (Exception ex){Thour = 0;}
+
+                                try{
+                                    Tmin = Integer.parseInt((spent_time/60)+"");
+                                    spent_time -= Integer.parseInt((Tmin*60)+"");
+                                } catch (Exception ex){Tmin = 0;}
+
+                                try{ Tsec =  Integer.parseInt(spent_time+""); } catch (Exception ex){Tmin = 0;}
+
                                 try{
                                     timer = new Timer();
                                     timer.schedule(new TimerTask() {
@@ -2254,7 +2348,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                 @Override
                                                 public void run()
                                                 {
-                                                    Tsec += 1;
+                                                    Tsec += 1;//here1
                                                     String hour_msg = "0"+Thour+":";
                                                     String hour_msg2 = Thour+":";
                                                     String min_msg = "0"+Tmin+":";
@@ -2352,7 +2446,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 });
 
                                 arrive.setText("إنهاء الرحلة");
-                                StartedTripAt = obj.tripsid;
                                 TripDistanceCalc = new ArrayList<>();
                                 k.setText("0.0 Km");
                                 canc.setText("إلغاء");
@@ -2372,7 +2465,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                 @Override
                                                 public void onClick(DialogInterface dialogInterface, int i) {
                                                     {
-
                                                         FirebaseFirestore.getInstance()
                                                                 .collection("Users")
                                                                 .document(obj.idCustomer)
@@ -2392,7 +2484,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                         Tmin = 0;
                                                         Thour = 0;
                                                         m.setText("00:00:00");
-
+                                                        OldDistance = "0";
                                                         progressDialogLoad.show();
 
                                                         FirebaseFirestore.getInstance()
@@ -3070,32 +3162,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if (UserInfo_sharedPreference.getUser(MapsActivity.this).balance<=0){
-            AlertDialog.Builder builder= new AlertDialog.Builder(MapsActivity.this);
-            builder.setTitle("رويال رايد");
-            builder.setMessage("لا تمتلك رصيد كافي لاستقبال طلبات, يرجى الشحن لفك حجز الحساب");
-            builder.setPositiveButton("شحن", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    startActivity(new Intent(getApplicationContext(),WalletActivity.class));
-                }
-            });
-            builder.setNegativeButton("الغاء", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-
-                }
-            });
-            builder.setCancelable(false);
-            builder.show();
-        }
-
-
-    }
-
-    @Override
     protected void onDestroy() {
         try{
             progressDialog.dismiss();
@@ -3162,5 +3228,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
     }
+
+//    @RequiresApi(api = Build.VERSION_CODES.O)
+//    @Override
+//    public void onTrimMemory(int level) {
+//        super.onTrimMemory(level);
+//
+//        startService(new Intent(getApplicationContext(), MyBackgroundService.class));
+//
+//    }
+
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//
+//        stopService(new Intent(MapsActivity.this, MyBackgroundService.class));
+//
+//    }
 
 }

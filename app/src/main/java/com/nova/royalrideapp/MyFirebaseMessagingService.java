@@ -8,6 +8,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
@@ -49,30 +50,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         editor.putString("new_token", "yes");
         editor.apply(); }
 
-    public void showNotification(String heading, String description){
-
-        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 1,
-                new Intent(getApplicationContext(), MapsActivity.class),
-                PendingIntent.FLAG_ONE_SHOT);
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-
-        Uri sound = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.carhorn);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(),"channelID")
-                .setSmallIcon(R.drawable.logo5)
-                .setContentTitle(heading)
-                .setAutoCancel(true)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(description))
-                .setSound(sound)
-                .setContentIntent(pendingIntent);
-
-        NotificationManager notificationManager = (NotificationManager)getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        createChannel(notificationManager);
-
-        notificationManager.notify(2, notificationBuilder.build());
-
-
-    }
-
     public void showNotification2(String heading, String description){
 
         final MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.carhorn);
@@ -101,28 +78,20 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 mNotificationManager.createNotificationChannel( mChannel );
             }
         }
+
         NotificationCompat.Builder status = new NotificationCompat.Builder(getApplicationContext(),CHANNEL_ID);
         status.setAutoCancel(true)
                 .setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.drawable.logo)
-                //.setOnlyAlertOnce(true)
-                .setContentTitle(getString(R.string.app_name))
+                .setContentTitle(heading)
                 .setContentText(description)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(description))
                 .setVibrate(new long[]{0, 500, 1000})
                 .setDefaults(Notification.DEFAULT_LIGHTS )
                 .setSound(Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE+ "://" +getApplicationContext().getPackageName()+"/"+R.raw.carhorn))
                 .setContentIntent(pendingIntent);
 
-        mNotificationManager.notify(123, status.build());
+        mNotificationManager.notify(1234, status.build());
 
-    }
-
-    public void createChannel(NotificationManager notificationManager){
-        if (Build.VERSION.SDK_INT < 26) {
-            return;
-        }
-        NotificationChannel channel = new NotificationChannel("channelID","name", NotificationManager.IMPORTANCE_HIGH);
-        channel.setDescription("Description");
-        notificationManager.createNotificationChannel(channel);
     }
 }

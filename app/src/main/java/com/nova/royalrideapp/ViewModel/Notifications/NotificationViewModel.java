@@ -30,6 +30,8 @@ public class NotificationViewModel extends ViewModel {
 
         FirebaseFirestore.getInstance()
                 .collection(notificationsCollection)
+                .whereEqualTo("typeUser", "TypeAccount.driver")
+                .whereNotEqualTo("body", "لقد تم الموافقه على طلبك بنجاح")
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
