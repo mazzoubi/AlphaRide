@@ -166,6 +166,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(binding.getRoot());
 
+        toggleButton = findViewById(R.id.toggleButton);
+
+        locationCritera = new Criteria();
+        locationCritera.setAccuracy(Criteria.ACCURACY_FINE);
+        locationCritera.setAltitudeRequired(false);
+        locationCritera.setCostAllowed(true);
+        locationCritera.setPowerRequirement(Criteria.NO_REQUIREMENT);
+
+        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME,
+                LOCATION_REFRESH_DISTANCE, mLocationListener);
+
         CheckForAppVersion();
         updateToken();
 
@@ -317,18 +329,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             @Override
                             public void onClick(View view) {
 
-                                Geocoder coder = new Geocoder(MapsActivity.this);
-                                double lng = 0;
-                                double lat = 0;
-                                try {
-                                    ArrayList<Address> adresses = (ArrayList<Address>) coder.getFromLocationName(value.getString("currentAddress"), 1);
-                                    for(Address add : adresses){
-                                        lng = add.getLongitude();
-                                        lat = add.getLatitude();
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
+//                                Geocoder coder = new Geocoder(MapsActivity.this);
+                                double lng = Double.parseDouble(value.get("lng").toString());
+                                double lat = Double.parseDouble(value.get("lat").toString());
+//                                try {
+//                                    ArrayList<Address> adresses = (ArrayList<Address>) coder.getFromLocationName(value.getString("currentAddress"), 1);
+//                                    for(Address add : adresses){
+//                                        lng = add.getLongitude();
+//                                        lat = add.getLatitude();
+//                                    }
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
 
                                 Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
                                         Uri.parse("http://maps.google.com/maps?saddr="+
@@ -749,7 +761,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                         final TextView t4 = dialog2.findViewById(R.id.textView11);
                                                                                         final TextView t5 = dialog2.findViewById(R.id.txvNo5);
 
-                                                                                        BigDecimal TripDistance = new BigDecimal("0");
+                                                                                        BigDecimal TripDistance = new BigDecimal(OldDistance);
                                                                                         for(int i=0; i<TripDistanceCalc.size()-1; i++){
 
                                                                                             TripDistance = TripDistance.add(new BigDecimal(GetDistanceFromLatLonInKm(
@@ -872,6 +884,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                             public void onSuccess(DocumentSnapshot documentSnapshot) {
                                                                                                                 SendNoti("عميلنا العزيز شكرا لاستخدامكم تطبيق رويال رايد, نتمنى لك يوما سعيدا", documentSnapshot.getString("token"));
                                                                                                                 toggleButton.setChecked(true);
+                                                                                                                OldDistance = "0";
                                                                                                             }
                                                                                                         });
 
@@ -1027,7 +1040,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         try{
                             t1.setText("الراكب : "+value.getString("nameCustomer"));
                             t3.setText("خصم الرحلة : "+value.get("discount").toString());
-                            t4.setText("مرجع الخريطة : "+value.getString("currentAddress"));
+//                            t4.setText("مرجع الخريطة : "+value.getString("currentAddress"));
 
                             FirebaseFirestore.getInstance()
                                     .collection("Users")
@@ -1036,17 +1049,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 @Override
                                 public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                                    Geocoder coder = new Geocoder(MapsActivity.this);
-                                    double flng = 0;
-                                    double flat = 0;
-                                    try {
-                                        ArrayList<Address> adresses = (ArrayList<Address>) coder.getFromLocationName(value.getString("currentAddress"), 1);
-                                        for(Address add : adresses){
-                                            flng = add.getLongitude();
-                                            flat = add.getLatitude();
-                                        }
-                                    }
-                                    catch (Exception e) {}
+                                    double flng = Double.parseDouble(value.get("lng").toString());
+                                    double flat = Double.parseDouble(value.get("lat").toString());
 
                                     try{
                                         double rate1 = Double.parseDouble(documentSnapshot.get("rating").toString());
@@ -1196,16 +1200,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME,
-                LOCATION_REFRESH_DISTANCE, mLocationListener);
-
-        locationCritera = new Criteria();
-        locationCritera.setAccuracy(Criteria.ACCURACY_FINE);
-        locationCritera.setAltitudeRequired(false);
-        locationCritera.setCostAllowed(true);
-        locationCritera.setPowerRequirement(Criteria.NO_REQUIREMENT);
-
         CheckBalance();
 
     }
@@ -1234,19 +1228,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void DrawPolyLine() {
 
-        Geocoder coder = new Geocoder(MapsActivity.this);
-        double lng = 0;
-        double lat = 0;
-        try {
-            ArrayList<Address> adresses = (ArrayList<Address>) coder.getFromLocationName(Snap_data.getString("currentAddress"), 1);
-            for(Address add : adresses){
-                lng = add.getLongitude();
-                lat = add.getLatitude();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try{PolylineOptions polylineOptions = new PolylineOptions()
+        double lng = Double.parseDouble(Snap_data.get("lng").toString());
+        double lat = Double.parseDouble(Snap_data.get("lat").toString());
+
+                try{PolylineOptions polylineOptions = new PolylineOptions()
                 .add(new LatLng(lat, lng))
                 .add(new LatLng(loc.getLatitude(), loc.getLongitude()));
             polyline = mMap.addPolyline(polylineOptions);}
@@ -1292,7 +1277,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .icon(markerIcon));
         }
 
-        toggleButton = findViewById(R.id.toggleButton);
         txvAccountState = findViewById(R.id.textView10);
         m = findViewById(R.id.textView511);
         k = findViewById(R.id.textView57);
@@ -1618,23 +1602,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         @Override
         public void onLocationChanged(final Location location) {
 
-            mMap.clear();
-            markerLat = location.getLatitude();
-            markerLng = location.getLongitude();
-            BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
+            if(mMap != null){
+                mMap.clear();
+                markerLat = location.getLatitude();
+                markerLng = location.getLongitude();
+                BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
 
-            if(loc == null)
-                loc = location;
+                if(loc == null)
+                    loc = location;
 
-            float bearing = loc.bearingTo(location) ;
+                float bearing = loc.bearingTo(location) ;
 
-            LatLng l =new LatLng(location.getLatitude(), location.getLongitude());
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(l,15.0f));
-            mMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(location.getLatitude(), location.getLongitude()))
-                    .icon(markerIcon)
-                    .anchor(0.5f, 0.5f)
-                    .rotation(bearing));
+                LatLng l =new LatLng(location.getLatitude(), location.getLongitude());
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(l,15.0f));
+                mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(location.getLatitude(), location.getLongitude()))
+                        .icon(markerIcon)
+                        .anchor(0.5f, 0.5f)
+                        .rotation(bearing));
+            }
 
             loc = location;
 
@@ -2057,10 +2043,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                 final TextView t4 = dialog2.findViewById(R.id.textView11);
                                                                                                 final TextView t5 = dialog2.findViewById(R.id.txvNo5);
 
-                                                                                                BigDecimal TripDistance = new BigDecimal("0");
-                                                                                                TripDistance = TripDistance.add(new BigDecimal(GetDistanceFromLatLonInKm(
-                                                                                                        Double.parseDouble(obj.locationCustomer.get("lng")+""), Double.parseDouble(obj.locationCustomer.get("lat")+""),
-                                                                                                        loc.getLatitude(), loc.getLongitude())));
+//                                                                                                BigDecimal TripDistance = new BigDecimal(OldDistance);
+//                                                                                                TripDistance = TripDistance.add(new BigDecimal(GetDistanceFromLatLonInKm(
+//                                                                                                        Double.parseDouble(obj.locationCustomer.get("lng")+""), Double.parseDouble(obj.locationCustomer.get("lat")+""),
+//                                                                                                        loc.getLatitude(), loc.getLongitude())));
+
+                                                                                                BigDecimal TripDistance = new BigDecimal(OldDistance);
+                                                                                                for(int i=0; i<TripDistanceCalc.size()-1; i++){
+
+                                                                                                    TripDistance = TripDistance.add(new BigDecimal(GetDistanceFromLatLonInKm(
+                                                                                                            TripDistanceCalc.get(i).getLatitude(), TripDistanceCalc.get(i).getLongitude(),
+                                                                                                            TripDistanceCalc.get(i+1).getLatitude(), TripDistanceCalc.get(i+1).getLongitude())));
+
+                                                                                                }
 
                                                                                                 double base_price = 0, below_4_km = 0, between_4n5_km = 0, between_5n8_km = 0,
                                                                                                         more_8_km = 0, minute_price = 0, minimum_trip_cost = 0, driver_fee = 0;
@@ -2141,6 +2136,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                                                                                                         SendNoti("عميلنا العزيز شكرا لاستخدامكم تطبيق رويال رايد, نتمنى لك يوما سعيدا", documentSnapshot.getString("token"));
                                                                                                         toggleButton.setChecked(true);
+                                                                                                        OldDistance = "0";
                                                                                                     }
                                                                                                 });
 
@@ -2484,7 +2480,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                         Tmin = 0;
                                                         Thour = 0;
                                                         m.setText("00:00:00");
-                                                        OldDistance = "0";
                                                         progressDialogLoad.show();
 
                                                         FirebaseFirestore.getInstance()
@@ -2521,10 +2516,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                 final TextView t4 = dialog2.findViewById(R.id.textView11);
                                                                                 final TextView t5 = dialog2.findViewById(R.id.txvNo5);
 
-                                                                                BigDecimal TripDistance = new BigDecimal("0");
-                                                                                TripDistance = TripDistance.add(new BigDecimal(GetDistanceFromLatLonInKm(
-                                                                                        Double.parseDouble(obj.locationCustomer.get("lng")+""), Double.parseDouble(obj.locationCustomer.get("lat")+""),
-                                                                                        loc.getLatitude(), loc.getLongitude())));
+//                                                                                BigDecimal TripDistance = new BigDecimal(OldDistance);
+//                                                                                TripDistance = TripDistance.add(new BigDecimal(GetDistanceFromLatLonInKm(
+//                                                                                        Double.parseDouble(obj.locationCustomer.get("lng")+""), Double.parseDouble(obj.locationCustomer.get("lat")+""),
+//                                                                                        loc.getLatitude(), loc.getLongitude())));
+
+                                                                                BigDecimal TripDistance = new BigDecimal(OldDistance);
+                                                                                for(int i=0; i<TripDistanceCalc.size()-1; i++){
+
+                                                                                    TripDistance = TripDistance.add(new BigDecimal(GetDistanceFromLatLonInKm(
+                                                                                            TripDistanceCalc.get(i).getLatitude(), TripDistanceCalc.get(i).getLongitude(),
+                                                                                            TripDistanceCalc.get(i+1).getLatitude(), TripDistanceCalc.get(i+1).getLongitude())));
+
+                                                                                }
 
                                                                                 double base_price = 0, below_4_km = 0, between_4n5_km = 0, between_5n8_km = 0,
                                                                                         more_8_km = 0, minute_price = 0, minimum_trip_cost = 0, driver_fee = 0;
@@ -2617,6 +2621,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                                                                                             SendNoti("عميلنا العزيز شكرا لاستخدامكم تطبيق رويال رايد, نتمنى لك يوما سعيدا", documentSnapshot.getString("token"));
                                                                                             toggleButton.setChecked(true);
+                                                                                            OldDistance = "0";
                                                                                         }
                                                                                     });
 
@@ -3037,6 +3042,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
 
         }
+
+        @Override
+        public void onProviderEnabled(@NonNull String provider) {}
+
+        @Override
+        public void onProviderDisabled(@NonNull String provider) {}
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {}
     };
 
     private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
@@ -3245,5 +3259,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        stopService(new Intent(MapsActivity.this, MyBackgroundService.class));
 //
 //    }
+
+
 
 }

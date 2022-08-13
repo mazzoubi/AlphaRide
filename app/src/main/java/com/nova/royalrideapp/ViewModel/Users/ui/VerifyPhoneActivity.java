@@ -92,8 +92,13 @@ public class VerifyPhoneActivity extends AppCompatActivity {
     }
 
     private void verifyCode(String code) {
-        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, code);
-        signInWithCredential(credential);
+        try{
+            PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, code);
+            signInWithCredential(credential);
+        }
+        catch (Exception exception){
+            Toast.makeText(VerifyPhoneActivity.this, "حدث خطأ في المصادقة, يرجى التأكد من شبكة الإنترنت إغلاق البرنامج و المحاولة من جديد", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void signInWithCredential(PhoneAuthCredential credential) {

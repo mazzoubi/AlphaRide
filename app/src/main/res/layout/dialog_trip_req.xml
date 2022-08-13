@@ -151,8 +151,8 @@
                 android:layout_marginRight="5dp"
                 android:layout_toLeftOf="@+id/loc"
                 android:fontFamily="serif"
-                android:text="---"
                 android:gravity="center"
+                android:text="عرض موقع الراكب"
                 android:textColor="@color/black"
                 android:textSize="18dp"
                 android:textStyle="bold" />

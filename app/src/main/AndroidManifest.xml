@@ -28,70 +28,91 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme">
         <activity
+            android:screenOrientation="portrait"
             android:name="com.nova.royalrideapp.ViewModel.Users.Cars.ChangeImagesActivity"
             android:exported="true" />
         <activity
+            android:screenOrientation="portrait"
             android:name="com.nova.royalrideapp.ViewModel.Main.LiveChatActivity"
             android:exported="true" />
         <activity
+            android:screenOrientation="portrait"
             android:name="com.nova.royalrideapp.RequestUserPermissions"
             android:exported="false" />
 
         <activity
+            android:screenOrientation="portrait"
             android:name="com.nova.royalrideapp.ViewModel.Users.ui.TripInfoWithMapActivity"
             android:exported="true"
             android:label="@string/title_activity_trip_info_with_map" />
         <activity
+            android:screenOrientation="portrait"
             android:name="com.nova.royalrideapp.ViewModel.Users.ui.ForgotPasswordActivity"
             android:exported="true" />
         <activity
+            android:screenOrientation="portrait"
             android:name="com.nova.royalrideapp.MainActivity"
             android:exported="true" />
         <activity
+            android:screenOrientation="portrait"
             android:name="com.nova.royalrideapp.ViewModel.Users.ui.TripInfoActivity"
             android:exported="true" />
         <activity
+            android:screenOrientation="portrait"
             android:name="com.nova.royalrideapp.ViewModel.Notifications.ui.NotificationsActivity"
             android:exported="true" />
         <activity
+            android:screenOrientation="portrait"
             android:name="com.nova.royalrideapp.ViewModel.Users.ui.MyTripsActivity"
             android:exported="true" />
         <activity
+            android:screenOrientation="portrait"
             android:name="com.nova.royalrideapp.ViewModel.Wallet.ui.WalletActivity"
             android:exported="true" />
         <activity
+            android:screenOrientation="portrait"
             android:name="com.nova.royalrideapp.ViewModel.Main.ContactUsActivity"
             android:exported="true" />
         <activity
+            android:screenOrientation="portrait"
             android:name="com.nova.royalrideapp.ViewModel.Users.Cars.AddNewCarActivity"
             android:exported="true" />
         <activity
+            android:screenOrientation="portrait"
             android:name="com.nova.royalrideapp.ViewModel.Users.Cars.MyCarsActivity"
             android:exported="true" />
         <activity
+            android:screenOrientation="portrait"
             android:name="com.nova.royalrideapp.ViewModel.Users.ui.ProfileActivity"
             android:exported="true" />
         <activity
+            android:screenOrientation="portrait"
             android:name="com.nova.royalrideapp.ViewModel.Main.MapsActivity"
             android:exported="true"
             android:launchMode="singleTask"
             android:label="@string/title_activity_maps" />
         <activity
+            android:screenOrientation="portrait"
             android:name="com.nova.royalrideapp.ViewModel.Main.Dashboard2Activity"
             android:exported="true" />
         <activity
+            android:screenOrientation="portrait"
             android:name="com.nova.royalrideapp.ViewModel.Main.DashboardActivity"
             android:exported="false" />
         <activity
+            android:screenOrientation="portrait"
             android:name="com.nova.royalrideapp.ViewModel.Users.ui.LoginActivity"
             android:exported="false" />
         <activity
+            android:screenOrientation="portrait"
             android:name="com.nova.royalrideapp.ViewModel.Users.ui.VerifyPhoneActivity"
             android:exported="false" />
         <activity
+            android:screenOrientation="portrait"
             android:name="com.nova.royalrideapp.ViewModel.Users.ui.RegisterActivity"
             android:exported="false" />
         <activity
+            android:screenOrientation="portrait"
             android:name="com.nova.royalrideapp.ViewModel.SplashActivity"
             android:exported="true">
             <intent-filter>
