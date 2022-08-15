@@ -210,19 +210,25 @@ public class UserViewModel extends ViewModel {
         progressDialog.setCancelable(false);
         progressDialog.setTitle("الرجاء الإنتظار...");
         progressDialog.show();
-        FirebaseFirestore.getInstance().collection(userCollection)
-                .document(user.uid)
-                .update(map)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        progressDialog.dismiss();
-                        UserInfo_sharedPreference.setInfo(c,user);
-                        c.startActivity(new Intent(c, MapsActivity.class));
-                        Toast.makeText(c, "تمت عملية الحفظ بنجاح", Toast.LENGTH_SHORT).show();
-                        c.finish();
-                    }
-                });
+
+        if(user.uid != null && !user.uid.equals("")){
+            try{
+                FirebaseFirestore.getInstance().collection(userCollection)
+                        .document(user.uid)
+                        .update(map)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                progressDialog.dismiss();
+                                UserInfo_sharedPreference.setInfo(c,user);
+                                c.startActivity(new Intent(c, MapsActivity.class));
+                                Toast.makeText(c, "تمت عملية الحفظ بنجاح", Toast.LENGTH_SHORT).show();
+                                c.finish();
+                            }
+                        });
+            }
+            catch (Exception ex){}
+        }
     }
 
     public void addDriverRequest(Activity c, DriverRequestAccountModel dd){

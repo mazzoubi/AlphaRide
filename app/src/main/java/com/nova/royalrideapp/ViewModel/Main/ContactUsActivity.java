@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -30,11 +31,16 @@ public class ContactUsActivity extends AppCompatActivity {
     }
 
     public void onClickSendEmail(View view) {
-        Intent email= new Intent(Intent.ACTION_SENDTO);
-        email.setData(Uri.parse("mailto:royal.ride.app@gmail.com"));
-        email.putExtra(Intent.EXTRA_SUBJECT, "Subject");
-        email.putExtra(Intent.EXTRA_TEXT, "My Email message");
-        startActivity(email);
+        try{
+            Intent email= new Intent(Intent.ACTION_SENDTO);
+            email.setData(Uri.parse("mailto:royal.ride.app@gmail.com"));
+            email.putExtra(Intent.EXTRA_SUBJECT, "Subject");
+            email.putExtra(Intent.EXTRA_TEXT, "My Email message");
+            startActivity(email);
+        }
+        catch (Exception ex){
+            Toast.makeText(ContactUsActivity.this, "لا يوجد تطبيق يدعم إرسال الإيميل ل royal.ride.app@gmail.com", Toast.LENGTH_LONG).show();
+        }
     }
 
     public void onClickLiveChat(View view) {

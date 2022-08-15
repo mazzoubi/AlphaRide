@@ -149,7 +149,9 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="1234" />
-
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
         <service android:name="com.nova.royalrideapp.SimpleService" />
     </application>
 

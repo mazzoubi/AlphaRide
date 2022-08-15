@@ -450,12 +450,26 @@
                 android:textSize="16dp"
                 android:textStyle="bold" />
             <TextView
+                android:id="@+id/textViews23"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="تسعيرة الرحلات"
+                android:textColor="@color/colorPrimary"
+                android:layout_below="@+id/textView23"
+                android:fontFamily="serif"
+                android:visibility="gone"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="15dp"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+            <TextView
                 android:id="@+id/textView24"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="تواصل معنا"
                 android:textColor="@color/colorPrimary"
-                android:layout_below="@+id/textView23"
+                android:layout_below="@+id/textViews23"
                 android:fontFamily="serif"
                 android:layout_alignParentRight="true"
                 android:layout_marginTop="15dp"

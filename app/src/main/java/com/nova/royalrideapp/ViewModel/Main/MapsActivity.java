@@ -86,6 +86,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -296,7 +297,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     if(dialog_count == 0 && !InTrip){
                         dialog_count = 1;
                         mp.start();
-                        dialog.show();
+                        try{dialog.show();} catch (Exception ex){}
                         Snap_data = value;
                         final TextView t1 = dialog.findViewById(R.id.txvType);
                         final TextView t3 = dialog.findViewById(R.id.txvNo);
@@ -1180,25 +1181,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //            }
 //        };
 
-        FirebaseFirestore.getInstance()
-                .collection("locations")
-                .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                String iduser = "";
-                try{
-                    iduser = documentSnapshot.getString("idUser");
-                } catch (Exception ex){}
+        if(UserInfo_sharedPreference.getUser(MapsActivity.this).uid != null && !UserInfo_sharedPreference.getUser(MapsActivity.this).uid.equals("")){
+            FirebaseFirestore.getInstance()
+                    .collection("locations")
+                    .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                    .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    String iduser = "";
+                    try{
+                        iduser = documentSnapshot.getString("idUser");
+                    } catch (Exception ex){}
 
-                if(iduser != null && !iduser.equals("")){
-                    toggleButton.setChecked(true);
-                    InTrip = false;
-                    isConnected = true;
+                    if(iduser != null && !iduser.equals("")){
+                        toggleButton.setChecked(true);
+                        InTrip = false;
+                        isConnected = true;
+                    }
+
                 }
-
-            }
-        });
+            });
+        }
 
         CheckBalance();
 
@@ -1227,11 +1230,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void DrawPolyLine() {
+        try{
+            double lng = Double.parseDouble(Snap_data.get("lng").toString());
+            double lat = Double.parseDouble(Snap_data.get("lat").toString());
 
-        double lng = Double.parseDouble(Snap_data.get("lng").toString());
-        double lat = Double.parseDouble(Snap_data.get("lat").toString());
-
-                try{PolylineOptions polylineOptions = new PolylineOptions()
+            PolylineOptions polylineOptions = new PolylineOptions()
                 .add(new LatLng(lat, lng))
                 .add(new LatLng(loc.getLatitude(), loc.getLongitude()));
             polyline = mMap.addPolyline(polylineOptions);}
@@ -1420,7 +1423,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         navigationView = findViewById(R.id.navView);
 
         TextView nav_myProfile , nav_wallet , nav_carMg , nav_myTrips
-                , nav_notifications , nav_sittings , nav_contactUs , nav_logout ;
+                , nav_notifications , nav_sittings , nav_contactUs , nav_logout;
         ImageView nav_imageView;
 //        LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
 //        View view= inflater.inflate(R.layout.menu_nav,navigationView);
@@ -1452,6 +1455,57 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 });
 
+        final TextView prices = findViewById(R.id.textViews23);
+        FirebaseFirestore.getInstance()
+                .collection("AdminDataConfig")
+                .document("Data")
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                if(documentSnapshot.getString("Prices").equals("1"))
+                    prices.setVisibility(View.VISIBLE);
+
+                prices.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        final androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(MapsActivity.this);
+                        LayoutInflater inflater = MapsActivity.this.getLayoutInflater();
+                        builder.setView(inflater.inflate(R.layout.dialog_trip_req3, null));
+                        final androidx.appcompat.app.AlertDialog dialog2 = builder.create();
+                        ((FrameLayout) dialog2.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                        lp.copyFrom(dialog2.getWindow().getAttributes());
+                        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                        lp.height = Math.round(TypedValue.applyDimension(
+                                TypedValue.COMPLEX_UNIT_DIP, 460, getResources().getDisplayMetrics()));
+                        dialog2.getWindow().setAttributes(lp);
+                        dialog2.show();
+
+                        TextView t1 = dialog2.findViewById(R.id.txvType);
+                        TextView t2 = dialog2.findViewById(R.id.txvColor);
+                        TextView t3 = dialog2.findViewById(R.id.txvColaor);
+                        TextView t4 = dialog2.findViewById(R.id.txvColasor);
+                        TextView t5 = dialog2.findViewById(R.id.txvColaasor);
+                        TextView t6 = dialog2.findViewById(R.id.txvColaaso6r);
+                        TextView t7 = dialog2.findViewById(R.id.txvColaasso6r);
+                        TextView t8 = dialog2.findViewById(R.id.txColaasso6r);
+
+                        t1.setText("سعر البداية : "+documentSnapshot.get("base_price")+" دينار.");
+                        t2.setText("سعر الدقيقة : "+documentSnapshot.get("minute_price")+" دينار.");
+                        t3.setText("سعر ك.م دون ال 4 ك.م : "+documentSnapshot.get("below_4_km")+" دينار.");
+                        t4.setText("سعر ك.م ل 4-5 ك.م : "+documentSnapshot.get("between_4n5_km")+" دينار.");
+                        t5.setText("سعر ك.م ل 5-8 ك.م : "+documentSnapshot.get("between_5n8_km")+" دينار.");
+                        t6.setText("سعر ك.م لأكثر من 8 ك.م : "+documentSnapshot.get("more_8_km")+" دينار.");
+                        t7.setText("سعر أقل رحلة : "+documentSnapshot.get("minimum_trip_cost")+" دينار.");
+                        t8.setText("نسبة التطبيق : "+documentSnapshot.get("driver_fee")+" بلمئة.");
+
+                    }
+                });
+
+            }
+        });
 
         nav_myProfile.setOnClickListener(new View.OnClickListener() {
             @Override
