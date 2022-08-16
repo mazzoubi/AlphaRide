@@ -63,7 +63,14 @@ public class VerifyPhoneActivity extends AppCompatActivity {
 
         fromWhere = getIntent().getStringExtra("fromWhere")+"";
 
-        phoneNumber = RegisterActivity.userModel.phoneNumber;
+        try{
+            if(RegisterActivity.userModel.phoneNumber != null && !RegisterActivity.userModel.phoneNumber.equals(""))
+                phoneNumber = RegisterActivity.userModel.phoneNumber;
+            else
+                Toast.makeText(VerifyPhoneActivity.this, "لم يتم العثور على رقم هاتف صحيح", Toast.LENGTH_SHORT).show();
+        } catch (Exception ex){
+            Toast.makeText(VerifyPhoneActivity.this, "لم يتم العثور على رقم هاتف صحيح", Toast.LENGTH_SHORT).show();
+        }
         sendVerificationCode(phoneNumber);
 
         // save phone number
