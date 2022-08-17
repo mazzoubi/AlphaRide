@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="440dp"
+    android:layout_height="480dp"
     android:background="@drawable/background2">
 
     <TextView
@@ -41,7 +41,7 @@
         android:layout_marginTop="15dp"
         android:layout_marginRight="25dp"
         android:layout_below="@+id/welcome4"
-        android:layout_height="40dp">
+        android:layout_height="60dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -49,12 +49,13 @@
             android:layout_height="match_parent">
 
             <ImageView
-                android:layout_width="50dp"
-                android:layout_alignParentRight="true"
-                android:src="@drawable/ic_baseline_person_24"
-                android:layout_marginRight="5dp"
                 android:id="@+id/person"
-                android:layout_height="match_parent"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="5dp"
+                android:src="@drawable/ic_baseline_person_24"
                 app:tint="@color/black" />
 
             <TextView
@@ -63,6 +64,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
+                android:text="جاري الإحتساب.."
                 android:layout_toLeftOf="@+id/person"
                 android:fontFamily="serif"
                 android:gravity="center"
@@ -83,7 +85,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginRight="25dp"
         android:layout_below="@+id/card1"
-        android:layout_height="40dp">
+        android:layout_height="60dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -91,12 +93,13 @@
             android:layout_height="match_parent">
 
             <ImageView
-                android:layout_width="50dp"
-                android:layout_alignParentRight="true"
-                android:src="@drawable/path"
-                android:layout_marginRight="5dp"
                 android:id="@+id/loc"
-                android:layout_height="match_parent"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="5dp"
+                android:src="@drawable/path"
                 app:tint="@color/black" />
 
             <TextView
@@ -104,6 +107,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="5dp"
+                android:text="جاري الإحتساب.."
                 android:layout_marginRight="5dp"
                 android:layout_toLeftOf="@+id/loc"
                 android:fontFamily="serif"
@@ -133,12 +137,13 @@
             android:layout_height="match_parent">
 
             <ImageView
-                android:layout_width="50dp"
-                android:layout_alignParentRight="true"
-                android:src="@drawable/disc2"
-                android:layout_marginRight="5dp"
                 android:id="@+id/disc"
-                android:layout_height="match_parent"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="5dp"
+                android:src="@drawable/disc2"
                 app:tint="@color/black" />
 
             <TextView
@@ -147,6 +152,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
+                android:text="جاري الإحتساب.."
                 android:layout_toLeftOf="@+id/disc"
                 android:fontFamily="serif"
                 android:gravity="center"
@@ -164,9 +170,9 @@
         app:cardCornerRadius="10dp"
         android:layout_marginLeft="25dp"
         android:elevation="15dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="25dp"
         android:layout_marginRight="25dp"
-        android:layout_below="@+id/card4"
+        android:layout_below="@+id/rating"
         android:layout_height="60dp">
 
         <RelativeLayout
@@ -174,12 +180,24 @@
             android:background="@color/colorPrimaryDark"
             android:layout_height="match_parent">
 
+            <ImageView
+                android:id="@+id/im"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/cash"
+                android:backgroundTint="@color/black" />
+
             <TextView
                 android:id="@+id/txvNo5"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
+                android:layout_toLeftOf="@+id/im"
+                android:text="جاري الإحتساب.."
                 android:fontFamily="serif"
                 android:gravity="center"
                 android:textColor="@color/black"
@@ -194,14 +212,14 @@
         android:id="@+id/rating"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
-        android:layout_below="@+id/card5"
+        android:layout_below="@+id/card4"
         android:layout_centerHorizontal="true"
-        android:progress="60"
         android:layout_marginLeft="25dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="25dp"
         android:layout_marginRight="25dp"
         android:isIndicator="false"
         android:numStars="5"
+        android:progress="60"
         android:progressBackgroundTint="@color/white"
         android:progressTint="@color/colorPrimaryDark"
         android:stepSize="0.1" />
@@ -210,17 +228,17 @@
         android:id="@+id/textView11"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_below="@+id/rating"
+        android:layout_below="@+id/card5"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="25dp"
-        android:layout_marginTop="35dp"
+        android:layout_marginTop="5dp"
         android:layout_marginRight="25dp"
         android:layout_weight="1"
         android:background="@drawable/btn_back22"
         android:backgroundTint="@color/green1"
         android:fontFamily="serif"
         android:gravity="center"
-        android:text="إرسال التقييم"
+        android:text="تأكيد الفاتورة"
         android:textColor="@color/black"
         android:textSize="18dp"
         android:textStyle="bold" />

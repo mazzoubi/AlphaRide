@@ -56,7 +56,7 @@ public class MyTripsAdapter extends ArrayAdapter<MyTripsModel> {
             txvTripState.setText("تم بدء الرحلة");
             txvTripState.setTextColor(Color.GREEN);
         }
-        else if (a.state.equals("StateTrip.needRatingByDriver")){
+        else if (a.state.equals("StateTrip.needRatingByDriver") || a.state.equals("StateTrip.needRatingByCustomer")){
             txvTripState.setText("تم إنهاء الرحلة");
             txvTripState.setTextColor(Color.GREEN);
         }

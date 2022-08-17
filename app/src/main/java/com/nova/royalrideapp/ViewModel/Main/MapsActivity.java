@@ -102,6 +102,7 @@ import com.nova.royalrideapp.Data.Users.UserInfo_sharedPreference;
 import com.nova.royalrideapp.Data.Users.UserModel;
 import com.nova.royalrideapp.MyBackgroundService;
 import com.nova.royalrideapp.R;
+import com.nova.royalrideapp.ViewModel.Users.ui.TripInfoWithMapActivity;
 import com.nova.royalrideapp.databinding.ActivityMapsBinding;
 
 import com.nova.royalrideapp.RequestUserPermissions;
@@ -112,11 +113,13 @@ import com.nova.royalrideapp.ViewModel.Users.UserViewModel;
 import com.nova.royalrideapp.ViewModel.Users.ui.MyTripsActivity;
 import com.nova.royalrideapp.ViewModel.Users.ui.ProfileActivity;
 import com.nova.royalrideapp.ViewModel.Wallet.ui.WalletActivity;
+import com.nova.royalrideapp.directionhelpers.FetchURL;
+import com.nova.royalrideapp.directionhelpers.TaskLoadedCallback;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, TaskLoadedCallback {
     public DrawerLayout drawerLayout;
     NavigationView navigationView;
 
@@ -158,6 +161,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     boolean FirstOpen = true;
     Criteria locationCritera;
     String OldDistance = "0";
+    String TripState = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -326,6 +330,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         };
                         cd2.start();
 
+                        final double clng = Double.parseDouble(value.get("lng").toString());
+                        final double clat = Double.parseDouble(value.get("lat").toString());
+
                         t4.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -430,6 +437,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 k.setText("0.000 Km");
                                 m.setText("00:00:00");
                                 InTrip = true;
+                                TripState = "tracking";
 
                                 final Map<String, Object> map = new HashMap<>();
                                 final Map<String, Object> mini_map = new HashMap<>();
@@ -577,50 +585,56 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                             public void onClick(View view) {
 
                                                 if(arrive.getText().toString().equals("لقد وصلت")){
-                                                    progressDialogLoad.show();
-                                                    FirebaseFirestore.getInstance()
-                                                            .collection("Users")
-                                                            .document(map.get("idCustomer").toString())
-                                                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                                        @Override
-                                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                            arrive.setText("بدء الرحلة");
-                                                            SendNoti("لقد وصل الكابتن للموقع.", documentSnapshot.getString("token"));
-                                                            progressDialogLoad.dismiss();
-                                                            cd = new CountDownTimer(300000, 1000) {
+                                                    if(GetDistanceFromLatLonInKm(loc.getLatitude(),loc.getLongitude(), clat, clng) <= 0.05){
+                                                        progressDialogLoad.show();
+                                                        TripState = "";
 
-                                                                public void onTick(long millisUntilFinished) {
+                                                        FirebaseFirestore.getInstance()
+                                                                .collection("Users")
+                                                                .document(map.get("idCustomer").toString())
+                                                                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                            @Override
+                                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                arrive.setText("بدء الرحلة");
+                                                                SendNoti("لقد وصل الكابتن للموقع.", documentSnapshot.getString("token"));
+                                                                progressDialogLoad.dismiss();
+                                                                cd = new CountDownTimer(300000, 1000) {
 
-                                                                    if(millisUntilFinished >= 240000){
-                                                                        if(millisUntilFinished-240000 < 10000) canc.setText("04:0" + ((millisUntilFinished-240000)/1000));
-                                                                        else canc.setText("04:" + ((millisUntilFinished-240000)/1000)); }
+                                                                    public void onTick(long millisUntilFinished) {
 
-                                                                    else if(millisUntilFinished >= 180000){
-                                                                        if(millisUntilFinished-180000 < 10000) canc.setText("03:0" + ((millisUntilFinished-180000)/1000));
-                                                                        else canc.setText("03:" + ((millisUntilFinished-180000)/1000)); }
+                                                                        if(millisUntilFinished >= 240000){
+                                                                            if(millisUntilFinished-240000 < 10000) canc.setText("04:0" + ((millisUntilFinished-240000)/1000));
+                                                                            else canc.setText("04:" + ((millisUntilFinished-240000)/1000)); }
 
-                                                                    else if(millisUntilFinished >= 120000){
-                                                                        if(millisUntilFinished-120000 < 10000) canc.setText("02:0" + ((millisUntilFinished-120000)/1000));
-                                                                        else canc.setText("02:" + ((millisUntilFinished-180000)/1000)); }
+                                                                        else if(millisUntilFinished >= 180000){
+                                                                            if(millisUntilFinished-180000 < 10000) canc.setText("03:0" + ((millisUntilFinished-180000)/1000));
+                                                                            else canc.setText("03:" + ((millisUntilFinished-180000)/1000)); }
 
-                                                                    else if(millisUntilFinished >= 60000){
-                                                                        if(millisUntilFinished-60000 < 10000) canc.setText("01:0" + ((millisUntilFinished-60000)/1000));
-                                                                        else canc.setText("01:" + ((millisUntilFinished-180000)/1000)); }
+                                                                        else if(millisUntilFinished >= 120000){
+                                                                            if(millisUntilFinished-120000 < 10000) canc.setText("02:0" + ((millisUntilFinished-120000)/1000));
+                                                                            else canc.setText("02:" + ((millisUntilFinished-180000)/1000)); }
 
-                                                                    else if(millisUntilFinished >= 0){
-                                                                        if(millisUntilFinished < 10000) canc.setText("01:0" + (millisUntilFinished/1000));
-                                                                        else canc.setText("01:" + (millisUntilFinished/1000)); }
+                                                                        else if(millisUntilFinished >= 60000){
+                                                                            if(millisUntilFinished-60000 < 10000) canc.setText("01:0" + ((millisUntilFinished-60000)/1000));
+                                                                            else canc.setText("01:" + ((millisUntilFinished-180000)/1000)); }
 
-                                                                }
+                                                                        else if(millisUntilFinished >= 0){
+                                                                            if(millisUntilFinished < 10000) canc.setText("01:0" + (millisUntilFinished/1000));
+                                                                            else canc.setText("01:" + (millisUntilFinished/1000)); }
 
-                                                                public void onFinish() {
-                                                                    canc.setText("إلغاء");
-                                                                }
+                                                                    }
 
-                                                            };
-                                                            cd.start();
-                                                        }
-                                                    });
+                                                                    public void onFinish() {
+                                                                        canc.setText("إلغاء");
+                                                                    }
+
+                                                                };
+                                                                cd.start();
+                                                            }
+                                                        });
+                                                    }
+                                                    else
+                                                        Toast.makeText(MapsActivity.this, "لا يمكن الوصول على بعد أكبر من 50 مترا", Toast.LENGTH_LONG).show();
                                                 }
                                                 else if(arrive.getText().toString().equals("بدء الرحلة")){
                                                     FirebaseFirestore.getInstance()
@@ -634,7 +648,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                     });
 
                                                     DrawPoly = false;
-                                                    polyline.remove();
+//                                                    polyline.remove();
                                                     progressDialogLoad.show();
                                                     FirebaseFirestore.getInstance()
                                                             .collection("Trips")
@@ -701,6 +715,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                         @Override
                                                         public void onClick(DialogInterface dialogInterface, int i) {
                                                             {
+                                                                progressDialog.show();
+
                                                                 FirebaseFirestore.getInstance()
                                                                         .collection("Trips")
                                                                         .document(map.get("tripsid")+"")
@@ -726,8 +742,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                 Thour = 0;
                                                                 m.setText("00:00:00");
 
-                                                                progressDialogLoad.show();
-
                                                                 FirebaseFirestore.getInstance()
                                                                         .collection("Trips")
                                                                         .document(map.get("tripsid").toString())
@@ -752,9 +766,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                         lp.copyFrom(dialog2.getWindow().getAttributes());
                                                                                         lp.width = WindowManager.LayoutParams.MATCH_PARENT;
                                                                                         lp.height = Math.round(TypedValue.applyDimension(
-                                                                                                TypedValue.COMPLEX_UNIT_DIP, 440, getResources().getDisplayMetrics()));
+                                                                                                TypedValue.COMPLEX_UNIT_DIP, 510, getResources().getDisplayMetrics()));
                                                                                         dialog2.getWindow().setAttributes(lp);
                                                                                         dialog2.show();
+                                                                                        dialog2.setCancelable(false);
 
                                                                                         final TextView t1 = dialog2.findViewById(R.id.txvType);
                                                                                         final TextView t2 = dialog2.findViewById(R.id.txvColor);
@@ -770,6 +785,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                     TripDistanceCalc.get(i+1).getLatitude(), TripDistanceCalc.get(i+1).getLongitude())));
 
                                                                                         }
+
+                                                                                        final BigDecimal FinalTripDistance = TripDistance;
 
                                                                                         double base_price = 0, below_4_km = 0, between_4n5_km = 0, between_5n8_km = 0,
                                                                                                 more_8_km = 0, minute_price = 0, minimum_trip_cost = 0, driver_fee = 0;
@@ -808,13 +825,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                     .add(new BigDecimal(more_8_km).multiply(TripDistance))
                                                                                                     .add(new BigDecimal(minute_price).multiply(new BigDecimal(time)));
 
+                                                                                        final BigDecimal PriceWithoutDisc = TotalTripPrice;
+
                                                                                         if(TotalTripPrice.doubleValue() < minimum_trip_cost)
                                                                                             TotalTripPrice = new BigDecimal(minimum_trip_cost);
                                                                                         if(TotalTripPrice.subtract(TotalTripPrice.multiply(disc)).doubleValue() >= minimum_trip_cost)
                                                                                             TotalTripPrice = TotalTripPrice.subtract(TotalTripPrice.multiply(disc));
 
-                                                                                        BigDecimal fee = TotalTripPrice.multiply(new BigDecimal(driver_fee).divide(new BigDecimal("100")));
-                                                                                        BigDecimal final_fee = new BigDecimal("0").subtract(fee);
+                                                                                        final BigDecimal fee = TotalTripPrice.multiply(new BigDecimal(driver_fee).divide(new BigDecimal("100")));
+                                                                                        final BigDecimal final_fee = new BigDecimal("0").subtract(fee);
+                                                                                        final BigDecimal FTotalTripPrice = TotalTripPrice;
+
                                                                                         FirebaseFirestore.getInstance()
                                                                                                 .collection("Users")
                                                                                                 .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
@@ -823,96 +844,126 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                     @Override
                                                                                                     public void onComplete(@NonNull Task<Void> task) {
                                                                                                         Toast.makeText(MapsActivity.this, "تم إقتطاع مبلغ "+String.format(Locale.ENGLISH,"%.3f", final_fee.doubleValue()), Toast.LENGTH_SHORT).show();
-                                                                                                    }
-                                                                                                });
 
-                                                                                        double km = Double.parseDouble(String.format(Locale.ENGLISH,"%.3f", TripDistance.doubleValue()));
-                                                                                        double totalPrice =Double.parseDouble(String.format(Locale.ENGLISH,"%.3f", TotalTripPrice.doubleValue()));
-                                                                                        Map<String, Object> ups = new HashMap<>();
-                                                                                        Map<String, Object> mini_locs = new HashMap<>();
-                                                                                        mini_locs.put("addressTo","");
-                                                                                        mini_locs.put("lat",loc.getLatitude());
-                                                                                        mini_locs.put("lng",loc.getLongitude());
-                                                                                        ups.put("accessPoint",mini_locs);
-                                                                                        ups.put("km",km);
-                                                                                        ups.put("hours", time);
-                                                                                        ups.put("totalPrice",totalPrice);
-                                                                                        FirebaseFirestore.getInstance()
-                                                                                                .collection("Trips")
-                                                                                                .document(map.get("tripsid").toString())
-                                                                                                .update(ups);
+                                                                                                        final double km = Double.parseDouble(String.format(Locale.ENGLISH,"%.3f", FinalTripDistance.doubleValue()));
+                                                                                                        final double totalPrice =Double.parseDouble(String.format(Locale.ENGLISH,"%.2f", FTotalTripPrice.doubleValue()));
 
-                                                                                        t1.setText(Snap_data.getString("nameCustomer"));
-                                                                                        t2.setText(String.format("%.3f", TripDistance.doubleValue())+" Km | "+time+" min");
-                                                                                        if(CustomerBalance.subtract(TotalTripPrice).doubleValue() >= 0){
-                                                                                            t3.setText("قيمة الرحلة: "+String.format("%.3f", TotalTripPrice.subtract(TotalTripPrice.multiply(disc)).doubleValue())+" بخصم "+Snap_data.get("discount")+"%");
-                                                                                            t5.setText("تم خصم الرحلة من محفظة الراكب والمطلوب 0.0 دينار");
-                                                                                            Map<String, Object> dada = new HashMap<>();
-                                                                                            dada.put("balance",Double.parseDouble(String.format(Locale.ENGLISH,"%.3f", CustomerBalance.subtract(TotalTripPrice))));
-                                                                                            FirebaseFirestore.getInstance()
-                                                                                                    .collection("Users")
-                                                                                                    .document(Snap_data.getString("idCustomer"))
-                                                                                                    .update(dada); }
-                                                                                        else{
-                                                                                            t3.setText("قيمة الرحلة: "+String.format("%.3f", TotalTripPrice.doubleValue())+" بخصم "+Snap_data.get("discount")+"%");
-                                                                                            t5.setText("سعر الرحلةالنهائي: "+String.format(Locale.ENGLISH,"%.3f", TotalTripPrice));
-                                                                                        }
-
-                                                                                        progressDialogLoad.dismiss();
-
-                                                                                        t4.setOnClickListener(new View.OnClickListener() {
-                                                                                            @Override
-                                                                                            public void onClick(View view) {
-
-                                                                                                RatingBar rate = dialog2.findViewById(R.id.rating);
-                                                                                                double rating = rate.getRating();
-
-                                                                                                Map<String, Object> ra = new HashMap<>();
-                                                                                                ra.put("rating", FieldValue.increment(rating));
-                                                                                                ra.put("countRating", FieldValue.increment(1));
-                                                                                                FirebaseFirestore.getInstance()
-                                                                                                        .collection("Users")
-                                                                                                        .document(Snap_data.getString("idCustomer"))
-                                                                                                        .update(ra).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                                                    @Override
-                                                                                                    public void onComplete(@NonNull Task<Void> task) {
-
-                                                                                                        FirebaseFirestore.getInstance()
-                                                                                                                .collection("Users")
-                                                                                                                .document(Snap_data.getString("idCustomer"))
-                                                                                                                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                                                                                            @Override
-                                                                                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                                                                                SendNoti("عميلنا العزيز شكرا لاستخدامكم تطبيق رويال رايد, نتمنى لك يوما سعيدا", documentSnapshot.getString("token"));
-                                                                                                                toggleButton.setChecked(true);
-                                                                                                                OldDistance = "0";
-                                                                                                            }
-                                                                                                        });
-
+                                                                                                        Map<String, Object> ups = new HashMap<>();
+                                                                                                        Map<String, Object> mini_locs = new HashMap<>();
+                                                                                                        mini_locs.put("addressTo","");
+                                                                                                        mini_locs.put("lat",loc.getLatitude());
+                                                                                                        mini_locs.put("lng",loc.getLongitude());
+                                                                                                        ups.put("accessPoint",mini_locs);
+                                                                                                        ups.put("km",km);
+                                                                                                        ups.put("hours", time);
+                                                                                                        ups.put("totalPrice",totalPrice);
                                                                                                         FirebaseFirestore.getInstance()
                                                                                                                 .collection("Trips")
                                                                                                                 .document(map.get("tripsid").toString())
-                                                                                                                .update("state", "StateTrip.needRatingByCustomer")
-                                                                                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                                                .update(ups).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                                            @Override
+                                                                                                            public void onComplete(@NonNull Task<Void> task) {
+
+                                                                                                                BigDecimal Balance = new BigDecimal("0");
+                                                                                                                BigDecimal Change = new BigDecimal("0");
+                                                                                                                BigDecimal Recieve = new BigDecimal("0");
+
+                                                                                                                if(CustomerBalance.subtract(FTotalTripPrice).doubleValue() >= 0){
+                                                                                                                    Balance = CustomerBalance.subtract(FTotalTripPrice);
+                                                                                                                    Change = new BigDecimal("0");
+                                                                                                                    Recieve = FTotalTripPrice;
+                                                                                                                }
+                                                                                                                else{
+                                                                                                                    Balance = new BigDecimal("0");
+                                                                                                                    Change = FTotalTripPrice.subtract(CustomerBalance);
+                                                                                                                    Recieve = CustomerBalance;
+                                                                                                                }
+
+                                                                                                                t1.setText(Snap_data.getString("nameCustomer"));
+                                                                                                                t2.setText("المسافة المقطوعة: "+String.format("%.2f", FinalTripDistance.doubleValue())+" Km \n"+"وقت الرحلة: "+time+" min");
+                                                                                                                t3.setText("عداد الرحلة: "+String.format("%.2f", PriceWithoutDisc)+" دينار بخصم "+Snap_data.get("discount")+"%");
+                                                                                                                t5.setText("القيمة المطلوبة كاش: "+String.format("%.2f", Change.doubleValue())+" دينار");
+
+                                                                                                                CustomerBalance = Balance;
+                                                                                                                final BigDecimal AddBalance = Recieve;
+                                                                                                                progressDialog.dismiss();
+
+                                                                                                                t4.setOnClickListener(new View.OnClickListener() {
                                                                                                                     @Override
-                                                                                                                    public void onComplete(@NonNull Task<Void> task) {
-                                                                                                                        dialog2.dismiss();
+                                                                                                                    public void onClick(View view) {
+                                                                                                                        progressDialog.show();
+
+                                                                                                                        Map<String, Object> dada = new HashMap<>();
+                                                                                                                        dada.put("balance",Double.parseDouble(String.format(Locale.ENGLISH,"%.2f", CustomerBalance)));
+                                                                                                                        FirebaseFirestore.getInstance()
+                                                                                                                                .collection("Users")
+                                                                                                                                .document(Snap_data.getString("idCustomer"))
+                                                                                                                                .update(dada).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                                                            @Override
+                                                                                                                            public void onComplete(@NonNull Task<Void> task) {
+
+                                                                                                                                RatingBar rate = dialog2.findViewById(R.id.rating);
+                                                                                                                                double rating = rate.getRating();
+
+                                                                                                                                Map<String, Object> ra = new HashMap<>();
+                                                                                                                                ra.put("rating", FieldValue.increment(rating));
+                                                                                                                                ra.put("countRating", FieldValue.increment(1));
+                                                                                                                                FirebaseFirestore.getInstance()
+                                                                                                                                        .collection("Users")
+                                                                                                                                        .document(Snap_data.getString("idCustomer"))
+                                                                                                                                        .update(ra).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                                                                    @Override
+                                                                                                                                    public void onComplete(@NonNull Task<Void> task) {
+
+                                                                                                                                        FirebaseFirestore.getInstance()
+                                                                                                                                                .collection("Users")
+                                                                                                                                                .document(Snap_data.getString("idCustomer"))
+                                                                                                                                                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                                                                                            @Override
+                                                                                                                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                                                                                                SendNoti("عميلنا العزيز شكرا لاستخدامكم تطبيق رويال رايد, نتمنى لك يوما سعيدا", documentSnapshot.getString("token"));
+                                                                                                                                                toggleButton.setChecked(true);
+                                                                                                                                                OldDistance = "0";
+                                                                                                                                            }
+                                                                                                                                        });
+
+                                                                                                                                        FirebaseFirestore.getInstance()
+                                                                                                                                                .collection("Users")
+                                                                                                                                                .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                                                                                                                                .update("balance", FieldValue.increment(AddBalance.doubleValue()));
+
+                                                                                                                                        FirebaseFirestore.getInstance()
+                                                                                                                                                .collection("Trips")
+                                                                                                                                                .document(map.get("tripsid").toString())
+                                                                                                                                                .update("state", "StateTrip.needRatingByCustomer")
+                                                                                                                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                                                                                    @Override
+                                                                                                                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                                                                                                                        progressDialog.dismiss();
+                                                                                                                                                        arrive.setText("لقد وصلت");
+                                                                                                                                                        canc.setText("إلغاء");
+                                                                                                                                                        dialog_count = 0;
+                                                                                                                                                        InTrip = false;
+                                                                                                                                                        isConnected = true;
+                                                                                                                                                        findViewById(R.id.card_default).setVisibility(View.VISIBLE);
+                                                                                                                                                        findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
+                                                                                                                                                        dialog2.dismiss();
+                                                                                                                                                    }
+                                                                                                                                                });
+                                                                                                                                    }
+                                                                                                                                });
+                                                                                                                            }
+                                                                                                                        });
+
                                                                                                                     }
                                                                                                                 });
+
+                                                                                                            }
+                                                                                                        });
                                                                                                     }
                                                                                                 });
-                                                                                            }
-                                                                                        });
                                                                                     }
                                                                                 });
-
-                                                                                arrive.setText("لقد وصلت");
-                                                                                canc.setText("إلغاء");
-                                                                                dialog_count = 0;
-                                                                                InTrip = false;
-                                                                                isConnected = true;
-                                                                                findViewById(R.id.card_default).setVisibility(View.VISIBLE);
-                                                                                findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
                                                                             }
                                                                         });
                                                             }
@@ -1040,7 +1091,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                         try{
                             t1.setText("الراكب : "+value.getString("nameCustomer"));
-                            t3.setText("خصم الرحلة : "+value.get("discount").toString());
+                            t3.setText("خصم الرحلة : "+value.get("discount").toString()+"%");
 //                            t4.setText("مرجع الخريطة : "+value.getString("currentAddress"));
 
                             FirebaseFirestore.getInstance()
@@ -1234,12 +1285,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             double lng = Double.parseDouble(Snap_data.get("lng").toString());
             double lat = Double.parseDouble(Snap_data.get("lat").toString());
 
-            PolylineOptions polylineOptions = new PolylineOptions()
-                .add(new LatLng(lat, lng))
-                .add(new LatLng(loc.getLatitude(), loc.getLongitude()));
-            polyline = mMap.addPolyline(polylineOptions);}
+//            PolylineOptions polylineOptions = new PolylineOptions()
+//                .add(new LatLng(lat, lng))
+//                .add(new LatLng(loc.getLatitude(), loc.getLongitude()));
+//            polyline = mMap.addPolyline(polylineOptions);
+
+            Drawable circleDrawable = getResources().getDrawable(R.drawable.mark);
+            BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
+            LatLng l =new LatLng(lat, lng);
+
+            mMap.addMarker(new MarkerOptions().position(l).icon(markerIcon));
+
+            new FetchURL(MapsActivity.this).execute(getUrl(new LatLng(loc.getLatitude(), loc.getLongitude()),
+                    new LatLng(lat, lng), "driving"), "driving");
+
+        }
         catch (Exception ex){}
 
+    }
+
+    private String getUrl(LatLng origin, LatLng dest, String directionMode) {
+        // Origin of route
+        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
+        // Destination of route
+        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
+        // Mode
+        String mode = "mode=" + directionMode;
+        // Building the parameters to the web service
+        String parameters = str_origin + "&" + str_dest + "&" + mode;
+        // Output format
+        String output = "json";
+        // Building the url to the web service
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&key=" + getString(R.string.google_maps_key);
+        return url;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -1262,7 +1340,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         catch (Exception ex){}
         mMap.setIndoorEnabled(true);
-        mMap.setTrafficEnabled(true);
+        mMap.setTrafficEnabled(false);
 
         String providerName = mLocationManager.getBestProvider(locationCritera, true);
         Location location  = mLocationManager.getLastKnownLocation(providerName);
@@ -1668,7 +1746,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 float bearing = loc.bearingTo(location) ;
 
                 LatLng l =new LatLng(location.getLatitude(), location.getLongitude());
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(l,15.0f));
+                if(!TripState.equals("tracking"))
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(l,16.0f));
                 mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(location.getLatitude(), location.getLongitude()))
                         .icon(markerIcon)
@@ -1690,10 +1769,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Map<String, Object> calc_map = new HashMap<>();
                 calc_map.put("km", TripDistance.doubleValue());
 
-                FirebaseFirestore.getInstance()
-                        .collection("Trips")
-                        .document(TripObjTid+"")
-                        .update(calc_map);
+                try{
+                    if(!(TripObjTid+"").equals(""))
+                        FirebaseFirestore.getInstance()
+                                .collection("Trips")
+                                .document(TripObjTid+"")
+                                .update(calc_map);
+                }
+                catch (Exception ex){}
 
             }
 
@@ -1902,65 +1985,72 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                     }
                                                 });
 
+                                                final double clng = Double.parseDouble(obj.locationCustomer.get("lng").toString());
+                                                final double clat = Double.parseDouble(obj.locationCustomer.get("lat").toString());
+
                                                 arrive.setOnClickListener(new View.OnClickListener() {
                                                     @Override
                                                     public void onClick(View view) {
 
                                                         if(arrive.getText().toString().equals("لقد وصلت")){
-                                                            progressDialogLoad.show();
-                                                            FirebaseFirestore.getInstance()
-                                                                    .collection("Users")
-                                                                    .document(map.get("idCustomer").toString())
-                                                                    .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                                                @Override
-                                                                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                                    arrive.setText("بدء الرحلة");
-                                                                    FirebaseFirestore.getInstance()
-                                                                            .collection("Users")
-                                                                            .document(map.get("idCustomer").toString())
-                                                                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                                                        @Override
-                                                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                                            SendNoti("لقد وصل الكابتن للموقع.", documentSnapshot.getString("token"));
-                                                                            progressDialogLoad.dismiss();
-                                                                        }
-                                                                    });
+                                                            if(GetDistanceFromLatLonInKm(loc.getLatitude(),loc.getLongitude(), clat, clng) <= 0.05){
+                                                                progressDialogLoad.show();
+                                                                FirebaseFirestore.getInstance()
+                                                                        .collection("Users")
+                                                                        .document(map.get("idCustomer").toString())
+                                                                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                    @Override
+                                                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                        arrive.setText("بدء الرحلة");
+                                                                        FirebaseFirestore.getInstance()
+                                                                                .collection("Users")
+                                                                                .document(map.get("idCustomer").toString())
+                                                                                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                            @Override
+                                                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                                SendNoti("لقد وصل الكابتن للموقع.", documentSnapshot.getString("token"));
+                                                                                progressDialogLoad.dismiss();
+                                                                            }
+                                                                        });
 
-                                                                    progressDialogLoad.dismiss();
-                                                                    cd = new CountDownTimer(300000, 1000) {
+                                                                        progressDialogLoad.dismiss();
+                                                                        cd = new CountDownTimer(300000, 1000) {
 
-                                                                        public void onTick(long millisUntilFinished) {
+                                                                            public void onTick(long millisUntilFinished) {
 
-                                                                            if(millisUntilFinished >= 240000){
-                                                                                if(millisUntilFinished-240000 < 10000) canc.setText("04:0" + ((millisUntilFinished-240000)/1000));
-                                                                                else canc.setText("04:" + ((millisUntilFinished-240000)/1000)); }
+                                                                                if(millisUntilFinished >= 240000){
+                                                                                    if(millisUntilFinished-240000 < 10000) canc.setText("04:0" + ((millisUntilFinished-240000)/1000));
+                                                                                    else canc.setText("04:" + ((millisUntilFinished-240000)/1000)); }
 
-                                                                            else if(millisUntilFinished >= 180000){
-                                                                                if(millisUntilFinished-180000 < 10000) canc.setText("03:0" + ((millisUntilFinished-180000)/1000));
-                                                                                else canc.setText("03:" + ((millisUntilFinished-180000)/1000)); }
+                                                                                else if(millisUntilFinished >= 180000){
+                                                                                    if(millisUntilFinished-180000 < 10000) canc.setText("03:0" + ((millisUntilFinished-180000)/1000));
+                                                                                    else canc.setText("03:" + ((millisUntilFinished-180000)/1000)); }
 
-                                                                            else if(millisUntilFinished >= 120000){
-                                                                                if(millisUntilFinished-120000 < 10000) canc.setText("02:0" + ((millisUntilFinished-120000)/1000));
-                                                                                else canc.setText("02:" + ((millisUntilFinished-180000)/1000)); }
+                                                                                else if(millisUntilFinished >= 120000){
+                                                                                    if(millisUntilFinished-120000 < 10000) canc.setText("02:0" + ((millisUntilFinished-120000)/1000));
+                                                                                    else canc.setText("02:" + ((millisUntilFinished-180000)/1000)); }
 
-                                                                            else if(millisUntilFinished >= 60000){
-                                                                                if(millisUntilFinished-60000 < 10000) canc.setText("01:0" + ((millisUntilFinished-60000)/1000));
-                                                                                else canc.setText("01:" + ((millisUntilFinished-180000)/1000)); }
+                                                                                else if(millisUntilFinished >= 60000){
+                                                                                    if(millisUntilFinished-60000 < 10000) canc.setText("01:0" + ((millisUntilFinished-60000)/1000));
+                                                                                    else canc.setText("01:" + ((millisUntilFinished-180000)/1000)); }
 
-                                                                            else if(millisUntilFinished >= 0){
-                                                                                if(millisUntilFinished < 10000) canc.setText("01:0" + (millisUntilFinished/1000));
-                                                                                else canc.setText("01:" + (millisUntilFinished/1000)); }
+                                                                                else if(millisUntilFinished >= 0){
+                                                                                    if(millisUntilFinished < 10000) canc.setText("01:0" + (millisUntilFinished/1000));
+                                                                                    else canc.setText("01:" + (millisUntilFinished/1000)); }
 
-                                                                        }
+                                                                            }
 
-                                                                        public void onFinish() {
-                                                                            canc.setText("إلغاء");
-                                                                        }
+                                                                            public void onFinish() {
+                                                                                canc.setText("إلغاء");
+                                                                            }
 
-                                                                    };
-                                                                    cd.start();
-                                                                }
-                                                            });
+                                                                        };
+                                                                        cd.start();
+                                                                    }
+                                                                });
+                                                            }
+                                                            else
+                                                                Toast.makeText(MapsActivity.this, "لا يمكن الوصول على بعد أكبر من 50 مترا", Toast.LENGTH_LONG).show();
                                                         }
                                                         else if(arrive.getText().toString().equals("بدء الرحلة")){
                                                             FirebaseFirestore.getInstance()
@@ -1973,10 +2063,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                 }
                                                             });
                                                             DrawPoly = false;
-                                                            try{
-                                                                polyline.remove();
-                                                            }
-                                                            catch (Exception ex){}
+//                                                            try{
+//                                                                polyline.remove();
+//                                                            }
+//                                                            catch (Exception ex){}
                                                             progressDialogLoad.show();
                                                             FirebaseFirestore.getInstance()
                                                                     .collection("Trips")
@@ -2087,9 +2177,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                 lp.copyFrom(dialog2.getWindow().getAttributes());
                                                                                                 lp.width = WindowManager.LayoutParams.MATCH_PARENT;
                                                                                                 lp.height = Math.round(TypedValue.applyDimension(
-                                                                                                        TypedValue.COMPLEX_UNIT_DIP, 440, getResources().getDisplayMetrics()));
+                                                                                                        TypedValue.COMPLEX_UNIT_DIP, 510, getResources().getDisplayMetrics()));
                                                                                                 dialog2.getWindow().setAttributes(lp);
                                                                                                 dialog2.show();
+                                                                                                dialog2.setCancelable(false);
 
                                                                                                 final TextView t1 = dialog2.findViewById(R.id.txvType);
                                                                                                 final TextView t2 = dialog2.findViewById(R.id.txvColor);
@@ -2110,6 +2201,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                             TripDistanceCalc.get(i+1).getLatitude(), TripDistanceCalc.get(i+1).getLongitude())));
 
                                                                                                 }
+
+                                                                                                final BigDecimal FinalTripDistance = TripDistance;
 
                                                                                                 double base_price = 0, below_4_km = 0, between_4n5_km = 0, between_5n8_km = 0,
                                                                                                         more_8_km = 0, minute_price = 0, minimum_trip_cost = 0, driver_fee = 0;
@@ -2148,6 +2241,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                             .add(new BigDecimal(more_8_km).multiply(TripDistance))
                                                                                                             .add(new BigDecimal(minute_price).multiply(new BigDecimal(time)));
 
+                                                                                                final BigDecimal PriceWithoutDisc = TotalTripPrice;
+
                                                                                                 if(TotalTripPrice.doubleValue() < minimum_trip_cost)
                                                                                                     TotalTripPrice = new BigDecimal(minimum_trip_cost);
                                                                                                 if(TotalTripPrice.subtract(TotalTripPrice.multiply(disc)).doubleValue() >= minimum_trip_cost)
@@ -2155,6 +2250,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                                                                                                 BigDecimal fee = TotalTripPrice.multiply(new BigDecimal(driver_fee).divide(new BigDecimal("100")));
                                                                                                 BigDecimal final_fee = new BigDecimal("0").subtract(fee);
+                                                                                                final BigDecimal FTotalTripPrice = TotalTripPrice;
+
                                                                                                 FirebaseFirestore.getInstance()
                                                                                                         .collection("Users")
                                                                                                         .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
@@ -2163,96 +2260,127 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                             @Override
                                                                                                             public void onComplete(@NonNull Task<Void> task) {
                                                                                                                 Toast.makeText(MapsActivity.this, "تم إقتطاع مبلغ "+String.format(Locale.ENGLISH,"%.3f", final_fee.doubleValue()), Toast.LENGTH_SHORT).show();
-                                                                                                            }
-                                                                                                        });
 
-                                                                                                double km = Double.parseDouble(String.format(Locale.ENGLISH,"%.3f", TripDistance.doubleValue()));
-                                                                                                double totalPrice =Double.parseDouble(String.format(Locale.ENGLISH,"%.3f", TotalTripPrice.doubleValue()));
-                                                                                                Map<String, Object> ups = new HashMap<>();
-                                                                                                Map<String, Object> mini_locs = new HashMap<>();
-                                                                                                mini_locs.put("addressTo","");
-                                                                                                mini_locs.put("lat",loc.getLatitude());
-                                                                                                mini_locs.put("lng",loc.getLongitude());
-                                                                                                ups.put("accessPoint",mini_locs);
-                                                                                                ups.put("km",km);
-                                                                                                ups.put("hours", time);
-                                                                                                ups.put("totalPrice",totalPrice);
-                                                                                                FirebaseFirestore.getInstance()
-                                                                                                        .collection("Trips")
-                                                                                                        .document(map.get("tripsid").toString())
-                                                                                                        .update(ups);
+                                                                                                                double km = Double.parseDouble(String.format(Locale.ENGLISH,"%.3f", FinalTripDistance.doubleValue()));
+                                                                                                                double totalPrice =Double.parseDouble(String.format(Locale.ENGLISH,"%.2f", FTotalTripPrice.doubleValue()));
 
-                                                                                                FirebaseFirestore.getInstance()
-                                                                                                        .collection("Users")
-                                                                                                        .document(map.get("idCustomer").toString())
-                                                                                                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                                                                                    @Override
-                                                                                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                                                                        SendNoti("عميلنا العزيز شكرا لاستخدامكم تطبيق رويال رايد, نتمنى لك يوما سعيدا", documentSnapshot.getString("token"));
-                                                                                                        toggleButton.setChecked(true);
-                                                                                                        OldDistance = "0";
-                                                                                                    }
-                                                                                                });
-
-                                                                                                t1.setText(obj.nameCustomer);
-                                                                                                t2.setText(String.format("%.3f", TripDistance.doubleValue())+" Km | "+time+" min");
-                                                                                                if(CustomerBalance.subtract(TotalTripPrice).doubleValue() >= 0){
-                                                                                                    t3.setText("قيمة الرحلة: "+String.format("%.3f", TotalTripPrice.subtract(TotalTripPrice.multiply(disc)).doubleValue())+" بخصم "+obj.discount+"%");
-                                                                                                    t5.setText("تم خصم الرحلة من محفظة الراكب والمطلوب 0.0 دينار");
-                                                                                                    Map<String, Object> dada = new HashMap<>();
-                                                                                                    dada.put("balance",Double.parseDouble(String.format(Locale.ENGLISH,"%.3f", CustomerBalance.subtract(TotalTripPrice))));
-                                                                                                    FirebaseFirestore.getInstance()
-                                                                                                            .collection("Users")
-                                                                                                            .document(obj.idCustomer)
-                                                                                                            .update(dada); }
-                                                                                                else{
-                                                                                                    t3.setText("قيمة الرحلة: "+String.format("%.3f", TotalTripPrice.doubleValue())+" بخصم "+obj.discount+"%");
-                                                                                                    t5.setText("سعر الرحلةالنهائي: "+String.format(Locale.ENGLISH,"%.3f", TotalTripPrice));
-                                                                                                }
-
-                                                                                                progressDialogLoad.dismiss();
-
-                                                                                                t4.setOnClickListener(new View.OnClickListener() {
-                                                                                                    @Override
-                                                                                                    public void onClick(View view) {
-
-                                                                                                        RatingBar rate = dialog2.findViewById(R.id.rating);
-                                                                                                        double rating = rate.getRating();
-
-                                                                                                        Map<String, Object> ra = new HashMap<>();
-                                                                                                        ra.put("rating", FieldValue.increment(rating));
-                                                                                                        ra.put("countRating", FieldValue.increment(1));
-                                                                                                        FirebaseFirestore.getInstance()
-                                                                                                                .collection("Users")
-                                                                                                                .document(obj.idCustomer)
-                                                                                                                .update(ra).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                                                            @Override
-                                                                                                            public void onComplete(@NonNull Task<Void> task) {
-
+                                                                                                                Map<String, Object> ups = new HashMap<>();
+                                                                                                                Map<String, Object> mini_locs = new HashMap<>();
+                                                                                                                mini_locs.put("addressTo","");
+                                                                                                                mini_locs.put("lat",loc.getLatitude());
+                                                                                                                mini_locs.put("lng",loc.getLongitude());
+                                                                                                                ups.put("accessPoint",mini_locs);
+                                                                                                                ups.put("km",km);
+                                                                                                                ups.put("hours", time);
+                                                                                                                ups.put("totalPrice",totalPrice);
                                                                                                                 FirebaseFirestore.getInstance()
                                                                                                                         .collection("Trips")
                                                                                                                         .document(map.get("tripsid").toString())
-                                                                                                                        .update("state", "StateTrip.needRatingByCustomer")
-                                                                                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                                                        .update(ups).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                                                    @Override
+                                                                                                                    public void onComplete(@NonNull Task<Void> task) {
+
+                                                                                                                        BigDecimal Balance = new BigDecimal("0");
+                                                                                                                        BigDecimal Change = new BigDecimal("0");
+                                                                                                                        BigDecimal Recieve = new BigDecimal("0");
+
+                                                                                                                        if(CustomerBalance.subtract(FTotalTripPrice).doubleValue() >= 0){
+                                                                                                                            Balance = CustomerBalance.subtract(FTotalTripPrice);
+                                                                                                                            Change = new BigDecimal("0");
+                                                                                                                            Recieve = FTotalTripPrice;
+                                                                                                                        }
+                                                                                                                        else{
+                                                                                                                            Balance = new BigDecimal("0");
+                                                                                                                            Change = FTotalTripPrice.subtract(CustomerBalance);
+                                                                                                                            Recieve = CustomerBalance;
+                                                                                                                        }
+
+                                                                                                                        t1.setText(obj.nameCustomer);
+                                                                                                                        t2.setText("المسافة المقطوعة: "+String.format("%.2f", FinalTripDistance.doubleValue())+" Km \n"+"وقت الرحلة: "+time+" min");
+                                                                                                                        t3.setText("عداد الرحلة: "+String.format("%.2f", PriceWithoutDisc)+" دينار بخصم "+obj.discount+"%");
+                                                                                                                        t5.setText("القيمة المطلوبة كاش: "+String.format("%.2f", Change.doubleValue())+" دينار");
+
+                                                                                                                        CustomerBalance = Balance;
+                                                                                                                        final BigDecimal AddBalance = Recieve;
+                                                                                                                        progressDialog.dismiss();
+
+                                                                                                                        t4.setOnClickListener(new View.OnClickListener() {
                                                                                                                             @Override
-                                                                                                                            public void onComplete(@NonNull Task<Void> task) {
-                                                                                                                                dialog2.dismiss();
+                                                                                                                            public void onClick(View view) {
+                                                                                                                                progressDialog.show();
+
+                                                                                                                                Map<String, Object> dada = new HashMap<>();
+                                                                                                                                dada.put("balance",Double.parseDouble(String.format(Locale.ENGLISH,"%.2f", CustomerBalance)));
+                                                                                                                                FirebaseFirestore.getInstance()
+                                                                                                                                        .collection("Users")
+                                                                                                                                        .document(obj.idCustomer)
+                                                                                                                                        .update(dada).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                                                                    @Override
+                                                                                                                                    public void onComplete(@NonNull Task<Void> task) {
+
+                                                                                                                                        RatingBar rate = dialog2.findViewById(R.id.rating);
+                                                                                                                                        double rating = rate.getRating();
+
+                                                                                                                                        Map<String, Object> ra = new HashMap<>();
+                                                                                                                                        ra.put("rating", FieldValue.increment(rating));
+                                                                                                                                        ra.put("countRating", FieldValue.increment(1));
+                                                                                                                                        FirebaseFirestore.getInstance()
+                                                                                                                                                .collection("Users")
+                                                                                                                                                .document(obj.idCustomer)
+                                                                                                                                                .update(ra).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                                                                            @Override
+                                                                                                                                            public void onComplete(@NonNull Task<Void> task) {
+
+                                                                                                                                                FirebaseFirestore.getInstance()
+                                                                                                                                                        .collection("Users")
+                                                                                                                                                        .document(map.get("idCustomer").toString())
+                                                                                                                                                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                                                                                                    @Override
+                                                                                                                                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                                                                                                        SendNoti("عميلنا العزيز شكرا لاستخدامكم تطبيق رويال رايد, نتمنى لك يوما سعيدا", documentSnapshot.getString("token"));
+                                                                                                                                                        toggleButton.setChecked(true);
+                                                                                                                                                        OldDistance = "0";
+                                                                                                                                                    }
+                                                                                                                                                });
+
+                                                                                                                                                FirebaseFirestore.getInstance()
+                                                                                                                                                        .collection("Users")
+                                                                                                                                                        .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                                                                                                                                        .update("balance", FieldValue.increment(AddBalance.doubleValue()));
+
+                                                                                                                                                FirebaseFirestore.getInstance()
+                                                                                                                                                        .collection("Trips")
+                                                                                                                                                        .document(map.get("tripsid").toString())
+                                                                                                                                                        .update("state", "StateTrip.needRatingByCustomer")
+                                                                                                                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                                                                                            @Override
+                                                                                                                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                                                                                                                progressDialog.dismiss();
+                                                                                                                                                                arrive.setText("لقد وصلت");
+                                                                                                                                                                canc.setText("إلغاء");
+                                                                                                                                                                dialog_count = 0;
+                                                                                                                                                                InTrip = false;
+                                                                                                                                                                isConnected = true;
+                                                                                                                                                                findViewById(R.id.card_default).setVisibility(View.VISIBLE);
+                                                                                                                                                                findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
+                                                                                                                                                                dialog2.dismiss();
+                                                                                                                                                            }
+                                                                                                                                                        });
+                                                                                                                                            }
+                                                                                                                                        });
+
+                                                                                                                                    }
+                                                                                                                                });
+
+
                                                                                                                             }
                                                                                                                         });
+                                                                                                                    }
+                                                                                                                });
                                                                                                             }
                                                                                                         });
-                                                                                                    }
-                                                                                                });
                                                                                             }
                                                                                         });
-
-                                                                                        arrive.setText("لقد وصلت");
-                                                                                        canc.setText("إلغاء");
-                                                                                        dialog_count = 0;
-                                                                                        InTrip = false;
-                                                                                        isConnected = true;
-                                                                                        findViewById(R.id.card_default).setVisibility(View.VISIBLE);
-                                                                                        findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
                                                                                     }
                                                                                 });
                                                                     }
@@ -2425,7 +2553,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 }
                                 catch (Exception ex){}
 
-                                progressDialogLoad.show();
+                                progressDialog.show();
 
                                 final Map<String, Object> map = new HashMap<>();
                                 final Map<String, Object> mini_map = new HashMap<>();
@@ -2502,7 +2630,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 canc.setVisibility(View.INVISIBLE);
                                 try{cd.cancel();} catch (Exception ex){}
 
-                                progressDialogLoad.dismiss();
+                                progressDialog.dismiss();
 
                                 arrive.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -2534,7 +2662,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                         Tmin = 0;
                                                         Thour = 0;
                                                         m.setText("00:00:00");
-                                                        progressDialogLoad.show();
+                                                        progressDialog.show();
 
                                                         FirebaseFirestore.getInstance()
                                                                 .collection("Trips")
@@ -2560,9 +2688,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                 lp.copyFrom(dialog2.getWindow().getAttributes());
                                                                                 lp.width = WindowManager.LayoutParams.MATCH_PARENT;
                                                                                 lp.height = Math.round(TypedValue.applyDimension(
-                                                                                        TypedValue.COMPLEX_UNIT_DIP, 440, getResources().getDisplayMetrics()));
+                                                                                        TypedValue.COMPLEX_UNIT_DIP, 510, getResources().getDisplayMetrics()));
                                                                                 dialog2.getWindow().setAttributes(lp);
                                                                                 dialog2.show();
+                                                                                dialog2.setCancelable(false);
 
                                                                                 final TextView t1 = dialog2.findViewById(R.id.txvType);
                                                                                 final TextView t2 = dialog2.findViewById(R.id.txvColor);
@@ -2583,6 +2712,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                             TripDistanceCalc.get(i+1).getLatitude(), TripDistanceCalc.get(i+1).getLongitude())));
 
                                                                                 }
+
+                                                                                final BigDecimal FinalTripDistance = TripDistance;
 
                                                                                 double base_price = 0, below_4_km = 0, between_4n5_km = 0, between_5n8_km = 0,
                                                                                         more_8_km = 0, minute_price = 0, minimum_trip_cost = 0, driver_fee = 0;
@@ -2621,6 +2752,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                             .add(new BigDecimal(more_8_km).multiply(TripDistance))
                                                                                             .add(new BigDecimal(minute_price).multiply(new BigDecimal(time)));
 
+                                                                                final BigDecimal PriceWithoutDisc = TotalTripPrice;
+
                                                                                 if(TotalTripPrice.doubleValue() < minimum_trip_cost)
                                                                                     TotalTripPrice = new BigDecimal(minimum_trip_cost);
                                                                                 if(TotalTripPrice.subtract(TotalTripPrice.multiply(disc)).doubleValue() >= minimum_trip_cost)
@@ -2628,6 +2761,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                                                                                 BigDecimal fee = TotalTripPrice.multiply(new BigDecimal(driver_fee).divide(new BigDecimal("100")));
                                                                                 BigDecimal final_fee = new BigDecimal("0").subtract(fee);
+                                                                                final BigDecimal FTotalTripPrice = TotalTripPrice;
+
                                                                                 FirebaseFirestore.getInstance()
                                                                                         .collection("Users")
                                                                                         .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
@@ -2636,98 +2771,126 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                             @Override
                                                                                             public void onComplete(@NonNull Task<Void> task) {
                                                                                                 Toast.makeText(MapsActivity.this, "تم إقتطاع مبلغ "+String.format(Locale.ENGLISH,"%.3f", final_fee.doubleValue()), Toast.LENGTH_SHORT).show();
-                                                                                            }
-                                                                                        });
 
-                                                                                double km = Double.parseDouble(String.format(Locale.ENGLISH,"%.3f", TripDistance.doubleValue()));
-                                                                                double totalPrice =Double.parseDouble(String.format(Locale.ENGLISH,"%.3f", TotalTripPrice.doubleValue()));
-                                                                                Map<String, Object> ups = new HashMap<>();
-                                                                                Map<String, Object> mini_locs = new HashMap<>();
-                                                                                mini_locs.put("addressTo","");
-                                                                                mini_locs.put("lat",loc.getLatitude());
-                                                                                mini_locs.put("lng",loc.getLongitude());
-                                                                                ups.put("accessPoint",mini_locs);
-                                                                                ups.put("km",km);
-                                                                                ups.put("hours", time);
-                                                                                ups.put("totalPrice",totalPrice);
-                                                                                FirebaseFirestore.getInstance()
-                                                                                        .collection("Trips")
-                                                                                        .document(map.get("tripsid").toString())
-                                                                                        .update(ups);
+                                                                                                double km = Double.parseDouble(String.format(Locale.ENGLISH,"%.3f", FinalTripDistance.doubleValue()));
+                                                                                                double totalPrice =Double.parseDouble(String.format(Locale.ENGLISH,"%.2f", FTotalTripPrice.doubleValue()));
 
-                                                                                t1.setText(obj.nameCustomer);
-                                                                                t2.setText(String.format("%.3f", TripDistance.doubleValue())+" Km | "+time+" min");
-                                                                                if(CustomerBalance.subtract(TotalTripPrice).doubleValue() >= 0){
-                                                                                    t3.setText("قيمة الرحلة: "+String.format("%.3f", TotalTripPrice.subtract(TotalTripPrice.multiply(disc)).doubleValue())+" بخصم "+obj.discount+"%");
-                                                                                    t5.setText("تم خصم الرحلة من محفظة الراكب والمطلوب 0.0 دينار");
-                                                                                    Map<String, Object> dada = new HashMap<>();
-                                                                                    dada.put("balance",Double.parseDouble(String.format(Locale.ENGLISH,"%.3f", CustomerBalance.subtract(TotalTripPrice))));
-                                                                                    FirebaseFirestore.getInstance()
-                                                                                            .collection("Users")
-                                                                                            .document(obj.idCustomer)
-                                                                                            .update(dada);
-
-                                                                                    FirebaseFirestore.getInstance()
-                                                                                            .collection("Users")
-                                                                                            .document(obj.idCustomer)
-                                                                                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                                                                        @Override
-                                                                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                                                            SendNoti("عميلنا العزيز شكرا لاستخدامكم تطبيق رويال رايد, نتمنى لك يوما سعيدا", documentSnapshot.getString("token"));
-                                                                                            toggleButton.setChecked(true);
-                                                                                            OldDistance = "0";
-                                                                                        }
-                                                                                    });
-
-                                                                                }
-                                                                                else{
-                                                                                    t3.setText("قيمة الرحلة: "+String.format("%.3f", TotalTripPrice.doubleValue())+" بخصم "+obj.discount+"%");
-                                                                                    t5.setText("سعر الرحلةالنهائي: "+String.format(Locale.ENGLISH,"%.3f", TotalTripPrice));
-                                                                                }
-
-                                                                                progressDialogLoad.dismiss();
-
-                                                                                t4.setOnClickListener(new View.OnClickListener() {
-                                                                                    @Override
-                                                                                    public void onClick(View view) {
-
-                                                                                        RatingBar rate = dialog2.findViewById(R.id.rating);
-                                                                                        double rating = rate.getRating();
-
-                                                                                        Map<String, Object> ra = new HashMap<>();
-                                                                                        ra.put("rating", FieldValue.increment(rating));
-                                                                                        ra.put("countRating", FieldValue.increment(1));
-                                                                                        FirebaseFirestore.getInstance()
-                                                                                                .collection("Users")
-                                                                                                .document(obj.idCustomer)
-                                                                                                .update(ra).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                                            @Override
-                                                                                            public void onComplete(@NonNull Task<Void> task) {
-
+                                                                                                Map<String, Object> ups = new HashMap<>();
+                                                                                                Map<String, Object> mini_locs = new HashMap<>();
+                                                                                                mini_locs.put("addressTo","");
+                                                                                                mini_locs.put("lat",loc.getLatitude());
+                                                                                                mini_locs.put("lng",loc.getLongitude());
+                                                                                                ups.put("accessPoint",mini_locs);
+                                                                                                ups.put("km",km);
+                                                                                                ups.put("hours", time);
+                                                                                                ups.put("totalPrice",totalPrice);
                                                                                                 FirebaseFirestore.getInstance()
                                                                                                         .collection("Trips")
                                                                                                         .document(map.get("tripsid").toString())
-                                                                                                        .update("state", "StateTrip.needRatingByCustomer")
-                                                                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                                        .update(ups).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                                    @Override
+                                                                                                    public void onComplete(@NonNull Task<Void> task) {
+
+                                                                                                        BigDecimal Balance = new BigDecimal("0");
+                                                                                                        BigDecimal Change = new BigDecimal("0");
+                                                                                                        BigDecimal Recieve = new BigDecimal("0");
+
+                                                                                                        if(CustomerBalance.subtract(FTotalTripPrice).doubleValue() >= 0){
+                                                                                                            Balance = CustomerBalance.subtract(FTotalTripPrice);
+                                                                                                            Change = new BigDecimal("0");
+                                                                                                            Recieve = FTotalTripPrice;
+                                                                                                        }
+                                                                                                        else{
+                                                                                                            Balance = new BigDecimal("0");
+                                                                                                            Change = FTotalTripPrice.subtract(CustomerBalance);
+                                                                                                            Recieve = CustomerBalance;
+                                                                                                        }
+
+                                                                                                        t1.setText(obj.nameCustomer);
+                                                                                                        t2.setText("المسافة المقطوعة: "+String.format("%.2f", FinalTripDistance.doubleValue())+" Km \n"+"وقت الرحلة: "+time+" min");
+                                                                                                        t3.setText("عداد الرحلة: "+String.format("%.2f", PriceWithoutDisc)+" دينار بخصم "+obj.discount+"%");
+                                                                                                        t5.setText("القيمة المطلوبة كاش: "+String.format("%.2f", Change.doubleValue())+" دينار");
+
+                                                                                                        CustomerBalance = Balance;
+                                                                                                        final BigDecimal AddBalance = Recieve;
+                                                                                                        progressDialog.dismiss();
+
+                                                                                                        t4.setOnClickListener(new View.OnClickListener() {
                                                                                                             @Override
-                                                                                                            public void onComplete(@NonNull Task<Void> task) {
-                                                                                                                dialog2.dismiss();
+                                                                                                            public void onClick(View view) {
+
+                                                                                                                progressDialog.show();
+
+                                                                                                                Map<String, Object> dada = new HashMap<>();
+                                                                                                                dada.put("balance",Double.parseDouble(String.format(Locale.ENGLISH,"%.3f", CustomerBalance)));
+                                                                                                                FirebaseFirestore.getInstance()
+                                                                                                                        .collection("Users")
+                                                                                                                        .document(obj.idCustomer)
+                                                                                                                        .update(dada).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                                                    @Override
+                                                                                                                    public void onComplete(@NonNull Task<Void> task) {
+
+                                                                                                                        RatingBar rate = dialog2.findViewById(R.id.rating);
+                                                                                                                        double rating = rate.getRating();
+
+                                                                                                                        Map<String, Object> ra = new HashMap<>();
+                                                                                                                        ra.put("rating", FieldValue.increment(rating));
+                                                                                                                        ra.put("countRating", FieldValue.increment(1));
+                                                                                                                        FirebaseFirestore.getInstance()
+                                                                                                                                .collection("Users")
+                                                                                                                                .document(obj.idCustomer)
+                                                                                                                                .update(ra).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                                                            @Override
+                                                                                                                            public void onComplete(@NonNull Task<Void> task) {
+
+                                                                                                                                FirebaseFirestore.getInstance()
+                                                                                                                                        .collection("Users")
+                                                                                                                                        .document(obj.idCustomer)
+                                                                                                                                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                                                                                    @Override
+                                                                                                                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                                                                                        SendNoti("عميلنا العزيز شكرا لاستخدامكم تطبيق رويال رايد, نتمنى لك يوما سعيدا", documentSnapshot.getString("token"));
+                                                                                                                                        toggleButton.setChecked(true);
+                                                                                                                                        OldDistance = "0";
+                                                                                                                                    }
+                                                                                                                                });
+
+                                                                                                                                FirebaseFirestore.getInstance()
+                                                                                                                                        .collection("Users")
+                                                                                                                                        .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                                                                                                                        .update("balance", FieldValue.increment(AddBalance.doubleValue()));
+
+                                                                                                                                FirebaseFirestore.getInstance()
+                                                                                                                                        .collection("Trips")
+                                                                                                                                        .document(map.get("tripsid").toString())
+                                                                                                                                        .update("state", "StateTrip.needRatingByCustomer")
+                                                                                                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                                                                            @Override
+                                                                                                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                                                                                                progressDialog.dismiss();
+                                                                                                                                                arrive.setText("لقد وصلت");
+                                                                                                                                                canc.setText("إلغاء");
+                                                                                                                                                dialog_count = 0;
+                                                                                                                                                InTrip = false;
+                                                                                                                                                isConnected = true;
+                                                                                                                                                findViewById(R.id.card_default).setVisibility(View.VISIBLE);
+                                                                                                                                                findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
+                                                                                                                                                dialog2.dismiss();
+                                                                                                                                            }
+                                                                                                                                        });
+                                                                                                                            }
+                                                                                                                        });
+
+                                                                                                                    }
+                                                                                                                });
                                                                                                             }
                                                                                                         });
+                                                                                                    }
+                                                                                                });
                                                                                             }
                                                                                         });
-                                                                                    }
-                                                                                });
                                                                             }
                                                                         });
-
-                                                                        arrive.setText("لقد وصلت");
-                                                                        canc.setText("إلغاء");
-                                                                        dialog_count = 0;
-                                                                        InTrip = false;
-                                                                        isConnected = true;
-                                                                        findViewById(R.id.card_default).setVisibility(View.VISIBLE);
-                                                                        findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
                                                                     }
                                                                 });
                                                     }
@@ -2931,9 +3094,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         lp.copyFrom(dialog2.getWindow().getAttributes());
                                         lp.width = WindowManager.LayoutParams.MATCH_PARENT;
                                         lp.height = Math.round(TypedValue.applyDimension(
-                                                TypedValue.COMPLEX_UNIT_DIP, 440, getResources().getDisplayMetrics()));
+                                                TypedValue.COMPLEX_UNIT_DIP, 510, getResources().getDisplayMetrics()));
                                         dialog2.getWindow().setAttributes(lp);
                                         dialog2.show();
+                                        dialog2.setCancelable(false);
 
                                         final TextView t1 = dialog2.findViewById(R.id.txvType);
                                         final TextView t2 = dialog2.findViewById(R.id.txvColor);
@@ -2948,6 +3112,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                 Double.parseDouble(obj.locationCustomer.get("lng")+""),
                                                 Double.parseDouble(obj.locationCustomer.get("lat")+""),
                                                 loc.getLatitude(), loc.getLongitude())));
+
+                                        final BigDecimal FinalTripDistance = TripDistance;
 
                                         double base_price = 0, below_4_km = 0, between_4n5_km = 0, between_5n8_km = 0,
                                                 more_8_km = 0, minute_price = 0, minimum_trip_cost = 0, driver_fee = 0;
@@ -2986,6 +3152,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                     .add(new BigDecimal(more_8_km).multiply(TripDistance))
                                                     .add(new BigDecimal(minute_price).multiply(new BigDecimal(time)));
 
+                                        final BigDecimal PriceWithoutDisc = TotalTripPrice;
+
                                         if(TotalTripPrice.doubleValue() < minimum_trip_cost)
                                             TotalTripPrice = new BigDecimal(minimum_trip_cost);
                                         if(TotalTripPrice.subtract(TotalTripPrice.multiply(disc)).doubleValue() >= minimum_trip_cost)
@@ -2993,9 +3161,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                                         BigDecimal fee = TotalTripPrice.multiply(new BigDecimal(driver_fee).divide(new BigDecimal("100")));
                                         BigDecimal final_fee = new BigDecimal("0").subtract(fee);
+                                        final BigDecimal FTotalTripPrice = TotalTripPrice;
 
-                                        double km = Double.parseDouble(String.format(Locale.ENGLISH,"%.3f", TripDistance.doubleValue()));
-                                        double totalPrice =Double.parseDouble(String.format(Locale.ENGLISH,"%.3f", TotalTripPrice.doubleValue()));
+                                        double km = Double.parseDouble(String.format(Locale.ENGLISH,"%.3f", FinalTripDistance.doubleValue()));
+                                        double totalPrice =Double.parseDouble(String.format(Locale.ENGLISH,"%.2f", FTotalTripPrice.doubleValue()));
+
                                         Map<String, Object> ups = new HashMap<>();
                                         Map<String, Object> mini_locs = new HashMap<>();
                                         mini_locs.put("addressTo","");
@@ -3008,67 +3178,107 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         FirebaseFirestore.getInstance()
                                                 .collection("Trips")
                                                 .document(map.get("tripsid").toString())
-                                                .update(ups);
-
-                                        t1.setText(obj.nameCustomer);
-                                        t2.setText(String.format("%.3f", TripDistance.doubleValue())+" Km | "+time+" min");
-                                        if(CustomerBalance.subtract(TotalTripPrice).doubleValue() >= 0){
-                                            t3.setText("قيمة الرحلة: "+String.format("%.3f", TotalTripPrice.subtract(TotalTripPrice.multiply(disc)).doubleValue())+" بخصم "+obj.discount+"%");
-                                            t5.setText("تم خصم الرحلة من محفظة الراكب والمطلوب 0.0 دينار");
-                                            Map<String, Object> dada = new HashMap<>();
-                                            dada.put("balance",Double.parseDouble(String.format(Locale.ENGLISH,"%.3f", CustomerBalance.subtract(TotalTripPrice))));
-                                            FirebaseFirestore.getInstance()
-                                                    .collection("Users")
-                                                    .document(obj.idCustomer)
-                                                    .update(dada); }
-                                        else{
-                                            t3.setText("قيمة الرحلة: "+String.format("%.3f", TotalTripPrice.doubleValue())+" بخصم "+obj.discount+"%");
-                                            t5.setText("سعر الرحلةالنهائي: "+String.format(Locale.ENGLISH,"%.3f", TotalTripPrice));
-                                        }
-
-                                        progressDialogLoad.dismiss();
-
-                                        t4.setOnClickListener(new View.OnClickListener() {
+                                                .update(ups).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
-                                            public void onClick(View view) {
+                                            public void onComplete(@NonNull Task<Void> task) {
 
-                                                RatingBar rate = dialog2.findViewById(R.id.rating);
-                                                double rating = rate.getRating();
+                                                BigDecimal Balance = new BigDecimal("0");
+                                                BigDecimal Change = new BigDecimal("0");
+                                                BigDecimal Recieve = new BigDecimal("0");
 
-                                                Map<String, Object> ra = new HashMap<>();
-                                                ra.put("rating", FieldValue.increment(rating));
-                                                ra.put("countRating", FieldValue.increment(1));
-                                                FirebaseFirestore.getInstance()
-                                                        .collection("Users")
-                                                        .document(obj.idCustomer)
-                                                        .update(ra).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                if(CustomerBalance.subtract(FTotalTripPrice).doubleValue() >= 0){
+                                                    Balance = CustomerBalance.subtract(FTotalTripPrice);
+                                                    Change = new BigDecimal("0");
+                                                    Recieve = FTotalTripPrice;
+                                                }
+                                                else{
+                                                    Balance = new BigDecimal("0");
+                                                    Change = FTotalTripPrice.subtract(CustomerBalance);
+                                                    Recieve = CustomerBalance;
+                                                }
+
+                                                t1.setText(obj.nameCustomer);
+                                                t2.setText("المسافة المقطوعة: "+String.format("%.2f", FinalTripDistance.doubleValue())+" Km \n"+"وقت الرحلة: "+time+" min");
+                                                t3.setText("عداد الرحلة: "+String.format("%.2f", PriceWithoutDisc)+" دينار بخصم "+obj.discount+"%");
+                                                t5.setText("القيمة المطلوبة كاش: "+String.format("%.2f", Change.doubleValue())+" دينار");
+
+                                                CustomerBalance = Balance;
+                                                final BigDecimal AddBalance = Recieve;
+                                                progressDialog.dismiss();
+
+                                                t4.setOnClickListener(new View.OnClickListener() {
                                                     @Override
-                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                    public void onClick(View view) {
+                                                        progressDialog.show();
 
+                                                        Map<String, Object> dada = new HashMap<>();
+                                                        dada.put("balance",Double.parseDouble(String.format(Locale.ENGLISH,"%.2f", CustomerBalance)));
                                                         FirebaseFirestore.getInstance()
-                                                                .collection("Trips")
-                                                                .document(map.get("tripsid").toString())
-                                                                .update("state", "StateTrip.needRatingByCustomer")
-                                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                .collection("Users")
+                                                                .document(obj.idCustomer)
+                                                                .update(dada).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+
+                                                                RatingBar rate = dialog2.findViewById(R.id.rating);
+                                                                double rating = rate.getRating();
+
+                                                                Map<String, Object> ra = new HashMap<>();
+                                                                ra.put("rating", FieldValue.increment(rating));
+                                                                ra.put("countRating", FieldValue.increment(1));
+                                                                FirebaseFirestore.getInstance()
+                                                                        .collection("Users")
+                                                                        .document(obj.idCustomer)
+                                                                        .update(ra).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                     @Override
                                                                     public void onComplete(@NonNull Task<Void> task) {
-                                                                        dialog2.dismiss();
+
+                                                                        FirebaseFirestore.getInstance()
+                                                                                .collection("Users")
+                                                                                .document(map.get("idCustomer").toString())
+                                                                                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                            @Override
+                                                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                                SendNoti("عميلنا العزيز شكرا لاستخدامكم تطبيق رويال رايد, نتمنى لك يوما سعيدا", documentSnapshot.getString("token"));
+                                                                                toggleButton.setChecked(true);
+                                                                                OldDistance = "0";
+                                                                            }
+                                                                        });
+
+                                                                        FirebaseFirestore.getInstance()
+                                                                                .collection("Users")
+                                                                                .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                                                                .update("balance", FieldValue.increment(AddBalance.doubleValue()));
+
+
+                                                                        FirebaseFirestore.getInstance()
+                                                                                .collection("Trips")
+                                                                                .document(map.get("tripsid").toString())
+                                                                                .update("state", "StateTrip.needRatingByCustomer")
+                                                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                    @Override
+                                                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                                                        progressDialog.dismiss();
+                                                                                        arrive.setText("لقد وصلت");
+                                                                                        canc.setText("إلغاء");
+                                                                                        dialog_count = 0;
+                                                                                        InTrip = false;
+                                                                                        isConnected = true;
+                                                                                        findViewById(R.id.card_default).setVisibility(View.VISIBLE);
+                                                                                        findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
+                                                                                        dialog2.dismiss();
+                                                                                    }
+                                                                                });
                                                                     }
                                                                 });
+                                                            }
+                                                        });
                                                     }
                                                 });
                                             }
                                         });
                                     }
                                 });
-
-                                arrive.setText("لقد وصلت");
-                                canc.setText("إلغاء");
-                                dialog_count = 0;
-                                InTrip = false;
-                                isConnected = true;
-                                findViewById(R.id.card_default).setVisibility(View.VISIBLE);
-                                findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
                             }
                             else{
                                 FirebaseFirestore.getInstance()
@@ -3295,6 +3505,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+    }
+
+    @Override
+    public void onTaskDone(Object... values) {
+        if (polyline != null)
+            polyline.remove();
+        polyline = mMap.addPolyline((PolylineOptions) values[0]);
     }
 
 //    @RequiresApi(api = Build.VERSION_CODES.O)
