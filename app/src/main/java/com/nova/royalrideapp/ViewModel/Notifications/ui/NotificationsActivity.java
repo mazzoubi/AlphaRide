@@ -9,11 +9,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.nova.royalrideapp.Data.Notifications.NotificationModel;
 import com.nova.royalrideapp.R;
@@ -60,8 +64,10 @@ public class NotificationsActivity extends AppCompatActivity {
                     ArrayAdapter<NotificationModel> adapter = new NotificationsAdapter(NotificationsActivity.this,
                             R.layout.row_notifications,notificationModels);
                     listView.setAdapter(adapter);
+
                 }
             }
         });
     }
+
 }

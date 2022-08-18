@@ -28,11 +28,11 @@
         <TextView
             android:id="@+id/textView17"
             android:layout_width="match_parent"
-            android:layout_toLeftOf="@+id/count"
             android:layout_height="wrap_content"
             android:layout_below="@+id/textView16"
             android:layout_marginStart="30dp"
             android:layout_marginTop="5dp"
+            android:layout_toLeftOf="@+id/count"
             android:gravity="right"
             android:text="TextView"
             android:textColor="@color/white"

@@ -21,6 +21,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewTreeObserver;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -48,9 +53,26 @@ public class FloatingService extends FloatingBubbleService {
     boolean flag;
     String providerName;
     Intent act;
+    int counter = 0;
 
     @Override
     protected FloatingBubbleConfig getConfig() {
+        View convertView = LayoutInflater.from(MapsActivity.main).inflate(R.layout.buub, null, false);
+        ImageView key = convertView.findViewById(R.id.key);
+
+
+        ViewTreeObserver vto = convertView.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if(counter++ == 1){
+                    Intent homeIntent = new Intent(MapsActivity.main, MapsActivity.class);
+                    homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(homeIntent);
+                }
+            }
+        });
+
         return new FloatingBubbleConfig.Builder()
                 .bubbleIcon(getDrawable(R.drawable.logo7))
                 .removeBubbleIcon(getDrawable(R.drawable.close2))
@@ -61,8 +83,7 @@ public class FloatingService extends FloatingBubbleService {
                 .physicsEnabled(false)
                 .expandableColor(Color.WHITE)
                 .triangleColor(Color.WHITE)
-                .gravity(Gravity.END)
-                .expandableView(null)
+                .expandableView(convertView)
                 .removeBubbleAlpha(0.75f)
                 .build();
     }

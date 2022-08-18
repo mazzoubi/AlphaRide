@@ -867,6 +867,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                                                                                                 BigDecimal disc = new BigDecimal(Snap_data.get("discount").toString()).divide(new BigDecimal("100"));
 
+
                                                                                                 if (TripDistance.doubleValue() <= 4)
                                                                                                     TotalTripPrice = new BigDecimal(base_price)
                                                                                                             .add(new BigDecimal(below_4_km).multiply(TripDistance))
