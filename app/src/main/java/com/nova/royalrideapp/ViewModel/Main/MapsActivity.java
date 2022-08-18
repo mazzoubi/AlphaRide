@@ -629,7 +629,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                     public void onClick(View view) {
 
                                                         if (arrive.getText().toString().equals("لقد وصلت")) {
-                                                            if (GetDistanceFromLatLonInKm(loc.getLatitude(), loc.getLongitude(), clat, clng) <= 0.05) {
+                                                            if (GetDistanceFromLatLonInKm(loc.getLatitude(), loc.getLongitude(), clat, clng) <= 0.10) {
                                                                 progressDialogLoad.show();
                                                                 TripState = "";
 
@@ -865,9 +865,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                 StartedTripAt = 0;
                                                                                                 BigDecimal TotalTripPrice = new BigDecimal("-1");
 
-                                                                                                BigDecimal disc = new BigDecimal(Snap_data.get("discount").toString()).divide(new BigDecimal("100"));
-
-
                                                                                                 if (TripDistance.doubleValue() <= 4)
                                                                                                     TotalTripPrice = new BigDecimal(base_price)
                                                                                                             .add(new BigDecimal(below_4_km).multiply(TripDistance))
@@ -885,28 +882,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                             .add(new BigDecimal(more_8_km).multiply(TripDistance))
                                                                                                             .add(new BigDecimal(minute_price).multiply(new BigDecimal(time)));
 
-                                                                                                final BigDecimal PriceWithoutDisc = TotalTripPrice;
-
                                                                                                 if (TotalTripPrice.doubleValue() < minimum_trip_cost)
                                                                                                     TotalTripPrice = new BigDecimal(minimum_trip_cost);
-                                                                                                if (TotalTripPrice.subtract(TotalTripPrice.multiply(disc)).doubleValue() >= minimum_trip_cost)
-                                                                                                    TotalTripPrice = TotalTripPrice.subtract(TotalTripPrice.multiply(disc));
 
-                                                                                                final BigDecimal fee = TotalTripPrice.multiply(new BigDecimal(driver_fee).divide(new BigDecimal("100")));
-                                                                                                final BigDecimal final_fee = new BigDecimal("0").subtract(fee);
-                                                                                                final BigDecimal FTotalTripPrice = TotalTripPrice;
+                                                                                                final BigDecimal PriceWithoutDisc = TotalTripPrice;
+                                                                                                final BigDecimal disc = new BigDecimal(Snap_data.get("discount").toString()).divide(new BigDecimal("100"));
+                                                                                                final BigDecimal disc2 = new BigDecimal(driver_fee);
+                                                                                                final BigDecimal CompanyShare = TotalTripPrice.multiply(disc2);
+                                                                                                final BigDecimal DiscountablePrice = TotalTripPrice.subtract(new BigDecimal(minimum_trip_cost));
+                                                                                                final BigDecimal CustomerPrice = DiscountablePrice.subtract(DiscountablePrice.multiply(disc));
+                                                                                                final BigDecimal AddBalancePrice = CompanyShare.subtract(DiscountablePrice.multiply(disc));
+                                                                                                final BigDecimal AddSubBalance = new BigDecimal("0").subtract(AddBalancePrice);
+                                                                                                final BigDecimal FinalCustomerPrice = CustomerPrice.add(new BigDecimal(minimum_trip_cost));
 
                                                                                                 FirebaseFirestore.getInstance()
                                                                                                         .collection("Users")
                                                                                                         .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                                                                                                        .update("balance", FieldValue.increment(final_fee.doubleValue()))
+                                                                                                        .update("balance", FieldValue.increment(AddSubBalance.doubleValue()))
                                                                                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                                                             @Override
                                                                                                             public void onComplete(@NonNull Task<Void> task) {
-                                                                                                                Toast.makeText(MapsActivity.this, "تم إقتطاع مبلغ " + String.format(Locale.ENGLISH, "%.3f", final_fee.doubleValue()), Toast.LENGTH_SHORT).show();
+//                                                                                                                Toast.makeText(MapsActivity.this, "تم إضافة مبلغ " + String.format(Locale.ENGLISH, "%.2f", AddSubBalance.doubleValue()), Toast.LENGTH_SHORT).show();
 
                                                                                                                 final double km = Double.parseDouble(String.format(Locale.ENGLISH, "%.3f", FinalTripDistance.doubleValue()));
-                                                                                                                final double totalPrice = Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", FTotalTripPrice.doubleValue()));
+                                                                                                                final double totalPrice = Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", PriceWithoutDisc.doubleValue()));
 
                                                                                                                 Map<String, Object> ups = new HashMap<>();
                                                                                                                 Map<String, Object> mini_locs = new HashMap<>();
@@ -928,13 +927,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                                         BigDecimal Change = new BigDecimal("0");
                                                                                                                         BigDecimal Recieve = new BigDecimal("0");
 
-                                                                                                                        if (CustomerBalance.subtract(FTotalTripPrice).doubleValue() >= 0) {
-                                                                                                                            Balance = CustomerBalance.subtract(FTotalTripPrice);
+                                                                                                                        if (CustomerBalance.subtract(FinalCustomerPrice).doubleValue() >= 0) {
+                                                                                                                            Balance = CustomerBalance.subtract(FinalCustomerPrice);
                                                                                                                             Change = new BigDecimal("0");
-                                                                                                                            Recieve = FTotalTripPrice;
+                                                                                                                            Recieve = FinalCustomerPrice;
                                                                                                                         } else {
                                                                                                                             Balance = new BigDecimal("0");
-                                                                                                                            Change = FTotalTripPrice.subtract(CustomerBalance);
+                                                                                                                            Change = FinalCustomerPrice.subtract(CustomerBalance);
                                                                                                                             Recieve = CustomerBalance;
                                                                                                                         }
 
@@ -2074,7 +2073,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                     public void onClick(View view) {
 
                                                         if(arrive.getText().toString().equals("لقد وصلت")){
-                                                            if(GetDistanceFromLatLonInKm(loc.getLatitude(),loc.getLongitude(), clat, clng) <= 0.05){
+                                                            if(GetDistanceFromLatLonInKm(loc.getLatitude(),loc.getLongitude(), clat, clng) <= 0.10){
                                                                 progressDialogLoad.show();
                                                                 FirebaseFirestore.getInstance()
                                                                         .collection("Users")
@@ -2269,11 +2268,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                 final TextView t4 = dialog2.findViewById(R.id.textView11);
                                                                                                 final TextView t5 = dialog2.findViewById(R.id.txvNo5);
 
-//                                                                                                BigDecimal TripDistance = new BigDecimal(OldDistance);
-//                                                                                                TripDistance = TripDistance.add(new BigDecimal(GetDistanceFromLatLonInKm(
-//                                                                                                        Double.parseDouble(obj.locationCustomer.get("lng")+""), Double.parseDouble(obj.locationCustomer.get("lat")+""),
-//                                                                                                        loc.getLatitude(), loc.getLongitude())));
-
                                                                                                 BigDecimal TripDistance = new BigDecimal(OldDistance);
                                                                                                 for(int i=0; i<TripDistanceCalc.size()-1; i++){
 
@@ -2303,8 +2297,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                 StartedTripAt = 0;
                                                                                                 BigDecimal TotalTripPrice = new BigDecimal("-1");
 
-                                                                                                BigDecimal disc = new BigDecimal(obj.discount+"").divide(new BigDecimal("100"));
-
                                                                                                 if(TripDistance.doubleValue() <= 4)
                                                                                                     TotalTripPrice = new BigDecimal(base_price)
                                                                                                             .add(new BigDecimal(below_4_km).multiply(TripDistance))
@@ -2322,28 +2314,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                             .add(new BigDecimal(more_8_km).multiply(TripDistance))
                                                                                                             .add(new BigDecimal(minute_price).multiply(new BigDecimal(time)));
 
-                                                                                                final BigDecimal PriceWithoutDisc = TotalTripPrice;
-
-                                                                                                if(TotalTripPrice.doubleValue() < minimum_trip_cost)
+                                                                                                if (TotalTripPrice.doubleValue() < minimum_trip_cost)
                                                                                                     TotalTripPrice = new BigDecimal(minimum_trip_cost);
-                                                                                                if(TotalTripPrice.subtract(TotalTripPrice.multiply(disc)).doubleValue() >= minimum_trip_cost)
-                                                                                                    TotalTripPrice = TotalTripPrice.subtract(TotalTripPrice.multiply(disc));
 
-                                                                                                BigDecimal fee = TotalTripPrice.multiply(new BigDecimal(driver_fee).divide(new BigDecimal("100")));
-                                                                                                BigDecimal final_fee = new BigDecimal("0").subtract(fee);
-                                                                                                final BigDecimal FTotalTripPrice = TotalTripPrice;
+                                                                                                final BigDecimal PriceWithoutDisc = TotalTripPrice;
+                                                                                                final BigDecimal disc = new BigDecimal(obj.discount+"").divide(new BigDecimal("100"));
+                                                                                                final BigDecimal disc2 = new BigDecimal(driver_fee);
+                                                                                                final BigDecimal CompanyShare = TotalTripPrice.multiply(disc2);
+                                                                                                final BigDecimal DiscountablePrice = TotalTripPrice.subtract(new BigDecimal(minimum_trip_cost));
+                                                                                                final BigDecimal CustomerPrice = DiscountablePrice.subtract(DiscountablePrice.multiply(disc));
+                                                                                                final BigDecimal AddBalancePrice = CompanyShare.subtract(DiscountablePrice.multiply(disc));
+                                                                                                final BigDecimal AddSubBalance = new BigDecimal("0").subtract(AddBalancePrice);
+                                                                                                final BigDecimal FinalCustomerPrice = CustomerPrice.add(new BigDecimal(minimum_trip_cost));
 
                                                                                                 FirebaseFirestore.getInstance()
                                                                                                         .collection("Users")
                                                                                                         .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                                                                                                        .update("balance", FieldValue.increment(final_fee.doubleValue()))
+                                                                                                        .update("balance", FieldValue.increment(AddSubBalance.doubleValue()))
                                                                                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                                                             @Override
                                                                                                             public void onComplete(@NonNull Task<Void> task) {
-                                                                                                                Toast.makeText(MapsActivity.this, "تم إقتطاع مبلغ "+String.format(Locale.ENGLISH,"%.3f", final_fee.doubleValue()), Toast.LENGTH_SHORT).show();
+//                                                                                                                Toast.makeText(MapsActivity.this, "تم إضافة مبلغ " + String.format(Locale.ENGLISH, "%.2f", AddSubBalance.doubleValue()), Toast.LENGTH_SHORT).show();
 
                                                                                                                 double km = Double.parseDouble(String.format(Locale.ENGLISH,"%.3f", FinalTripDistance.doubleValue()));
-                                                                                                                double totalPrice =Double.parseDouble(String.format(Locale.ENGLISH,"%.2f", FTotalTripPrice.doubleValue()));
+                                                                                                                double totalPrice =Double.parseDouble(String.format(Locale.ENGLISH,"%.2f", PriceWithoutDisc.doubleValue()));
 
                                                                                                                 Map<String, Object> ups = new HashMap<>();
                                                                                                                 Map<String, Object> mini_locs = new HashMap<>();
@@ -2365,14 +2359,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                                         BigDecimal Change = new BigDecimal("0");
                                                                                                                         BigDecimal Recieve = new BigDecimal("0");
 
-                                                                                                                        if(CustomerBalance.subtract(FTotalTripPrice).doubleValue() >= 0){
-                                                                                                                            Balance = CustomerBalance.subtract(FTotalTripPrice);
+                                                                                                                        if(CustomerBalance.subtract(FinalCustomerPrice).doubleValue() >= 0){
+                                                                                                                            Balance = CustomerBalance.subtract(FinalCustomerPrice);
                                                                                                                             Change = new BigDecimal("0");
-                                                                                                                            Recieve = FTotalTripPrice;
+                                                                                                                            Recieve = FinalCustomerPrice;
                                                                                                                         }
                                                                                                                         else{
                                                                                                                             Balance = new BigDecimal("0");
-                                                                                                                            Change = FTotalTripPrice.subtract(CustomerBalance);
+                                                                                                                            Change = FinalCustomerPrice.subtract(CustomerBalance);
                                                                                                                             Recieve = CustomerBalance;
                                                                                                                         }
 
@@ -2799,11 +2793,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                 final TextView t4 = dialog2.findViewById(R.id.textView11);
                                                                                 final TextView t5 = dialog2.findViewById(R.id.txvNo5);
 
-//                                                                                BigDecimal TripDistance = new BigDecimal(OldDistance);
-//                                                                                TripDistance = TripDistance.add(new BigDecimal(GetDistanceFromLatLonInKm(
-//                                                                                        Double.parseDouble(obj.locationCustomer.get("lng")+""), Double.parseDouble(obj.locationCustomer.get("lat")+""),
-//                                                                                        loc.getLatitude(), loc.getLongitude())));
-
                                                                                 BigDecimal TripDistance = new BigDecimal(OldDistance);
                                                                                 for(int i=0; i<TripDistanceCalc.size()-1; i++){
 
@@ -2833,8 +2822,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                 StartedTripAt = 0;
                                                                                 BigDecimal TotalTripPrice = new BigDecimal("-1");
 
-                                                                                BigDecimal disc = new BigDecimal(obj.discount+"").divide(new BigDecimal("100"));
-
                                                                                 if(TripDistance.doubleValue() <= 4)
                                                                                     TotalTripPrice = new BigDecimal(base_price)
                                                                                             .add(new BigDecimal(below_4_km).multiply(TripDistance))
@@ -2852,28 +2839,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                             .add(new BigDecimal(more_8_km).multiply(TripDistance))
                                                                                             .add(new BigDecimal(minute_price).multiply(new BigDecimal(time)));
 
-                                                                                final BigDecimal PriceWithoutDisc = TotalTripPrice;
-
-                                                                                if(TotalTripPrice.doubleValue() < minimum_trip_cost)
+                                                                                if (TotalTripPrice.doubleValue() < minimum_trip_cost)
                                                                                     TotalTripPrice = new BigDecimal(minimum_trip_cost);
-                                                                                if(TotalTripPrice.subtract(TotalTripPrice.multiply(disc)).doubleValue() >= minimum_trip_cost)
-                                                                                    TotalTripPrice = TotalTripPrice.subtract(TotalTripPrice.multiply(disc));
 
-                                                                                BigDecimal fee = TotalTripPrice.multiply(new BigDecimal(driver_fee).divide(new BigDecimal("100")));
-                                                                                BigDecimal final_fee = new BigDecimal("0").subtract(fee);
-                                                                                final BigDecimal FTotalTripPrice = TotalTripPrice;
+                                                                                final BigDecimal PriceWithoutDisc = TotalTripPrice;
+                                                                                final BigDecimal disc = new BigDecimal(obj.discount+"").divide(new BigDecimal("100"));
+                                                                                final BigDecimal disc2 = new BigDecimal(driver_fee);
+                                                                                final BigDecimal CompanyShare = TotalTripPrice.multiply(disc2);
+                                                                                final BigDecimal DiscountablePrice = TotalTripPrice.subtract(new BigDecimal(minimum_trip_cost));
+                                                                                final BigDecimal CustomerPrice = DiscountablePrice.subtract(DiscountablePrice.multiply(disc));
+                                                                                final BigDecimal AddBalancePrice = CompanyShare.subtract(DiscountablePrice.multiply(disc));
+                                                                                final BigDecimal AddSubBalance = new BigDecimal("0").subtract(AddBalancePrice);
+                                                                                final BigDecimal FinalCustomerPrice = CustomerPrice.add(new BigDecimal(minimum_trip_cost));
 
                                                                                 FirebaseFirestore.getInstance()
                                                                                         .collection("Users")
                                                                                         .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                                                                                        .update("balance", FieldValue.increment(final_fee.doubleValue()))
+                                                                                        .update("balance", FieldValue.increment(AddSubBalance.doubleValue()))
                                                                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                                             @Override
                                                                                             public void onComplete(@NonNull Task<Void> task) {
-                                                                                                Toast.makeText(MapsActivity.this, "تم إقتطاع مبلغ "+String.format(Locale.ENGLISH,"%.3f", final_fee.doubleValue()), Toast.LENGTH_SHORT).show();
+                                                                                                Toast.makeText(MapsActivity.this, "تم إقتطاع مبلغ "+String.format(Locale.ENGLISH,"%.2f", AddSubBalance.doubleValue()), Toast.LENGTH_SHORT).show();
 
                                                                                                 double km = Double.parseDouble(String.format(Locale.ENGLISH,"%.3f", FinalTripDistance.doubleValue()));
-                                                                                                double totalPrice =Double.parseDouble(String.format(Locale.ENGLISH,"%.2f", FTotalTripPrice.doubleValue()));
+                                                                                                double totalPrice =Double.parseDouble(String.format(Locale.ENGLISH,"%.2f", PriceWithoutDisc.doubleValue()));
 
                                                                                                 Map<String, Object> ups = new HashMap<>();
                                                                                                 Map<String, Object> mini_locs = new HashMap<>();
@@ -2895,14 +2884,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                         BigDecimal Change = new BigDecimal("0");
                                                                                                         BigDecimal Recieve = new BigDecimal("0");
 
-                                                                                                        if(CustomerBalance.subtract(FTotalTripPrice).doubleValue() >= 0){
-                                                                                                            Balance = CustomerBalance.subtract(FTotalTripPrice);
+                                                                                                        if(CustomerBalance.subtract(FinalCustomerPrice).doubleValue() >= 0){
+                                                                                                            Balance = CustomerBalance.subtract(FinalCustomerPrice);
                                                                                                             Change = new BigDecimal("0");
-                                                                                                            Recieve = FTotalTripPrice;
+                                                                                                            Recieve = FinalCustomerPrice;
                                                                                                         }
                                                                                                         else{
                                                                                                             Balance = new BigDecimal("0");
-                                                                                                            Change = FTotalTripPrice.subtract(CustomerBalance);
+                                                                                                            Change = FinalCustomerPrice.subtract(CustomerBalance);
                                                                                                             Recieve = CustomerBalance;
                                                                                                         }
 
@@ -3252,8 +3241,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         StartedTripAt = 0;
                                         BigDecimal TotalTripPrice = new BigDecimal("-1");
 
-                                        BigDecimal disc = new BigDecimal(obj.discount+"").divide(new BigDecimal("100"));
-
                                         if(TripDistance.doubleValue() <= 4)
                                             TotalTripPrice = new BigDecimal(base_price)
                                                     .add(new BigDecimal(below_4_km).multiply(TripDistance))
@@ -3271,19 +3258,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                     .add(new BigDecimal(more_8_km).multiply(TripDistance))
                                                     .add(new BigDecimal(minute_price).multiply(new BigDecimal(time)));
 
-                                        final BigDecimal PriceWithoutDisc = TotalTripPrice;
-
-                                        if(TotalTripPrice.doubleValue() < minimum_trip_cost)
+                                        if (TotalTripPrice.doubleValue() < minimum_trip_cost)
                                             TotalTripPrice = new BigDecimal(minimum_trip_cost);
-                                        if(TotalTripPrice.subtract(TotalTripPrice.multiply(disc)).doubleValue() >= minimum_trip_cost)
-                                            TotalTripPrice = TotalTripPrice.subtract(TotalTripPrice.multiply(disc));
 
-                                        BigDecimal fee = TotalTripPrice.multiply(new BigDecimal(driver_fee).divide(new BigDecimal("100")));
-                                        BigDecimal final_fee = new BigDecimal("0").subtract(fee);
-                                        final BigDecimal FTotalTripPrice = TotalTripPrice;
+                                        final BigDecimal PriceWithoutDisc = TotalTripPrice;
+                                        final BigDecimal disc = new BigDecimal(obj.discount+"").divide(new BigDecimal("100"));
+                                        final BigDecimal disc2 = new BigDecimal(driver_fee);
+                                        final BigDecimal CompanyShare = TotalTripPrice.multiply(disc2);
+                                        final BigDecimal DiscountablePrice = TotalTripPrice.subtract(new BigDecimal(minimum_trip_cost));
+                                        final BigDecimal CustomerPrice = DiscountablePrice.subtract(DiscountablePrice.multiply(disc));
+                                        final BigDecimal AddBalancePrice = CompanyShare.subtract(DiscountablePrice.multiply(disc));
+                                        final BigDecimal AddSubBalance = new BigDecimal("0").subtract(AddBalancePrice);
+                                        final BigDecimal FinalCustomerPrice = CustomerPrice.add(new BigDecimal(minimum_trip_cost));
 
-                                        double km = Double.parseDouble(String.format(Locale.ENGLISH,"%.3f", FinalTripDistance.doubleValue()));
-                                        double totalPrice =Double.parseDouble(String.format(Locale.ENGLISH,"%.2f", FTotalTripPrice.doubleValue()));
+                                        double km = Double.parseDouble(String.format(Locale.ENGLISH,"%.2f", FinalTripDistance.doubleValue()));
+                                        double totalPrice =Double.parseDouble(String.format(Locale.ENGLISH,"%.2f", PriceWithoutDisc.doubleValue()));
 
                                         Map<String, Object> ups = new HashMap<>();
                                         Map<String, Object> mini_locs = new HashMap<>();
@@ -3305,14 +3294,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                 BigDecimal Change = new BigDecimal("0");
                                                 BigDecimal Recieve = new BigDecimal("0");
 
-                                                if(CustomerBalance.subtract(FTotalTripPrice).doubleValue() >= 0){
-                                                    Balance = CustomerBalance.subtract(FTotalTripPrice);
+                                                if(CustomerBalance.subtract(FinalCustomerPrice).doubleValue() >= 0){
+                                                    Balance = CustomerBalance.subtract(FinalCustomerPrice);
                                                     Change = new BigDecimal("0");
-                                                    Recieve = FTotalTripPrice;
+                                                    Recieve = FinalCustomerPrice;
                                                 }
                                                 else{
                                                     Balance = new BigDecimal("0");
-                                                    Change = FTotalTripPrice.subtract(CustomerBalance);
+                                                    Change = FinalCustomerPrice.subtract(CustomerBalance);
                                                     Recieve = CustomerBalance;
                                                 }
 
@@ -3367,7 +3356,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                         FirebaseFirestore.getInstance()
                                                                                 .collection("Users")
                                                                                 .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                                                                                .update("balance", FieldValue.increment(AddBalance.doubleValue()));
+                                                                                .update("balance", FieldValue.increment(AddSubBalance.doubleValue()));
 
 
                                                                         FirebaseFirestore.getInstance()
