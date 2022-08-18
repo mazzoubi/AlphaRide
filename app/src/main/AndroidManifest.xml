@@ -16,8 +16,8 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+<!--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>-->
+<!--    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />-->
 
     <application
         android:allowBackup="true"
@@ -131,21 +131,10 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
         <service
             android:enabled="true"
             android:exported="true"
-            android:process=":ServiceProcess"
-            android:name = ".MyBackgroundService"/>
-
-        <receiver
-            android:name=".RestartBackgroundService"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="restartservice" />
-            </intent-filter>
-        </receiver>
+            android:name=".FloatingService" />
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
@@ -162,7 +151,6 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-        <service android:name="com.nova.royalrideapp.SimpleService" />
     </application>
 
 </manifest>
