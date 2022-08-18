@@ -86,7 +86,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -102,11 +101,9 @@ import com.nova.royalrideapp.Data.Users.UserInfo_sharedPreference;
 import com.nova.royalrideapp.Data.Users.UserModel;
 import com.nova.royalrideapp.MyBackgroundService;
 import com.nova.royalrideapp.R;
-import com.nova.royalrideapp.ViewModel.Users.ui.TripInfoWithMapActivity;
 import com.nova.royalrideapp.databinding.ActivityMapsBinding;
 
 import com.nova.royalrideapp.RequestUserPermissions;
-import com.nova.royalrideapp.SimpleService;
 import com.nova.royalrideapp.ViewModel.Notifications.ui.NotificationsActivity;
 import com.nova.royalrideapp.ViewModel.Users.Cars.MyCarsActivity;
 import com.nova.royalrideapp.ViewModel.Users.UserViewModel;
@@ -1216,24 +1213,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             catch (Exception ex){}
         }
-
-        ser_int = new Intent(getApplicationContext(), SimpleService.class);
-
-//        EventListener<DocumentSnapshot> docsn = new EventListener<DocumentSnapshot>() {
-//            @Override
-//            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-//                String AID = Settings.Secure.getString(
-//                        getApplicationContext().getContentResolver(),
-//                        Settings.Secure.ANDROID_ID);
-//                String other = value.getString("AID");
-//                if(!other.equals(AID) && !other.equals("")){
-//                    Toast.makeText(MapsActivity.this, "تم تسجيل الدخول من جهاز اخر...", Toast.LENGTH_SHORT).show();
-//                    startActivity(new Intent(MapsActivity.this, MainActivity.class)
-//                            .putExtra("exit", "1"));
-//                    finish();
-//                }
-//            }
-//        };
 
         if(UserInfo_sharedPreference.getUser(MapsActivity.this).uid != null && !UserInfo_sharedPreference.getUser(MapsActivity.this).uid.equals("")){
             FirebaseFirestore.getInstance()
