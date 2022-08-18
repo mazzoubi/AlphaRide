@@ -162,6 +162,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Criteria locationCritera;
     String OldDistance = "0";
     String TripState = "";
+    Intent serv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -172,6 +173,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(binding.getRoot());
 
         toggleButton = findViewById(R.id.toggleButton);
+
+        serv = new Intent(getApplicationContext(), MyBackgroundService.class);
 
         locationCritera = new Criteria();
         locationCritera.setAccuracy(Criteria.ACCURACY_FINE);
@@ -3514,22 +3517,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         polyline = mMap.addPolyline((PolylineOptions) values[0]);
     }
 
-//    @RequiresApi(api = Build.VERSION_CODES.O)
-//    @Override
-//    public void onTrimMemory(int level) {
-//        super.onTrimMemory(level);
-//
-//        startService(new Intent(getApplicationContext(), MyBackgroundService.class));
-//
-//    }
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    public void onTrimMemory(int level) {
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//
-//        stopService(new Intent(MapsActivity.this, MyBackgroundService.class));
-//
-//    }
+//        if(isConnected){
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+//                MapsActivity.this.startForegroundService(serv);
+//            else
+//                MapsActivity.this.startService(serv);
+//        }
+
+        super.onTrimMemory(level);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+//        stopService(serv);
+
+    }
 
 
 

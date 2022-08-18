@@ -1,5 +1,6 @@
 package com.nova.royalrideapp;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -9,6 +10,7 @@ import android.app.Service;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
@@ -24,6 +26,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
 import com.nova.royalrideapp.ViewModel.Main.MapsActivity;
@@ -32,59 +35,37 @@ public class MyBackgroundService extends Service {
 
     LocationManager mLocationManager;
     Criteria locationCritera;
-    LocationListener mLocationListener;
 
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
-    @SuppressLint("MissingPermission")
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         showNotification2("رويال رايد", "التطبيق لايزال يعمل في الخلفية");
 
-//        locationCritera = new Criteria();
-//        locationCritera.setAccuracy(Criteria.ACCURACY_FINE);
-//        locationCritera.setAltitudeRequired(false);
-//        locationCritera.setCostAllowed(true);
-//        locationCritera.setPowerRequirement(Criteria.NO_REQUIREMENT);
-//
-//        mLocationListener = new LocationListener() {
-//            @Override
-//            public void onLocationChanged(@NonNull Location location) {
-////                Toast.makeText(MyBackgroundService.this, location.getLatitude()+","+location.getLatitude(), Toast.LENGTH_SHORT).show();
-//            }
-//        };
-//
-//        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-//        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
+        locationCritera = new Criteria();
+        locationCritera.setAccuracy(Criteria.ACCURACY_FINE);
+        locationCritera.setAltitudeRequired(false);
+        locationCritera.setCostAllowed(true);
+        locationCritera.setPowerRequirement(Criteria.NO_REQUIREMENT);
 
+        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED) { return 0; }
 
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new LocationListener() {
+            @Override
+            public void onLocationChanged(@NonNull Location location) {
+                Toast.makeText(MyBackgroundService.this, location.getLatitude()+","+location.getLongitude(), Toast.LENGTH_SHORT).show();
+            }
+        });
 
         return START_STICKY;
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        Call();
-    }
-
-    public void Call(){
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(MyBackgroundService.this, ""+System.currentTimeMillis(), Toast.LENGTH_SHORT).show();
-                Call();
-            }
-        }, 3000);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
     }
 
     public void showNotification2(String heading, String description){

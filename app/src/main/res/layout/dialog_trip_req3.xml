@@ -45,7 +45,7 @@
                 android:fontFamily="serif"
                 android:gravity="center"
                 android:textColor="@color/black"
-                android:textSize="18dp"
+                android:textSize="14dp"
                 android:textStyle="bold" />
 
         </RelativeLayout>
@@ -77,7 +77,7 @@
                 android:fontFamily="serif"
                 android:gravity="center"
                 android:textColor="@color/black"
-                android:textSize="18dp"
+                android:textSize="14dp"
                 android:textStyle="bold" />
 
         </RelativeLayout>
@@ -109,7 +109,7 @@
                 android:fontFamily="serif"
                 android:gravity="center"
                 android:textColor="@color/black"
-                android:textSize="18dp"
+                android:textSize="14dp"
                 android:textStyle="bold" />
 
         </RelativeLayout>
@@ -141,7 +141,7 @@
                 android:fontFamily="serif"
                 android:gravity="center"
                 android:textColor="@color/black"
-                android:textSize="18dp"
+                android:textSize="14dp"
                 android:textStyle="bold" />
 
         </RelativeLayout>
@@ -173,7 +173,7 @@
                 android:fontFamily="serif"
                 android:gravity="center"
                 android:textColor="@color/black"
-                android:textSize="18dp"
+                android:textSize="14dp"
                 android:textStyle="bold" />
 
         </RelativeLayout>
@@ -205,7 +205,7 @@
                 android:fontFamily="serif"
                 android:gravity="center"
                 android:textColor="@color/black"
-                android:textSize="18dp"
+                android:textSize="14dp"
                 android:textStyle="bold" />
 
         </RelativeLayout>
@@ -237,7 +237,7 @@
                 android:fontFamily="serif"
                 android:gravity="center"
                 android:textColor="@color/black"
-                android:textSize="18dp"
+                android:textSize="14dp"
                 android:textStyle="bold" />
 
         </RelativeLayout>
@@ -269,7 +269,7 @@
                 android:fontFamily="serif"
                 android:gravity="center"
                 android:textColor="@color/black"
-                android:textSize="18dp"
+                android:textSize="14dp"
                 android:textStyle="bold" />
 
         </RelativeLayout>
