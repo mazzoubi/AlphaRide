@@ -163,8 +163,8 @@ public class FloatingService extends FloatingBubbleService {
 
     public void showNotification2(String heading, String description){
 
-        final MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.carhorn);
-        mp.start();
+//        final MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.carhorn);
+//        mp.start();
 
         String CHANNEL_ID="1234";
 
@@ -193,7 +193,7 @@ public class FloatingService extends FloatingBubbleService {
         NotificationCompat.Builder status = new NotificationCompat.Builder(getApplicationContext(),CHANNEL_ID);
         status.setAutoCancel(true)
                 .setWhen(System.currentTimeMillis())
-                .setSmallIcon(R.drawable.logo)
+                .setSmallIcon(R.drawable.logo7)
                 .setContentTitle(heading)
                 .setContentText(description)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(description))

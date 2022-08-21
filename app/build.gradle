@@ -13,8 +13,8 @@ android {
         applicationId "com.nova.royalrideapp"
         minSdk 23
         targetSdk 31
-        versionCode 15
-        versionName "3.3"
+        versionCode 16
+        versionName "3.4"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
