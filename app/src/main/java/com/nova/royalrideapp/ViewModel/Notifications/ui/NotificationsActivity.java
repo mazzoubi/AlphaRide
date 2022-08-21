@@ -61,7 +61,7 @@ public class NotificationsActivity extends AppCompatActivity {
                 }else {
                     txvWaiting.setVisibility(View.GONE);
                     listView.setVisibility(View.VISIBLE);
-                    ArrayAdapter<NotificationModel> adapter = new NotificationsAdapter(NotificationsActivity.this,
+                    NotificationsAdapter adapter = new NotificationsAdapter(NotificationsActivity.this,
                             R.layout.row_notifications,notificationModels);
                     listView.setAdapter(adapter);
 

@@ -1,12 +1,15 @@
 package com.nova.royalrideapp.ViewModel.Notifications.Adapters;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,7 +20,7 @@ import java.util.regex.Pattern;
 import com.nova.royalrideapp.Data.Notifications.NotificationModel;
 import com.nova.royalrideapp.R;
 
-public class NotificationsAdapter extends ArrayAdapter<NotificationModel> {
+public class NotificationsAdapter extends BaseAdapter {
 
     public static class ViewHolder {
 
@@ -27,19 +30,29 @@ public class NotificationsAdapter extends ArrayAdapter<NotificationModel> {
         public static TextView count;
 
     }
-    NotificationModel a ;
     Activity c ;
+    ArrayList<NotificationModel> arrayList;
+
     public NotificationsAdapter(Activity context, int view, ArrayList<NotificationModel> arrayList){
-        super(context,view,arrayList);
         this.c = context;
+        this.arrayList = arrayList;
     }
+
+    @Override
+    public int getCount() { return arrayList.size(); }
+
+    @Override
+    public Object getItem(int i) { return arrayList.get(i); }
+
+    @Override
+    public long getItemId(int i) { return i; }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
         View myView = convertView;
         if(myView == null)
-            myView = LayoutInflater.from(getContext()).inflate(R.layout.row_notifications,parent,false);
+            myView = LayoutInflater.from(c).inflate(R.layout.row_notifications,parent,false);
 
         ViewHolder holder = new ViewHolder();
         holder.title = myView.findViewById(R.id.textView16);
@@ -47,17 +60,15 @@ public class NotificationsAdapter extends ArrayAdapter<NotificationModel> {
         holder.date = myView.findViewById(R.id.textView18);
         holder.count = myView.findViewById(R.id.count);
 
-        a= getItem(position);
-
-        holder.title.setText(a.title);
-        holder.body.setText(a.body);
-        holder.date.setText(a.createdAt.toString());
+        holder.title.setText(arrayList.get(position).title);
+        holder.body.setText(arrayList.get(position).body);
+        holder.date.setText(arrayList.get(position).createdAt.toString());
         holder.count.setText("-"+(position+1) + "-");
 
         holder.body.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Toast.makeText(c, pullLinks(holder.body.getText().toString()).get(0), Toast.LENGTH_SHORT).show();
+                c.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(pullLinks(arrayList.get(position).body).get(0))));
             }
         });
 

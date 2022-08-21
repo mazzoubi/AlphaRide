@@ -142,7 +142,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Drawable circleDrawable;
     Polyline polyline;
 
-    EventListener<DocumentSnapshot> event, event2, event3;
+    EventListener<DocumentSnapshot> event, event2, event3, event4;
     Intent ser_int;
     Location loc;
     long StartedTripAt = 0;
@@ -165,6 +165,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     String TripState = "";
     Intent BgServiceIntent;
     public static Activity main;
+    double WallateBalance = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -1326,12 +1327,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             });
         }
 
-        CheckBalance();
+        event4 = new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                try{ WallateBalance = Double.parseDouble(value.get("balance").toString()); }
+                catch (Exception ex){ WallateBalance = 0;}
+            }
+        };
+
+        try{
+            if(UserInfo_sharedPreference.getUser(MapsActivity.this).uid != null && !UserInfo_sharedPreference.getUser(MapsActivity.this).uid.equals("")){
+                FirebaseFirestore.getInstance()
+                        .collection("Users")
+                        .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                        .addSnapshotListener(event4);
+            }
+        }
+        catch (Exception ex){}
 
     }
 
-    private void CheckBalance() {
-        if (UserInfo_sharedPreference.getUser(MapsActivity.this).balance <= 0) {
+    private boolean CheckBalance() {
+        if (WallateBalance <= 0) {
             AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
             builder.setTitle("رويال رايد");
             builder.setMessage("لا تمتلك رصيد كافي لاستقبال طلبات, يرجى الشحن لفك حجز الحساب");
@@ -1344,12 +1361,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             builder.setNegativeButton("الغاء", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-
+                    toggleButton.setChecked(false);
+                    dialogInterface.dismiss();
                 }
             });
             builder.setCancelable(false);
             builder.show();
+
+            return false;
         }
+        else return true;
     }
 
     private void DrawPolyLine() {
@@ -1437,12 +1458,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                isConnected = b;
-                SharedPreferences.Editor editor = MapsActivity.this.getSharedPreferences("User", Context.MODE_PRIVATE).edit();
-                editor.putBoolean("isConnected", isConnected);
-                editor.apply();
-                editor.commit();
-                if (b) {
+
+                if (b && CheckBalance()) {
+
+                    isConnected = true;
+                    SharedPreferences.Editor editor = MapsActivity.this.getSharedPreferences("User", Context.MODE_PRIVATE).edit();
+                    editor.putBoolean("isConnected", isConnected);
+                    editor.apply();
+                    editor.commit();
 
                     String providerName = mLocationManager.getBestProvider(locationCritera, true);
                     Location location = mLocationManager.getLastKnownLocation(providerName);
@@ -1471,53 +1494,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         catch (Exception ex){}
                     }
 
-                    if (UserInfo_sharedPreference.getUser(MapsActivity.this).balance<=0){
-                        AlertDialog.Builder builder= new AlertDialog.Builder(MapsActivity.this);
-                        builder.setTitle("رويال رايد");
-                        builder.setMessage("لا تمتلك رصيد كافي لاستقبال طلبات, يرجى الشحن لفك حجز الحساب");
-                        builder.setPositiveButton("شحن", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                startActivity(new Intent(getApplicationContext(),WalletActivity.class));
-                            }
-                        });
-                        builder.setNegativeButton("الغاء", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                toggleButton.setChecked(false);
-                                dialogInterface.dismiss();
-                            }
-                        });
-                        builder.setCancelable(false);
-                        builder.show(); }
-                    else {
-                        circleDrawable = getResources().getDrawable(R.drawable.ccc);
-                        toggleButton.setBackgroundDrawable(getDrawable(R.drawable.btn_back23));
+                    circleDrawable = getResources().getDrawable(R.drawable.ccc);
+                    toggleButton.setBackgroundDrawable(getDrawable(R.drawable.btn_back23));
 
-                        FirebaseFirestore.getInstance()
-                                .collection("driverRequests")
-                                .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                                .addSnapshotListener(event);
+                    FirebaseFirestore.getInstance()
+                            .collection("driverRequests")
+                            .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                            .addSnapshotListener(event);
 
-                        if (!Settings.canDrawOverlays(MapsActivity.this)) {
-                            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                                    Uri.parse("package:" + getPackageName()));
-                            startActivityForResult(intent, 1234); }
+                    if (!Settings.canDrawOverlays(MapsActivity.this)) {
+                        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                Uri.parse("package:" + getPackageName()));
+                        startActivityForResult(intent, 1234); }
 
-                       try{
-                           mMap.clear();
-                           markerLat = loc.getLatitude();
-                           markerLng = loc.getLongitude();
-                           BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
-                           LatLng l =new LatLng(loc.getLatitude(), loc.getLongitude());
-                           mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(l,15.0f));
-                           mMap.addMarker(new MarkerOptions()
-                                   .position(new LatLng(loc.getLatitude(), loc.getLongitude()))
-                                   .icon(markerIcon));
-                       }catch (Exception ex){}
-                    }
+                    try{
+                        mMap.clear();
+                        markerLat = loc.getLatitude();
+                        markerLng = loc.getLongitude();
+                        BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
+                        LatLng l =new LatLng(loc.getLatitude(), loc.getLongitude());
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(l,15.0f));
+                        mMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(loc.getLatitude(), loc.getLongitude()))
+                                .icon(markerIcon));
+                    }catch (Exception ex){}
                 }
                 else {
+                    isConnected = false;
+                    SharedPreferences.Editor editor = MapsActivity.this.getSharedPreferences("User", Context.MODE_PRIVATE).edit();
+                    editor.putBoolean("isConnected", isConnected);
+                    editor.apply();
+                    editor.commit();
+
                     circleDrawable = getResources().getDrawable(R.drawable.cc);
                     toggleButton.setBackgroundDrawable(getDrawable(R.drawable.btn_back22));
                     FirebaseFirestore.getInstance()
@@ -1542,14 +1550,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 .icon(markerIcon));
                     }catch (Exception ex){}
                 }
-
-//                    BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
-//                    mMap.clear();
-//                    LatLng l =new LatLng(loc.getLatitude(), loc.getLatitude());
-//                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(l,15.0f));
-//                    mMap.addMarker(new MarkerOptions()
-//                            .position(new LatLng(loc.getLatitude(), loc.getLatitude()))
-//                            .icon(markerIcon));
 
             }
         });
@@ -3641,7 +3641,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onTrimMemory(int level) {
 
         if(isConnected){
-            BgServiceIntent.putExtra("close",false);
+            BgServiceIntent.putExtra("condition","start");
             startService(BgServiceIntent);
         }
         super.onTrimMemory(level);
@@ -3652,7 +3652,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onResume();
 
         if(isMyServiceRunning(FloatingService.class)){
-            BgServiceIntent.putExtra("close",true);
+            BgServiceIntent.putExtra("condition","close");
             startService(BgServiceIntent);
         }
 

@@ -34,6 +34,8 @@ import androidx.core.app.NotificationCompat;
 
 import com.firebase.geofire.GeoFireUtils;
 import com.firebase.geofire.GeoLocation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.nova.royalrideapp.Data.Users.UserInfo_sharedPreference;
@@ -50,10 +52,11 @@ public class FloatingService extends FloatingBubbleService {
     LocationManager mLocationManager;
     Criteria locationCritera;
     LocationListener lsn;
-    boolean flag;
+    String flag;
     String providerName;
     Intent act;
     int counter = 0;
+    int WithIntent = 0;
 
     @Override
     protected FloatingBubbleConfig getConfig() {
@@ -92,17 +95,18 @@ public class FloatingService extends FloatingBubbleService {
     protected boolean onGetIntent(@NonNull Intent intent) {
 
         act = intent;
-        boolean shouldClose = intent.getBooleanExtra("close", false);
-        flag = shouldClose;
+        try{ flag = act.getStringExtra("condition"); }
+        catch (Exception ex) { flag = ""; }
 
-        if (shouldClose) StopWorkingMF();
+        WithIntent = 1;
+        if (flag.equals("close")) StopWorkingMF();
         else StartWorkingMF();
 
         return super.onGetIntent(intent);
     }
 
     private void StartWorkingMF() {
-
+        WithIntent = 0;
         InitLsnr();
         showNotification2("رويال رايد", "لا يزال التطبيق يعمل في الخلف");
 
@@ -163,9 +167,6 @@ public class FloatingService extends FloatingBubbleService {
 
     public void showNotification2(String heading, String description){
 
-//        final MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.carhorn);
-//        mp.start();
-
         String CHANNEL_ID="1234";
 
         Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://"+ getApplicationContext().getPackageName() + "/" + R.raw.carhorn);
@@ -175,7 +176,7 @@ public class FloatingService extends FloatingBubbleService {
         NotificationChannel mChannel;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            mChannel = new NotificationChannel(CHANNEL_ID, CHANNEL_ID, NotificationManager.IMPORTANCE_HIGH);
+            mChannel = new NotificationChannel(CHANNEL_ID, CHANNEL_ID, NotificationManager.IMPORTANCE_DEFAULT);
             mChannel.setLightColor(Color.GRAY);
             mChannel.enableLights(true);
             mChannel.setDescription(CHANNEL_ID);
@@ -183,7 +184,7 @@ public class FloatingService extends FloatingBubbleService {
                     .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                     .setUsage(AudioAttributes.USAGE_NOTIFICATION)
                     .build();
-            mChannel.setSound(soundUri, audioAttributes);
+//            mChannel.setSound(soundUri, audioAttributes);
 
             if (mNotificationManager != null) {
                 mNotificationManager.createNotificationChannel( mChannel );
@@ -196,10 +197,11 @@ public class FloatingService extends FloatingBubbleService {
                 .setSmallIcon(R.drawable.logo7)
                 .setContentTitle(heading)
                 .setContentText(description)
+                .setTicker(null)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(description))
                 .setVibrate(new long[]{0, 500, 1000})
-                .setDefaults(Notification.DEFAULT_LIGHTS )
-                .setSound(Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE+ "://" +getApplicationContext().getPackageName()+"/"+R.raw.carhorn))
+                .setDefaults(Notification.DEFAULT_LIGHTS)
+//                .setSound(Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE+ "://" +getApplicationContext().getPackageName()+"/"+R.raw.carhorn))
                 .setContentIntent(pendingIntent);
 
         startForeground(1234, status.build());
@@ -208,14 +210,6 @@ public class FloatingService extends FloatingBubbleService {
 
     private void StopWorkingMF() {
 
-//        try{
-//            FirebaseFirestore.getInstance()
-//                    .collection("locations")
-//                    .document(UserInfo_sharedPreference.getUser(MapsActivity.main).uid)
-//                    .delete();
-//        }
-//        catch (Exception ex){}
-
         try{mLocationManager.removeUpdates(lsn);}
         catch (Exception ex){}
 
@@ -223,4 +217,26 @@ public class FloatingService extends FloatingBubbleService {
 
     }
 
+    @Override
+    public void onDestroy() {
+
+        if(WithIntent == 0){
+            try{
+                FirebaseFirestore.getInstance()
+                        .collection("locations")
+                        .document(UserInfo_sharedPreference.getUser(MapsActivity.main).uid)
+                        .delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        FloatingService.super.onDestroy();
+                        try{MapsActivity.main.finishAffinity();}
+                        catch (Exception ex){}
+                    }
+                });
+            }
+            catch (Exception ex){}
+        }
+        else
+            FloatingService.super.onDestroy();
+    }
 }
