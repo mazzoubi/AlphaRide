@@ -30,4 +30,20 @@
         android:textSize="14dp"
         android:textStyle="bold" />
 
+    <TextView
+        android:id="@+id/ver"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="-15dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginRight="10dp"
+        android:fontFamily="serif"
+        android:gravity="center"
+        android:text="إصدار رقم : 3.5.1"
+        android:textColor="#cd951a"
+        android:textSize="14dp"
+        android:textStyle="bold" />
+
 </RelativeLayout>

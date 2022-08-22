@@ -68,7 +68,8 @@ public class NotificationsAdapter extends BaseAdapter {
         holder.body.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                c.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(pullLinks(arrayList.get(position).body).get(0))));
+                try{c.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(pullLinks(arrayList.get(position).body).get(0))));}
+                catch (Exception ex){}
             }
         });
 

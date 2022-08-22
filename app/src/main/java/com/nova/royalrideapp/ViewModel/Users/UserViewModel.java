@@ -161,16 +161,16 @@ public class UserViewModel extends ViewModel {
         map.put("password", user.password );
         map.put("imageProfile", user.imageProfile );
 
-        ProgressDialog progressDialog = new ProgressDialog(c);
-        progressDialog.setCancelable(false);
-        progressDialog.setTitle("الرجاء الإنتظار...");
-        progressDialog.show();
+        final ProgressDialog progressDialogg = new ProgressDialog(c);
+        progressDialogg.setCancelable(false);
+        progressDialogg.setTitle("الرجاء الإنتظار...");
+        try{progressDialogg.show();} catch (Exception ex){}
         FirebaseFirestore.getInstance().collection(userCollection)
                 .document(user.uid).update(map)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        progressDialog.dismiss();
+                        progressDialogg.dismiss();
                         UserInfo_sharedPreference.setInfo(c,user);
                         Toast.makeText(c, "تمت عملية الحفظ بنجاح", Toast.LENGTH_SHORT).show();
                     }

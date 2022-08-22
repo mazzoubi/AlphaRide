@@ -169,22 +169,16 @@ public class FloatingService extends FloatingBubbleService {
 
         String CHANNEL_ID="1234";
 
-        Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://"+ getApplicationContext().getPackageName() + "/" + R.raw.carhorn);
         NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 1,
                 new Intent(getApplicationContext(), MapsActivity.class), PendingIntent.FLAG_IMMUTABLE);
         NotificationChannel mChannel;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            mChannel = new NotificationChannel(CHANNEL_ID, CHANNEL_ID, NotificationManager.IMPORTANCE_DEFAULT);
+            mChannel = new NotificationChannel(CHANNEL_ID, CHANNEL_ID, NotificationManager.IMPORTANCE_MIN);
             mChannel.setLightColor(Color.GRAY);
             mChannel.enableLights(true);
             mChannel.setDescription(CHANNEL_ID);
-            AudioAttributes audioAttributes = new AudioAttributes.Builder()
-                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                    .build();
-//            mChannel.setSound(soundUri, audioAttributes);
 
             if (mNotificationManager != null) {
                 mNotificationManager.createNotificationChannel( mChannel );
@@ -201,7 +195,6 @@ public class FloatingService extends FloatingBubbleService {
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(description))
                 .setVibrate(new long[]{0, 500, 1000})
                 .setDefaults(Notification.DEFAULT_LIGHTS)
-//                .setSound(Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE+ "://" +getApplicationContext().getPackageName()+"/"+R.raw.carhorn))
                 .setContentIntent(pendingIntent);
 
         startForeground(1234, status.build());

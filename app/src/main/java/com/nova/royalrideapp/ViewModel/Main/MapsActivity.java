@@ -40,6 +40,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -104,6 +105,7 @@ import com.nova.royalrideapp.ClassDate;
 import com.nova.royalrideapp.Data.Users.UserInfo_sharedPreference;
 import com.nova.royalrideapp.Data.Users.UserModel;
 import com.nova.royalrideapp.R;
+import com.nova.royalrideapp.ViewModel.SplashActivity;
 import com.nova.royalrideapp.databinding.ActivityMapsBinding;
 
 import com.nova.royalrideapp.RequestUserPermissions;
@@ -175,63 +177,63 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(binding.getRoot());
 
-        main = this;
-        BgServiceIntent = new Intent(MapsActivity.this, FloatingService.class);
-        FloatingBubblePermissions.startPermissionRequest(this);
+        if(isLocationEnabled(MapsActivity.this)){
+            main = this;
+            BgServiceIntent = new Intent(MapsActivity.this, FloatingService.class);
+            FloatingBubblePermissions.startPermissionRequest(this);
 
 
-        toggleButton = findViewById(R.id.toggleButton);
+            toggleButton = findViewById(R.id.toggleButton);
 
-        locationCritera = new Criteria();
-        locationCritera.setAccuracy(Criteria.ACCURACY_FINE);
-        locationCritera.setAltitudeRequired(false);
-        locationCritera.setCostAllowed(true);
-        locationCritera.setPowerRequirement(Criteria.NO_REQUIREMENT);
+            locationCritera = new Criteria();
+            locationCritera.setAccuracy(Criteria.ACCURACY_FINE);
+            locationCritera.setAltitudeRequired(false);
+            locationCritera.setCostAllowed(true);
+            locationCritera.setPowerRequirement(Criteria.NO_REQUIREMENT);
 
-        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME,
-                LOCATION_REFRESH_DISTANCE, mLocationListener);
+            mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME,
+                    LOCATION_REFRESH_DISTANCE, mLocationListener);
 
-        CheckForAppVersion();
-        updateToken();
+            CheckForAppVersion();
+            updateToken();
 
-        mp = new MediaPlayer();
-        Uri mediaPath = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.carhorn);
+            mp = new MediaPlayer();
+            Uri mediaPath = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.carhorn);
 
-        try {
-            mp.setAudioStreamType(AudioManager.STREAM_RING);
-            mp.setDataSource(MapsActivity.this, mediaPath);
-            mp.setLooping(true);
-            mp.prepare();
-        } catch (Exception e) {
-        }
+            try {
+                mp.setAudioStreamType(AudioManager.STREAM_RING);
+                mp.setDataSource(MapsActivity.this, mediaPath);
+                mp.setLooping(true);
+                mp.prepare();
+            } catch (Exception e) {}
 
-        progressDialog = new ProgressDialog(MapsActivity.this);
-        progressDialog.setTitle("النظام...");
-        progressDialog.setMessage("الرجاء الإنتظار...");
-        progressDialog.setCancelable(false);
-        try {
-            if (!progressDialog.isShowing())
-                progressDialog.show();
-        } catch (Exception ex) {
-        }
+            progressDialog = new ProgressDialog(MapsActivity.this);
+            progressDialog.setTitle("النظام...");
+            progressDialog.setMessage("الرجاء الإنتظار...");
+            progressDialog.setCancelable(false);
+            try {
+                if (!progressDialog.isShowing())
+                    progressDialog.show();
+            } catch (Exception ex) {
+            }
 
-        FirebaseFirestore.getInstance().collection("BlockUsers")
-                .whereEqualTo("idUser", UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+            FirebaseFirestore.getInstance().collection("BlockUsers")
+                    .whereEqualTo("idUser", UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                    .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                @Override
+                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
 
-                if (queryDocumentSnapshots.getDocuments().size() > 0) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
-                    builder.setTitle("النظام...");
-                    builder.setMessage("عزيزي المستخدم, لقد تم حظرك من إستخدام التطبيق يمكنك التواصل معنا");
-                    builder.setPositiveButton("تواصل", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            startActivity(new Intent(getApplicationContext(), ContactUsActivity.class));
-                        }
-                    });
+                    if (queryDocumentSnapshots.getDocuments().size() > 0) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+                        builder.setTitle("النظام...");
+                        builder.setMessage("عزيزي المستخدم, لقد تم حظرك من إستخدام التطبيق يمكنك التواصل معنا");
+                        builder.setPositiveButton("تواصل", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                startActivity(new Intent(getApplicationContext(), ContactUsActivity.class));
+                            }
+                        });
 //                    builder.setNegativeButton("", new DialogInterface.OnClickListener() {
 //                        @Override
 //                        public void onClick(DialogInterface dialogInterface, int i) {
@@ -239,133 +241,133 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //                        }
 //                    });
 
-                    builder.setCancelable(false);
-                    builder.show();
+                        builder.setCancelable(false);
+                        builder.show();
+                    }
                 }
+            });
+
+            CustomerBalance = new BigDecimal("0");
+            progressDialogLoad = new ProgressDialog(MapsActivity.this);
+            progressDialogLoad.setCancelable(false);
+            progressDialogLoad.setMessage("الرجاء الإنتظار...");
+
+            // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.map);
+            mapFragment.getMapAsync(this);
+
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                return;
             }
-        });
 
-        CustomerBalance = new BigDecimal("0");
-        progressDialogLoad = new ProgressDialog(MapsActivity.this);
-        progressDialogLoad.setCancelable(false);
-        progressDialogLoad.setMessage("الرجاء الإنتظار...");
-
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            return;
-        }
-
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            checkLocationPermission();
-        }
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                checkLocationPermission();
+            }
 
 
-        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+                    || ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+                    || ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                    || ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    || ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
 
-            ActivityCompat.requestPermissions(MapsActivity.this, new String[]{
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                            Manifest.permission.READ_EXTERNAL_STORAGE,
-                            Manifest.permission.CAMERA,
-                            Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_COARSE_LOCATION},
-                    1);
-        }
+                ActivityCompat.requestPermissions(MapsActivity.this, new String[]{
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                Manifest.permission.READ_EXTERNAL_STORAGE,
+                                Manifest.permission.CAMERA,
+                                Manifest.permission.ACCESS_FINE_LOCATION,
+                                Manifest.permission.ACCESS_COARSE_LOCATION},
+                        1);
+            }
 
-        final androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(MapsActivity.this);
-        LayoutInflater inflater = MapsActivity.this.getLayoutInflater();
-        builder.setView(inflater.inflate(R.layout.dialog_trip_req, null));
-        final androidx.appcompat.app.AlertDialog dialog = builder.create();
-        ((FrameLayout) dialog.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-        lp.copyFrom(dialog.getWindow().getAttributes());
-        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-        lp.height = Math.round(TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, 500, getResources().getDisplayMetrics()));
-        dialog.getWindow().setAttributes(lp);
-        dialog.setCancelable(false);
+            final androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(MapsActivity.this);
+            LayoutInflater inflater = MapsActivity.this.getLayoutInflater();
+            builder.setView(inflater.inflate(R.layout.dialog_trip_req, null));
+            final androidx.appcompat.app.AlertDialog dialog = builder.create();
+            ((FrameLayout) dialog.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+            WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+            lp.copyFrom(dialog.getWindow().getAttributes());
+            lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+            lp.height = Math.round(TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, 500, getResources().getDisplayMetrics()));
+            dialog.getWindow().setAttributes(lp);
+            dialog.setCancelable(false);
 
-        event = new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+            event = new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
 
-                Intent homeIntent = new Intent(MapsActivity.this, MapsActivity.class);
-                homeIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(homeIntent);
+                    Intent homeIntent = new Intent(MapsActivity.this, MapsActivity.class);
+                    homeIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    startActivity(homeIntent);
 
-                String val = "";
-                try {
-                    val = value.getString("idCustomer");
-                } catch (Exception ex) {
-                }
+                    String val = "";
+                    try {
+                        val = value.getString("idCustomer");
+                    } catch (Exception ex) {
+                    }
 
-                if (val != null && isConnected) {
-                    if (dialog_count == 0 && !InTrip) {
-                        dialog_count = 1;
-                        mp.start();
-                        try {
-                            dialog.show();
-                        } catch (Exception ex) {
-                        }
-                        Snap_data = value;
-                        final TextView t1 = dialog.findViewById(R.id.txvType);
-                        final TextView t3 = dialog.findViewById(R.id.txvNo);
-                        final TextView t4 = dialog.findViewById(R.id.txvColor);
-                        final TextView t5 = dialog.findViewById(R.id.textView11);
-                        final TextView t6 = dialog.findViewById(R.id.textView7);
-                        final TextView t7 = dialog.findViewById(R.id.rarate);
-                        final TextView t8 = dialog.findViewById(R.id.distatxt);
-                        final ImageView close = dialog.findViewById(R.id.close);
-
-                        cd2 = new CountDownTimer(17000, 1000) {
-                            public void onTick(long millisUntilFinished) {
-
-                                t6.setText("الرفض (" + (millisUntilFinished / 1000) + ")");
-
+                    if (val != null && isConnected) {
+                        if (dialog_count == 0 && !InTrip) {
+                            dialog_count = 1;
+                            mp.start();
+                            try {
+                                dialog.show();
+                            } catch (Exception ex) {
                             }
+                            Snap_data = value;
+                            final TextView t1 = dialog.findViewById(R.id.txvType);
+                            final TextView t3 = dialog.findViewById(R.id.txvNo);
+                            final TextView t4 = dialog.findViewById(R.id.txvColor);
+                            final TextView t5 = dialog.findViewById(R.id.textView11);
+                            final TextView t6 = dialog.findViewById(R.id.textView7);
+                            final TextView t7 = dialog.findViewById(R.id.rarate);
+                            final TextView t8 = dialog.findViewById(R.id.distatxt);
+                            final ImageView close = dialog.findViewById(R.id.close);
 
-                            public void onFinish() {
-                                isConnected = true;
-                                SharedPreferences.Editor editor = MapsActivity.this.getSharedPreferences("User", Context.MODE_PRIVATE).edit();
-                                editor.putBoolean("isConnected", isConnected);
-                                editor.apply();
-                                editor.commit();
+                            cd2 = new CountDownTimer(17000, 1000) {
+                                public void onTick(long millisUntilFinished) {
 
-                                dialog_count = 0;
-                                try {
-                                    mp.pause();
-                                    mp.seekTo(0);
-                                } catch (Exception ex) {
+                                    t6.setText("الرفض (" + (millisUntilFinished / 1000) + ")");
+
                                 }
-                                FirebaseFirestore.getInstance()
-                                        .collection("driverRequests")
-                                        .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                                        .delete();
-                                dialog.dismiss();
-                            }
-                        };
-                        cd2.start();
 
-                        final double clng = Double.parseDouble(value.get("lng").toString());
-                        final double clat = Double.parseDouble(value.get("lat").toString());
+                                public void onFinish() {
+                                    isConnected = true;
+                                    SharedPreferences.Editor editor = MapsActivity.this.getSharedPreferences("User", Context.MODE_PRIVATE).edit();
+                                    editor.putBoolean("isConnected", isConnected);
+                                    editor.apply();
+                                    editor.commit();
 
-                        t4.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
+                                    dialog_count = 0;
+                                    try {
+                                        mp.pause();
+                                        mp.seekTo(0);
+                                    } catch (Exception ex) {
+                                    }
+                                    FirebaseFirestore.getInstance()
+                                            .collection("driverRequests")
+                                            .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                            .delete();
+                                    dialog.dismiss();
+                                }
+                            };
+                            cd2.start();
+
+                            final double clng = Double.parseDouble(value.get("lng").toString());
+                            final double clat = Double.parseDouble(value.get("lat").toString());
+
+                            t4.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
 
 //                                Geocoder coder = new Geocoder(MapsActivity.this);
-                                double lng = Double.parseDouble(value.get("lng").toString());
-                                double lat = Double.parseDouble(value.get("lat").toString());
+                                    double lng = Double.parseDouble(value.get("lng").toString());
+                                    double lat = Double.parseDouble(value.get("lat").toString());
 //                                try {
 //                                    ArrayList<Address> adresses = (ArrayList<Address>) coder.getFromLocationName(value.getString("currentAddress"), 1);
 //                                    for(Address add : adresses){
@@ -376,944 +378,857 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //                                    e.printStackTrace();
 //                                }
 
-                                Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                                        Uri.parse("http://maps.google.com/maps?saddr=" +
-                                                loc.getLatitude() + "," + loc.getLongitude() +
-                                                "&daddr=" + lat + "," + lng));
-                                startActivity(intent);
-                            }
-                        });
-
-                        close.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                dialog.dismiss();
-                                dialog_count = 0;
-                                InTrip = false;
-                                isConnected = true;
-                                SharedPreferences.Editor editor = MapsActivity.this.getSharedPreferences("User", Context.MODE_PRIVATE).edit();
-                                editor.putBoolean("isConnected", isConnected);
-                                editor.putBoolean("InTrip", InTrip);
-                                editor.apply();
-                                editor.commit();
-                                findViewById(R.id.card_default).setVisibility(View.VISIBLE);
-                                findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
-
-                                FirebaseFirestore.getInstance()
-                                        .collection("driverRequests")
-                                        .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                                        .delete();
-                                try {
-                                    mp.pause();
-                                    mp.seekTo(0);
-                                } catch (Exception ex) {
+                                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                                            Uri.parse("http://maps.google.com/maps?saddr=" +
+                                                    loc.getLatitude() + "," + loc.getLongitude() +
+                                                    "&daddr=" + lat + "," + lng));
+                                    startActivity(intent);
                                 }
-                                try {
-                                    cd2.cancel();
-                                } catch (Exception ex) {
+                            });
+
+                            close.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    dialog.dismiss();
+                                    dialog_count = 0;
+                                    InTrip = false;
+                                    isConnected = true;
+                                    SharedPreferences.Editor editor = MapsActivity.this.getSharedPreferences("User", Context.MODE_PRIVATE).edit();
+                                    editor.putBoolean("isConnected", isConnected);
+                                    editor.putBoolean("InTrip", InTrip);
+                                    editor.apply();
+                                    editor.commit();
+                                    findViewById(R.id.card_default).setVisibility(View.VISIBLE);
+                                    findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
+
+                                    FirebaseFirestore.getInstance()
+                                            .collection("driverRequests")
+                                            .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                            .delete();
+                                    try {
+                                        mp.pause();
+                                        mp.seekTo(0);
+                                    } catch (Exception ex) {
+                                    }
+                                    try {
+                                        cd2.cancel();
+                                    } catch (Exception ex) {
+                                    }
                                 }
-                            }
-                        });
+                            });
 
-                        t6.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
+                            t6.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
 
-                                AlertDialog.Builder d = new AlertDialog.Builder(MapsActivity.this);
-                                d.setCancelable(false);
-                                d.setTitle("النظام...");
-                                d.setMessage("هل تريد تأكيد رفض الطلب؟");
-                                d.setPositiveButton("تأكيد", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        dialog.dismiss();
-                                        try {
-                                            mp.pause();
-                                            mp.seekTo(0);
-                                        } catch (Exception ex) {
+                                    AlertDialog.Builder d = new AlertDialog.Builder(MapsActivity.this);
+                                    d.setCancelable(false);
+                                    d.setTitle("النظام...");
+                                    d.setMessage("هل تريد تأكيد رفض الطلب؟");
+                                    d.setPositiveButton("تأكيد", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            dialog.dismiss();
+                                            try {
+                                                mp.pause();
+                                                mp.seekTo(0);
+                                            } catch (Exception ex) {
+                                            }
+                                            dialog_count = 0;
+                                            InTrip = false;
+                                            isConnected = true;
+                                            SharedPreferences.Editor editor = MapsActivity.this.getSharedPreferences("User", Context.MODE_PRIVATE).edit();
+                                            editor.putBoolean("isConnected", isConnected);
+                                            editor.putBoolean("InTrip", InTrip);
+                                            editor.apply();
+                                            editor.commit();
+                                            findViewById(R.id.card_default).setVisibility(View.VISIBLE);
+                                            findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
+
+                                            FirebaseFirestore.getInstance()
+                                                    .collection("driverRequests")
+                                                    .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                                    .delete();
+                                            try {
+                                                cd2.cancel();
+                                            } catch (Exception ex) {
+                                            }
                                         }
-                                        dialog_count = 0;
-                                        InTrip = false;
-                                        isConnected = true;
-                                        SharedPreferences.Editor editor = MapsActivity.this.getSharedPreferences("User", Context.MODE_PRIVATE).edit();
-                                        editor.putBoolean("isConnected", isConnected);
-                                        editor.putBoolean("InTrip", InTrip);
-                                        editor.apply();
-                                        editor.commit();
-                                        findViewById(R.id.card_default).setVisibility(View.VISIBLE);
-                                        findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
+                                    });
+                                    d.setNegativeButton("الغاء", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
 
-                                        FirebaseFirestore.getInstance()
-                                                .collection("driverRequests")
-                                                .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                                                .delete();
-                                        try {
-                                            cd2.cancel();
-                                        } catch (Exception ex) {
                                         }
-                                    }
-                                });
-                                d.setNegativeButton("الغاء", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                                    }
-                                });
-                                d.show();
-                            }
-                        });
-
-                        t5.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                InTrip = true;
-                                SharedPreferences.Editor editor = MapsActivity.this.getSharedPreferences("User", Context.MODE_PRIVATE).edit();
-                                editor.putBoolean("InTrip", InTrip);
-                                editor.apply();
-                                editor.commit();
-
-                                try {
-                                    mp.pause();
-                                    mp.seekTo(0);
-                                } catch (Exception ex) {
+                                    });
+                                    d.show();
                                 }
-                                progressDialogLoad.show();
-                                findViewById(R.id.textView7).setVisibility(View.VISIBLE);
-                                k.setText("0.000 Km");
-                                m.setText("00:00:00");
-                                TripState = "tracking";
+                            });
 
-                                final Map<String, Object> map = new HashMap<>();
-                                final Map<String, Object> mini_map = new HashMap<>();
-                                final Map<String, Object> mini_map2 = new HashMap<>();
-                                final Map<String, Object> mini_map3 = new HashMap<>();
+                            t5.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    InTrip = true;
+                                    SharedPreferences.Editor editor = MapsActivity.this.getSharedPreferences("User", Context.MODE_PRIVATE).edit();
+                                    editor.putBoolean("InTrip", InTrip);
+                                    editor.apply();
+                                    editor.commit();
 
-                                map.put("tripsid", System.currentTimeMillis());
-                                TripObjTid = map.get("tripsid").toString();
-                                map.put("date", ClassDate.date());
-                                map.put("nameCustomer", value.getString("nameCustomer"));
-                                map.put("phoneCustomer", value.getString("phoneCustomer"));
-                                map.put("idCustomer", value.getString("idCustomer"));
-                                map.put("idDriver", UserInfo_sharedPreference.getUser(MapsActivity.this).uid);
-                                map.put("dateStart", FieldValue.serverTimestamp());
-                                map.put("dateAcceptRequest", FieldValue.serverTimestamp());
-                                map.put("state", "StateTrip.active");
-                                map.put("km", 0.0);
-                                map.put("totalPrice", 0.0);
-                                map.put("hours", value.get("hours"));
-                                map.put("typeTrip", value.getString("typeTrip"));
-                                map.put("discount", value.get("discount"));
-                                map.put("addressCurrent", value.getString("currentAddress"));
-
-                                mini_map.put("lat", ((Map<String, Object>) value.get("accessPoint")).get("lat"));
-                                mini_map.put("lng", ((Map<String, Object>) value.get("accessPoint")).get("lng"));
-                                mini_map.put("addressTo", ((Map<String, Object>) value.get("accessPoint")).get("addressTo") + "");
-                                map.put("accessPoint", mini_map);
-
-                                Geocoder coder = new Geocoder(MapsActivity.this);
-                                double lng = 0;
-                                double lat = 0;
-                                try {
-                                    ArrayList<Address> adresses = (ArrayList<Address>) coder.getFromLocationName(value.getString("currentAddress"), 1);
-                                    for (Address add : adresses) {
-                                        lng = add.getLongitude();
-                                        lat = add.getLatitude();
+                                    try {
+                                        mp.pause();
+                                        mp.seekTo(0);
+                                    } catch (Exception ex) {
                                     }
-                                } catch (Exception e) {
-                                }
+                                    progressDialogLoad.show();
+                                    findViewById(R.id.textView7).setVisibility(View.VISIBLE);
+                                    k.setText("0.000 Km");
+                                    m.setText("00:00:00");
+                                    TripState = "tracking";
 
-                                mini_map2.put("lat", lng);
-                                mini_map2.put("lng", lat);
-                                map.put("locationCustomer", mini_map2);
+                                    final Map<String, Object> map = new HashMap<>();
+                                    final Map<String, Object> mini_map = new HashMap<>();
+                                    final Map<String, Object> mini_map2 = new HashMap<>();
+                                    final Map<String, Object> mini_map3 = new HashMap<>();
 
-                                mini_map3.put("lat", loc.getLatitude());
-                                mini_map3.put("lng", loc.getLongitude());
-                                mini_map3.put("rotateDriver", 0);
-                                map.put("locationDriver", mini_map3);
+                                    map.put("tripsid", System.currentTimeMillis());
+                                    TripObjTid = map.get("tripsid").toString();
+                                    map.put("date", ClassDate.date());
+                                    map.put("nameCustomer", value.getString("nameCustomer"));
+                                    map.put("phoneCustomer", value.getString("phoneCustomer"));
+                                    map.put("idCustomer", value.getString("idCustomer"));
+                                    map.put("idDriver", UserInfo_sharedPreference.getUser(MapsActivity.this).uid);
+                                    map.put("dateStart", FieldValue.serverTimestamp());
+                                    map.put("dateAcceptRequest", FieldValue.serverTimestamp());
+                                    map.put("state", "StateTrip.active");
+                                    map.put("km", 0.0);
+                                    map.put("totalPrice", 0.0);
+                                    map.put("hours", value.get("hours"));
+                                    map.put("typeTrip", value.getString("typeTrip"));
+                                    map.put("discount", value.get("discount"));
+                                    map.put("addressCurrent", value.getString("currentAddress"));
 
-                                FirebaseFirestore.getInstance()
-                                        .collection("Trips")
-                                        .document(map.get("tripsid").toString())
-                                        .set(map)
-                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                FirebaseFirestore.getInstance()
-                                                        .collection("Trips")
-                                                        .document(map.get("tripsid") + "")
-                                                        .addSnapshotListener(event2);
+                                    mini_map.put("lat", ((Map<String, Object>) value.get("accessPoint")).get("lat"));
+                                    mini_map.put("lng", ((Map<String, Object>) value.get("accessPoint")).get("lng"));
+                                    mini_map.put("addressTo", ((Map<String, Object>) value.get("accessPoint")).get("addressTo") + "");
+                                    map.put("accessPoint", mini_map);
 
-                                                FirebaseFirestore.getInstance()
-                                                        .collection("driverRequests")
-                                                        .whereEqualTo("idCustomer", map.get("idCustomer").toString())
-                                                        .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                                    @Override
-                                                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                                        List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                                                        for (int i = 0; i < list.size(); i++) {
-                                                            FirebaseFirestore.getInstance()
-                                                                    .collection("driverRequests")
-                                                                    .document(list.get(i).getId())
-                                                                    .delete();
-                                                        }
-                                                    }
-                                                });
+                                    Geocoder coder = new Geocoder(MapsActivity.this);
+                                    double lng = 0;
+                                    double lat = 0;
+                                    try {
+                                        ArrayList<Address> adresses = (ArrayList<Address>) coder.getFromLocationName(value.getString("currentAddress"), 1);
+                                        for (Address add : adresses) {
+                                            lng = add.getLongitude();
+                                            lat = add.getLatitude();
+                                        }
+                                    } catch (Exception e) {
+                                    }
 
-                                                FirebaseFirestore.getInstance()
-                                                        .collection("location")
-                                                        .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                                                        .update("available", false);
+                                    mini_map2.put("lat", lng);
+                                    mini_map2.put("lng", lat);
+                                    map.put("locationCustomer", mini_map2);
 
-                                                FirebaseFirestore.getInstance()
-                                                        .collection("Users")
-                                                        .document(map.get("idCustomer").toString())
-                                                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                                    @Override
-                                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                        SendNoti("الكابتن في الطريق اليك", documentSnapshot.getString("token"));
-                                                        progressDialogLoad.dismiss();
-                                                    }
-                                                });
+                                    mini_map3.put("lat", loc.getLatitude());
+                                    mini_map3.put("lng", loc.getLongitude());
+                                    mini_map3.put("rotateDriver", 0);
+                                    map.put("locationDriver", mini_map3);
 
-                                                DrawPoly = true;
-                                                DrawPolyLine();
+                                    FirebaseFirestore.getInstance()
+                                            .collection("Trips")
+                                            .document(map.get("tripsid").toString())
+                                            .set(map)
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    FirebaseFirestore.getInstance()
+                                                            .collection("Trips")
+                                                            .document(map.get("tripsid") + "")
+                                                            .addSnapshotListener(event2);
 
-                                                findViewById(R.id.card_default).setVisibility(View.INVISIBLE);
-                                                findViewById(R.id.card_default2).setVisibility(View.VISIBLE);
-
-                                                ImageView call = findViewById(R.id.call);
-                                                CardView loca = findViewById(R.id.card3);
-                                                TextView arrive = findViewById(R.id.textView11);
-                                                TextView canc = findViewById(R.id.textView7);
-                                                TextView name = findViewById(R.id.txvType);
-                                                TextView locat = findViewById(R.id.txvColor);
-
-                                                name.setText(value.getString("nameCustomer"));
-                                                locat.setText(value.getString("currentAddress"));
-
-                                                call.setOnClickListener(new View.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(View view) {
-                                                        Intent intent = new Intent(Intent.ACTION_DIAL);
-                                                        intent.setData(Uri.parse("tel:" + value.getString("phoneCustomer").replace("+962", "0")));
-                                                        startActivity(intent);
-                                                    }
-                                                });
-
-                                                loca.setOnClickListener(new View.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(View view) {
-
-                                                        Geocoder coder = new Geocoder(MapsActivity.this);
-                                                        double lng = 0;
-                                                        double lat = 0;
-                                                        try {
-                                                            ArrayList<Address> adresses = (ArrayList<Address>) coder.getFromLocationName(value.getString("currentAddress"), 1);
-                                                            for (Address add : adresses) {
-                                                                lng = add.getLongitude();
-                                                                lat = add.getLatitude();
+                                                    FirebaseFirestore.getInstance()
+                                                            .collection("driverRequests")
+                                                            .whereEqualTo("idCustomer", map.get("idCustomer").toString())
+                                                            .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                                        @Override
+                                                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                                            List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+                                                            for (int i = 0; i < list.size(); i++) {
+                                                                FirebaseFirestore.getInstance()
+                                                                        .collection("driverRequests")
+                                                                        .document(list.get(i).getId())
+                                                                        .delete();
                                                             }
-                                                        } catch (Exception e) {
-                                                            e.printStackTrace();
                                                         }
+                                                    });
 
-                                                        Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                                                                Uri.parse("http://maps.google.com/maps?saddr=" +
-                                                                        loc.getLatitude() + "," + loc.getLongitude() +
-                                                                        "&daddr=" + lat + "," + lng));
-                                                        startActivity(intent);
-                                                    }
-                                                });
+                                                    FirebaseFirestore.getInstance()
+                                                            .collection("location")
+                                                            .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                                            .update("available", false);
 
-                                                arrive.setOnClickListener(new View.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(View view) {
+                                                    FirebaseFirestore.getInstance()
+                                                            .collection("Users")
+                                                            .document(map.get("idCustomer").toString())
+                                                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                        @Override
+                                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                            SendNoti("الكابتن في الطريق اليك", documentSnapshot.getString("token"));
+                                                            progressDialogLoad.dismiss();
+                                                        }
+                                                    });
 
-                                                        if (arrive.getText().toString().equals("لقد وصلت")) {
-                                                            if (GetDistanceFromLatLonInKm(loc.getLatitude(), loc.getLongitude(), clat, clng) <= 0.10) {
-                                                                progressDialogLoad.show();
-                                                                TripState = "";
+                                                    DrawPoly = true;
+                                                    DrawPolyLine();
 
+                                                    findViewById(R.id.card_default).setVisibility(View.INVISIBLE);
+                                                    findViewById(R.id.card_default2).setVisibility(View.VISIBLE);
+
+                                                    ImageView call = findViewById(R.id.call);
+                                                    CardView loca = findViewById(R.id.card3);
+                                                    TextView arrive = findViewById(R.id.textView11);
+                                                    TextView canc = findViewById(R.id.textView7);
+                                                    TextView name = findViewById(R.id.txvType);
+                                                    TextView locat = findViewById(R.id.txvColor);
+
+                                                    name.setText(value.getString("nameCustomer"));
+                                                    locat.setText(value.getString("currentAddress"));
+
+                                                    call.setOnClickListener(new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View view) {
+                                                            Intent intent = new Intent(Intent.ACTION_DIAL);
+                                                            intent.setData(Uri.parse("tel:" + value.getString("phoneCustomer").replace("+962", "0")));
+                                                            startActivity(intent);
+                                                        }
+                                                    });
+
+                                                    loca.setOnClickListener(new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View view) {
+
+                                                            Geocoder coder = new Geocoder(MapsActivity.this);
+                                                            double lng = 0;
+                                                            double lat = 0;
+                                                            try {
+                                                                ArrayList<Address> adresses = (ArrayList<Address>) coder.getFromLocationName(value.getString("currentAddress"), 1);
+                                                                for (Address add : adresses) {
+                                                                    lng = add.getLongitude();
+                                                                    lat = add.getLatitude();
+                                                                }
+                                                            } catch (Exception e) {
+                                                                e.printStackTrace();
+                                                            }
+
+                                                            Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                                                                    Uri.parse("http://maps.google.com/maps?saddr=" +
+                                                                            loc.getLatitude() + "," + loc.getLongitude() +
+                                                                            "&daddr=" + lat + "," + lng));
+                                                            startActivity(intent);
+                                                        }
+                                                    });
+
+                                                    arrive.setOnClickListener(new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View view) {
+
+                                                            if (arrive.getText().toString().equals("لقد وصلت")) {
+                                                                if (GetDistanceFromLatLonInKm(loc.getLatitude(), loc.getLongitude(), clat, clng) <= 0.10) {
+                                                                    progressDialogLoad.show();
+                                                                    TripState = "";
+
+                                                                    FirebaseFirestore.getInstance()
+                                                                            .collection("Users")
+                                                                            .document(map.get("idCustomer").toString())
+                                                                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                        @Override
+                                                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                            arrive.setText("بدء الرحلة");
+                                                                            SendNoti("لقد وصل الكابتن للموقع.", documentSnapshot.getString("token"));
+                                                                            progressDialogLoad.dismiss();
+                                                                            cd = new CountDownTimer(300000, 1000) {
+
+                                                                                public void onTick(long millisUntilFinished) {
+
+                                                                                    if (millisUntilFinished >= 240000) {
+                                                                                        if (millisUntilFinished - 240000 < 10000)
+                                                                                            canc.setText("04:0" + ((millisUntilFinished - 240000) / 1000));
+                                                                                        else
+                                                                                            canc.setText("04:" + ((millisUntilFinished - 240000) / 1000));
+                                                                                    } else if (millisUntilFinished >= 180000) {
+                                                                                        if (millisUntilFinished - 180000 < 10000)
+                                                                                            canc.setText("03:0" + ((millisUntilFinished - 180000) / 1000));
+                                                                                        else
+                                                                                            canc.setText("03:" + ((millisUntilFinished - 180000) / 1000));
+                                                                                    } else if (millisUntilFinished >= 120000) {
+                                                                                        if (millisUntilFinished - 120000 < 10000)
+                                                                                            canc.setText("02:0" + ((millisUntilFinished - 120000) / 1000));
+                                                                                        else
+                                                                                            canc.setText("02:" + ((millisUntilFinished - 180000) / 1000));
+                                                                                    } else if (millisUntilFinished >= 60000) {
+                                                                                        if (millisUntilFinished - 60000 < 10000)
+                                                                                            canc.setText("01:0" + ((millisUntilFinished - 60000) / 1000));
+                                                                                        else
+                                                                                            canc.setText("01:" + ((millisUntilFinished - 180000) / 1000));
+                                                                                    } else if (millisUntilFinished >= 0) {
+                                                                                        if (millisUntilFinished < 10000)
+                                                                                            canc.setText("01:0" + (millisUntilFinished / 1000));
+                                                                                        else
+                                                                                            canc.setText("01:" + (millisUntilFinished / 1000));
+                                                                                    }
+
+                                                                                }
+
+                                                                                public void onFinish() {
+                                                                                    canc.setText("إلغاء");
+                                                                                }
+
+                                                                            };
+                                                                            cd.start();
+                                                                        }
+                                                                    });
+                                                                } else
+                                                                    Toast.makeText(MapsActivity.this, "لا يمكن الوصول على بعد أكبر من 50 مترا", Toast.LENGTH_LONG).show();
+                                                            } else if (arrive.getText().toString().equals("بدء الرحلة")) {
                                                                 FirebaseFirestore.getInstance()
                                                                         .collection("Users")
                                                                         .document(map.get("idCustomer").toString())
                                                                         .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                                                     @Override
                                                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                                        arrive.setText("بدء الرحلة");
-                                                                        SendNoti("لقد وصل الكابتن للموقع.", documentSnapshot.getString("token"));
-                                                                        progressDialogLoad.dismiss();
-                                                                        cd = new CountDownTimer(300000, 1000) {
-
-                                                                            public void onTick(long millisUntilFinished) {
-
-                                                                                if (millisUntilFinished >= 240000) {
-                                                                                    if (millisUntilFinished - 240000 < 10000)
-                                                                                        canc.setText("04:0" + ((millisUntilFinished - 240000) / 1000));
-                                                                                    else
-                                                                                        canc.setText("04:" + ((millisUntilFinished - 240000) / 1000));
-                                                                                } else if (millisUntilFinished >= 180000) {
-                                                                                    if (millisUntilFinished - 180000 < 10000)
-                                                                                        canc.setText("03:0" + ((millisUntilFinished - 180000) / 1000));
-                                                                                    else
-                                                                                        canc.setText("03:" + ((millisUntilFinished - 180000) / 1000));
-                                                                                } else if (millisUntilFinished >= 120000) {
-                                                                                    if (millisUntilFinished - 120000 < 10000)
-                                                                                        canc.setText("02:0" + ((millisUntilFinished - 120000) / 1000));
-                                                                                    else
-                                                                                        canc.setText("02:" + ((millisUntilFinished - 180000) / 1000));
-                                                                                } else if (millisUntilFinished >= 60000) {
-                                                                                    if (millisUntilFinished - 60000 < 10000)
-                                                                                        canc.setText("01:0" + ((millisUntilFinished - 60000) / 1000));
-                                                                                    else
-                                                                                        canc.setText("01:" + ((millisUntilFinished - 180000) / 1000));
-                                                                                } else if (millisUntilFinished >= 0) {
-                                                                                    if (millisUntilFinished < 10000)
-                                                                                        canc.setText("01:0" + (millisUntilFinished / 1000));
-                                                                                    else
-                                                                                        canc.setText("01:" + (millisUntilFinished / 1000));
-                                                                                }
-
-                                                                            }
-
-                                                                            public void onFinish() {
-                                                                                canc.setText("إلغاء");
-                                                                            }
-
-                                                                        };
-                                                                        cd.start();
+                                                                        SendNoti("لقد بدأت الرحلة.", documentSnapshot.getString("token"));
                                                                     }
                                                                 });
-                                                            } else
-                                                                Toast.makeText(MapsActivity.this, "لا يمكن الوصول على بعد أكبر من 50 مترا", Toast.LENGTH_LONG).show();
-                                                        } else if (arrive.getText().toString().equals("بدء الرحلة")) {
-                                                            FirebaseFirestore.getInstance()
-                                                                    .collection("Users")
-                                                                    .document(map.get("idCustomer").toString())
-                                                                    .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                                                @Override
-                                                                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                                    SendNoti("لقد بدأت الرحلة.", documentSnapshot.getString("token"));
-                                                                }
-                                                            });
 
-                                                            DrawPoly = false;
+                                                                DrawPoly = false;
 //                                                    polyline.remove();
-                                                            progressDialogLoad.show();
-                                                            FirebaseFirestore.getInstance()
-                                                                    .collection("Trips")
-                                                                    .document(map.get("tripsid").toString())
-                                                                    .update("state", "StateTrip.started")
-                                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                        @Override
-                                                                        public void onComplete(@NonNull Task<Void> task) {
-                                                                            progressDialogLoad.dismiss();
-
-                                                                            try {
-                                                                                timer = new Timer();
-                                                                                timer.schedule(new TimerTask() {
-                                                                                    @Override
-                                                                                    public void run() {
-                                                                                        runOnUiThread(new Runnable() {
-                                                                                            @Override
-                                                                                            public void run() {
-                                                                                                Tsec += 1;
-                                                                                                String hour_msg = "0" + Thour + ":";
-                                                                                                String hour_msg2 = Thour + ":";
-                                                                                                String min_msg = "0" + Tmin + ":";
-                                                                                                String min_msg2 = Tmin + ":";
-                                                                                                String sec_msg = "0" + Tsec;
-                                                                                                String sec_msg2 = "" + Tsec;
-
-                                                                                                if (Tsec == 59) {
-                                                                                                    Tsec = 0;
-                                                                                                    Tmin += 1;
-                                                                                                }
-                                                                                                if (Tmin == 59) {
-                                                                                                    Tmin = 0;
-                                                                                                    Thour += 1;
-                                                                                                }
-
-                                                                                                String final_msg = "";
-                                                                                                if (Thour >= 10)
-                                                                                                    final_msg += hour_msg2;
-                                                                                                else
-                                                                                                    final_msg += hour_msg;
-                                                                                                if (Tmin >= 10)
-                                                                                                    final_msg += min_msg2;
-                                                                                                else
-                                                                                                    final_msg += min_msg;
-                                                                                                if (Tsec >= 10)
-                                                                                                    final_msg += sec_msg2;
-                                                                                                else
-                                                                                                    final_msg += sec_msg;
-
-                                                                                                m.setText(final_msg);
-                                                                                            }
-                                                                                        });
-                                                                                    }
-                                                                                }, 1000, 1000);
-                                                                            } catch (Exception ex) {
-                                                                            }
-
-                                                                            //here
-
-                                                                            arrive.setText("إنهاء الرحلة");
-                                                                            StartedTripAt = System.currentTimeMillis();
-                                                                            TripDistanceCalc = new ArrayList<>();
-                                                                            k.setText("0.0 Km");
-                                                                            canc.setText("إلغاء");
-                                                                            canc.setVisibility(View.INVISIBLE);
-                                                                            cd.cancel();
-                                                                        }
-                                                                    });
-                                                        } else if (arrive.getText().toString().equals("إنهاء الرحلة")) {
-                                                            AlertDialog.Builder d = new AlertDialog.Builder(MapsActivity.this);
-                                                            d.setMessage("هل تريد تأكيد انهاء الرحلة؟");
-                                                            d.setPositiveButton("تأكيد", new DialogInterface.OnClickListener() {
-                                                                @Override
-                                                                public void onClick(DialogInterface dialogInterface, int i) {
-                                                                    {
-                                                                        progressDialog.show();
-
-                                                                        FirebaseFirestore.getInstance()
-                                                                                .collection("Trips")
-                                                                                .document(map.get("tripsid") + "")
-                                                                                .addSnapshotListener(event2).remove();
-
-                                                                        FirebaseFirestore.getInstance()
-                                                                                .collection("Users")
-                                                                                .document(Snap_data.getString("idCustomer"))
-                                                                                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                progressDialogLoad.show();
+                                                                FirebaseFirestore.getInstance()
+                                                                        .collection("Trips")
+                                                                        .document(map.get("tripsid").toString())
+                                                                        .update("state", "StateTrip.started")
+                                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                             @Override
-                                                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                                                CustomerBalance = new BigDecimal(documentSnapshot.get("balance").toString());
+                                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                                progressDialogLoad.dismiss();
+
+                                                                                try {
+                                                                                    timer = new Timer();
+                                                                                    timer.schedule(new TimerTask() {
+                                                                                        @Override
+                                                                                        public void run() {
+                                                                                            runOnUiThread(new Runnable() {
+                                                                                                @Override
+                                                                                                public void run() {
+                                                                                                    Tsec += 1;
+                                                                                                    String hour_msg = "0" + Thour + ":";
+                                                                                                    String hour_msg2 = Thour + ":";
+                                                                                                    String min_msg = "0" + Tmin + ":";
+                                                                                                    String min_msg2 = Tmin + ":";
+                                                                                                    String sec_msg = "0" + Tsec;
+                                                                                                    String sec_msg2 = "" + Tsec;
+
+                                                                                                    if (Tsec == 59) {
+                                                                                                        Tsec = 0;
+                                                                                                        Tmin += 1;
+                                                                                                    }
+                                                                                                    if (Tmin == 59) {
+                                                                                                        Tmin = 0;
+                                                                                                        Thour += 1;
+                                                                                                    }
+
+                                                                                                    String final_msg = "";
+                                                                                                    if (Thour >= 10)
+                                                                                                        final_msg += hour_msg2;
+                                                                                                    else
+                                                                                                        final_msg += hour_msg;
+                                                                                                    if (Tmin >= 10)
+                                                                                                        final_msg += min_msg2;
+                                                                                                    else
+                                                                                                        final_msg += min_msg;
+                                                                                                    if (Tsec >= 10)
+                                                                                                        final_msg += sec_msg2;
+                                                                                                    else
+                                                                                                        final_msg += sec_msg;
+
+                                                                                                    m.setText(final_msg);
+                                                                                                }
+                                                                                            });
+                                                                                        }
+                                                                                    }, 1000, 1000);
+                                                                                } catch (Exception ex) {
+                                                                                }
+
+                                                                                //here
+
+                                                                                arrive.setText("إنهاء الرحلة");
+                                                                                StartedTripAt = System.currentTimeMillis();
+                                                                                TripDistanceCalc = new ArrayList<>();
+                                                                                k.setText("0.0 Km");
+                                                                                canc.setText("إلغاء");
+                                                                                canc.setVisibility(View.INVISIBLE);
+                                                                                cd.cancel();
                                                                             }
                                                                         });
-
-                                                                        try {
-                                                                            timer.cancel();
-                                                                            timer.purge();
-                                                                        } catch (Exception ex) {
-                                                                        }
-                                                                        Tsec = 0;
-                                                                        Tmin = 0;
-                                                                        Thour = 0;
-                                                                        m.setText("00:00:00");
-
-                                                                        FirebaseFirestore.getInstance()
-                                                                                .collection("Trips")
-                                                                                .document(map.get("tripsid").toString())
-                                                                                .update("state", "StateTrip.needRatingByDriver")
-                                                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                                    @Override
-                                                                                    public void onComplete(@NonNull Task<Void> task) {
-
-                                                                                        FirebaseFirestore.getInstance()
-                                                                                                .collection("AdminDataConfig")
-                                                                                                .document("Data")
-                                                                                                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                                                                            @Override
-                                                                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
-
-                                                                                                final androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(MapsActivity.this);
-                                                                                                LayoutInflater inflater = MapsActivity.this.getLayoutInflater();
-                                                                                                builder.setView(inflater.inflate(R.layout.dialog_trip_req2, null));
-                                                                                                final androidx.appcompat.app.AlertDialog dialog2 = builder.create();
-                                                                                                ((FrameLayout) dialog2.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-                                                                                                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-                                                                                                lp.copyFrom(dialog2.getWindow().getAttributes());
-                                                                                                lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-                                                                                                lp.height = Math.round(TypedValue.applyDimension(
-                                                                                                        TypedValue.COMPLEX_UNIT_DIP, 510, getResources().getDisplayMetrics()));
-                                                                                                dialog2.getWindow().setAttributes(lp);
-                                                                                                dialog2.show();
-                                                                                                dialog2.setCancelable(false);
-
-                                                                                                final TextView t1 = dialog2.findViewById(R.id.txvType);
-                                                                                                final TextView t2 = dialog2.findViewById(R.id.txvColor);
-                                                                                                final TextView t3 = dialog2.findViewById(R.id.txvNo);
-                                                                                                final TextView t4 = dialog2.findViewById(R.id.textView11);
-                                                                                                final TextView t5 = dialog2.findViewById(R.id.txvNo5);
-
-                                                                                                BigDecimal TripDistance = new BigDecimal(OldDistance);
-                                                                                                for (int i = 0; i < TripDistanceCalc.size() - 1; i++) {
-
-                                                                                                    TripDistance = TripDistance.add(new BigDecimal(GetDistanceFromLatLonInKm(
-                                                                                                            TripDistanceCalc.get(i).getLatitude(), TripDistanceCalc.get(i).getLongitude(),
-                                                                                                            TripDistanceCalc.get(i + 1).getLatitude(), TripDistanceCalc.get(i + 1).getLongitude())));
-
-                                                                                                }
-
-                                                                                                final BigDecimal FinalTripDistance = TripDistance;
-
-                                                                                                double base_price = 0, below_4_km = 0, between_4n5_km = 0, between_5n8_km = 0,
-                                                                                                        more_8_km = 0, minute_price = 0, minimum_trip_cost = 0, driver_fee = 0;
-
-                                                                                                try {
-                                                                                                    base_price = Double.parseDouble(documentSnapshot.getString("base_price"));
-                                                                                                    below_4_km = Double.parseDouble(documentSnapshot.getString("below_4_km"));
-                                                                                                    between_4n5_km = Double.parseDouble(documentSnapshot.getString("between_4n5_km"));
-                                                                                                    between_5n8_km = Double.parseDouble(documentSnapshot.getString("between_5n8_km"));
-                                                                                                    more_8_km = Double.parseDouble(documentSnapshot.getString("more_8_km"));
-                                                                                                    minute_price = Double.parseDouble(documentSnapshot.getString("minute_price"));
-                                                                                                    minimum_trip_cost = Double.parseDouble(documentSnapshot.getString("minimum_trip_cost"));
-                                                                                                    driver_fee = Double.parseDouble(documentSnapshot.getString("driver_fee"));
-                                                                                                } catch (Exception ex) {
-                                                                                                }
-
-                                                                                                long time = ((System.currentTimeMillis() / 1000) - (StartedTripAt / 1000)) / 60;
-                                                                                                StartedTripAt = 0;
-                                                                                                BigDecimal TotalTripPrice = new BigDecimal("-1");
-
-                                                                                                if (TripDistance.doubleValue() <= 4)
-                                                                                                    TotalTripPrice = new BigDecimal(base_price)
-                                                                                                            .add(new BigDecimal(below_4_km).multiply(TripDistance))
-                                                                                                            .add(new BigDecimal(minute_price).multiply(new BigDecimal(time)));
-                                                                                                else if (TripDistance.doubleValue() > 4 && TripDistance.doubleValue() <= 5)
-                                                                                                    TotalTripPrice = new BigDecimal(base_price)
-                                                                                                            .add(new BigDecimal(between_4n5_km).multiply(TripDistance))
-                                                                                                            .add(new BigDecimal(minute_price).multiply(new BigDecimal(time)));
-                                                                                                else if (TripDistance.doubleValue() > 5 && TripDistance.doubleValue() <= 8)
-                                                                                                    TotalTripPrice = new BigDecimal(base_price)
-                                                                                                            .add(new BigDecimal(between_5n8_km).multiply(TripDistance))
-                                                                                                            .add(new BigDecimal(minute_price).multiply(new BigDecimal(time)));
-                                                                                                else if (TripDistance.doubleValue() > 8)
-                                                                                                    TotalTripPrice = new BigDecimal(base_price)
-                                                                                                            .add(new BigDecimal(more_8_km).multiply(TripDistance))
-                                                                                                            .add(new BigDecimal(minute_price).multiply(new BigDecimal(time)));
-
-                                                                                                if (TotalTripPrice.doubleValue() < minimum_trip_cost)
-                                                                                                    TotalTripPrice = new BigDecimal(minimum_trip_cost);
-
-                                                                                                final BigDecimal PriceWithoutDisc = TotalTripPrice;
-                                                                                                final BigDecimal disc = new BigDecimal(Snap_data.get("discount").toString()).divide(new BigDecimal("100"));
-                                                                                                final BigDecimal disc2 = new BigDecimal(driver_fee);
-                                                                                                final BigDecimal CompanyShare = TotalTripPrice.multiply(disc2);
-                                                                                                final BigDecimal DiscountablePrice = TotalTripPrice.subtract(new BigDecimal(minimum_trip_cost));
-                                                                                                final BigDecimal CustomerPrice = DiscountablePrice.subtract(DiscountablePrice.multiply(disc));
-                                                                                                final BigDecimal AddBalancePrice = CompanyShare.subtract(DiscountablePrice.multiply(disc));
-                                                                                                final BigDecimal AddSubBalance = new BigDecimal("0").subtract(AddBalancePrice);
-                                                                                                final BigDecimal FinalCustomerPrice = CustomerPrice.add(new BigDecimal(minimum_trip_cost));
-
-                                                                                                FirebaseFirestore.getInstance()
-                                                                                                        .collection("Users")
-                                                                                                        .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                                                                                                        .update("balance", FieldValue.increment(AddSubBalance.doubleValue()))
-                                                                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                                                            @Override
-                                                                                                            public void onComplete(@NonNull Task<Void> task) {
-//                                                                                                                Toast.makeText(MapsActivity.this, "تم إضافة مبلغ " + String.format(Locale.ENGLISH, "%.2f", AddSubBalance.doubleValue()), Toast.LENGTH_SHORT).show();
-
-                                                                                                                final double km = Double.parseDouble(String.format(Locale.ENGLISH, "%.3f", FinalTripDistance.doubleValue()));
-                                                                                                                final double totalPrice = Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", PriceWithoutDisc.doubleValue()));
-
-                                                                                                                Map<String, Object> ups = new HashMap<>();
-                                                                                                                Map<String, Object> mini_locs = new HashMap<>();
-                                                                                                                mini_locs.put("addressTo", "");
-                                                                                                                mini_locs.put("lat", loc.getLatitude());
-                                                                                                                mini_locs.put("lng", loc.getLongitude());
-                                                                                                                ups.put("accessPoint", mini_locs);
-                                                                                                                ups.put("km", km);
-                                                                                                                ups.put("hours", time);
-                                                                                                                ups.put("totalPrice", totalPrice);
-                                                                                                                FirebaseFirestore.getInstance()
-                                                                                                                        .collection("Trips")
-                                                                                                                        .document(map.get("tripsid").toString())
-                                                                                                                        .update(ups).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                                                                    @Override
-                                                                                                                    public void onComplete(@NonNull Task<Void> task) {
-
-                                                                                                                        BigDecimal Balance = new BigDecimal("0");
-                                                                                                                        BigDecimal Change = new BigDecimal("0");
-                                                                                                                        BigDecimal Recieve = new BigDecimal("0");
-
-                                                                                                                        if (CustomerBalance.subtract(FinalCustomerPrice).doubleValue() >= 0) {
-                                                                                                                            Balance = CustomerBalance.subtract(FinalCustomerPrice);
-                                                                                                                            Change = new BigDecimal("0");
-                                                                                                                            Recieve = FinalCustomerPrice;
-                                                                                                                        } else {
-                                                                                                                            Balance = new BigDecimal("0");
-                                                                                                                            Change = FinalCustomerPrice.subtract(CustomerBalance);
-                                                                                                                            Recieve = CustomerBalance;
-                                                                                                                        }
-
-                                                                                                                        t1.setText(Snap_data.getString("nameCustomer"));
-                                                                                                                        t2.setText("المسافة المقطوعة: " + String.format("%.2f", FinalTripDistance.doubleValue()) + " Km \n" + "وقت الرحلة: " + time + " min");
-                                                                                                                        t3.setText("عداد الرحلة: " + String.format("%.2f", PriceWithoutDisc) + " دينار بخصم " + Snap_data.get("discount") + "%");
-                                                                                                                        t5.setText("القيمة المطلوبة كاش: " + String.format("%.2f", Change.doubleValue()) + " دينار");
-
-                                                                                                                        CustomerBalance = Balance;
-                                                                                                                        final BigDecimal AddBalance = Recieve;
-                                                                                                                        progressDialog.dismiss();
-
-                                                                                                                        t4.setOnClickListener(new View.OnClickListener() {
-                                                                                                                            @Override
-                                                                                                                            public void onClick(View view) {
-                                                                                                                                progressDialog.show();
-
-                                                                                                                                Map<String, Object> dada = new HashMap<>();
-                                                                                                                                dada.put("balance", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", CustomerBalance)));
-                                                                                                                                FirebaseFirestore.getInstance()
-                                                                                                                                        .collection("Users")
-                                                                                                                                        .document(Snap_data.getString("idCustomer"))
-                                                                                                                                        .update(dada).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                                                                                    @Override
-                                                                                                                                    public void onComplete(@NonNull Task<Void> task) {
-
-                                                                                                                                        RatingBar rate = dialog2.findViewById(R.id.rating);
-                                                                                                                                        double rating = rate.getRating();
-
-                                                                                                                                        Map<String, Object> ra = new HashMap<>();
-                                                                                                                                        ra.put("rating", FieldValue.increment(rating));
-                                                                                                                                        ra.put("countRating", FieldValue.increment(1));
-                                                                                                                                        FirebaseFirestore.getInstance()
-                                                                                                                                                .collection("Users")
-                                                                                                                                                .document(Snap_data.getString("idCustomer"))
-                                                                                                                                                .update(ra).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                                                                                            @Override
-                                                                                                                                            public void onComplete(@NonNull Task<Void> task) {
-
-                                                                                                                                                FirebaseFirestore.getInstance()
-                                                                                                                                                        .collection("Users")
-                                                                                                                                                        .document(Snap_data.getString("idCustomer"))
-                                                                                                                                                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                                                                                                                                    @Override
-                                                                                                                                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                                                                                                                        SendNoti("عميلنا العزيز شكرا لاستخدامكم تطبيق رويال رايد, نتمنى لك يوما سعيدا", documentSnapshot.getString("token"));
-                                                                                                                                                        toggleButton.setChecked(true);
-                                                                                                                                                        OldDistance = "0";
-                                                                                                                                                    }
-                                                                                                                                                });
-
-                                                                                                                                                FirebaseFirestore.getInstance()
-                                                                                                                                                        .collection("Users")
-                                                                                                                                                        .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                                                                                                                                                        .update("balance", FieldValue.increment(AddBalance.doubleValue()));
-
-                                                                                                                                                FirebaseFirestore.getInstance()
-                                                                                                                                                        .collection("Trips")
-                                                                                                                                                        .document(map.get("tripsid").toString())
-                                                                                                                                                        .update("state", "StateTrip.needRatingByCustomer")
-                                                                                                                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                                                                                                            @Override
-                                                                                                                                                            public void onComplete(@NonNull Task<Void> task) {
-                                                                                                                                                                progressDialog.dismiss();
-                                                                                                                                                                arrive.setText("لقد وصلت");
-                                                                                                                                                                canc.setText("إلغاء");
-                                                                                                                                                                dialog_count = 0;
-                                                                                                                                                                InTrip = false;
-                                                                                                                                                                isConnected = true;
-                                                                                                                                                                SharedPreferences.Editor editor = MapsActivity.this.getSharedPreferences("User", Context.MODE_PRIVATE).edit();
-                                                                                                                                                                editor.putBoolean("isConnected", isConnected);
-                                                                                                                                                                editor.putBoolean("InTrip", InTrip);
-                                                                                                                                                                editor.apply();
-                                                                                                                                                                editor.commit();
-                                                                                                                                                                findViewById(R.id.card_default).setVisibility(View.VISIBLE);
-                                                                                                                                                                findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
-                                                                                                                                                                dialog2.dismiss();
-                                                                                                                                                            }
-                                                                                                                                                        });
-                                                                                                                                            }
-                                                                                                                                        });
-                                                                                                                                    }
-                                                                                                                                });
-
-                                                                                                                            }
-                                                                                                                        });
-
-                                                                                                                    }
-                                                                                                                });
-                                                                                                            }
-                                                                                                        });
-                                                                                            }
-                                                                                        });
-                                                                                    }
-                                                                                });
-                                                                    }
-                                                                }
-                                                            });
-                                                            d.setNegativeButton("الغاء", new DialogInterface.OnClickListener() {
-                                                                @Override
-                                                                public void onClick(DialogInterface dialogInterface, int i) {
-
-                                                                }
-                                                            });
-                                                            d.setCancelable(false);
-                                                            d.show();
-                                                        }
-                                                    }
-                                                });
-
-                                                canc.setOnClickListener(new View.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(View view) {
-
-                                                        if (!canc.getText().toString().equals("إلغاء")) {
-                                                            new AlertDialog.Builder(MapsActivity.this)
-                                                                    .setMessage("سيتم خصم مبلغ بقيمة 0.5 دينار عند قيامك بإلغاء رحلة مقبولة هل ترغب بذلك ؟")
-                                                                    .setPositiveButton("نعم", new DialogInterface.OnClickListener() {
-                                                                        @Override
-                                                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                                            } else if (arrive.getText().toString().equals("إنهاء الرحلة")) {
+                                                                AlertDialog.Builder d = new AlertDialog.Builder(MapsActivity.this);
+                                                                d.setMessage("هل تريد تأكيد انهاء الرحلة؟");
+                                                                d.setPositiveButton("تأكيد", new DialogInterface.OnClickListener() {
+                                                                    @Override
+                                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                                        {
+                                                                            progressDialog.show();
 
                                                                             FirebaseFirestore.getInstance()
                                                                                     .collection("Trips")
                                                                                     .document(map.get("tripsid") + "")
                                                                                     .addSnapshotListener(event2).remove();
 
-                                                                            findViewById(R.id.card_default).setVisibility(View.VISIBLE);
-                                                                            findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
-                                                                            progressDialogLoad.show();
-                                                                            dialog_count = 0;
-                                                                            InTrip = false;
-                                                                            isConnected = true;
-                                                                            SharedPreferences.Editor editor = MapsActivity.this.getSharedPreferences("User", Context.MODE_PRIVATE).edit();
-                                                                            editor.putBoolean("isConnected", isConnected);
-                                                                            editor.putBoolean("InTrip", InTrip);
-                                                                            editor.apply();
-                                                                            editor.commit();
-                                                                            findViewById(R.id.card_default).setVisibility(View.VISIBLE);
-                                                                            findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
-
                                                                             FirebaseFirestore.getInstance()
-                                                                                    .collection("driverRequests")
-                                                                                    .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                                                                                    .delete();
+                                                                                    .collection("Users")
+                                                                                    .document(Snap_data.getString("idCustomer"))
+                                                                                    .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                                @Override
+                                                                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                                    CustomerBalance = new BigDecimal(documentSnapshot.get("balance").toString());
+                                                                                }
+                                                                            });
+
+                                                                            try {
+                                                                                timer.cancel();
+                                                                                timer.purge();
+                                                                            } catch (Exception ex) {
+                                                                            }
+                                                                            Tsec = 0;
+                                                                            Tmin = 0;
+                                                                            Thour = 0;
+                                                                            m.setText("00:00:00");
 
                                                                             FirebaseFirestore.getInstance()
                                                                                     .collection("Trips")
                                                                                     .document(map.get("tripsid").toString())
-                                                                                    .update("state", "StateTrip.cancelByDriver");
+                                                                                    .update("state", "StateTrip.needRatingByDriver")
+                                                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                        @Override
+                                                                                        public void onComplete(@NonNull Task<Void> task) {
 
-                                                                            BigDecimal bal = new BigDecimal(UserInfo_sharedPreference.getUser(MapsActivity.this).balance)
-                                                                                    .subtract(new BigDecimal("0.5"));
-                                                                            FirebaseFirestore.getInstance()
-                                                                                    .collection("Users")
-                                                                                    .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                                                                                    .update("balance", bal.doubleValue());
-                                                                            progressDialogLoad.dismiss();
+                                                                                            FirebaseFirestore.getInstance()
+                                                                                                    .collection("AdminDataConfig")
+                                                                                                    .document("Data")
+                                                                                                    .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                                                @Override
+                                                                                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                                                                                    final androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(MapsActivity.this);
+                                                                                                    LayoutInflater inflater = MapsActivity.this.getLayoutInflater();
+                                                                                                    builder.setView(inflater.inflate(R.layout.dialog_trip_req2, null));
+                                                                                                    final androidx.appcompat.app.AlertDialog dialog2 = builder.create();
+                                                                                                    ((FrameLayout) dialog2.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                                                                                                    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                                                                                                    lp.copyFrom(dialog2.getWindow().getAttributes());
+                                                                                                    lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                                                                                                    lp.height = Math.round(TypedValue.applyDimension(
+                                                                                                            TypedValue.COMPLEX_UNIT_DIP, 510, getResources().getDisplayMetrics()));
+                                                                                                    dialog2.getWindow().setAttributes(lp);
+                                                                                                    dialog2.show();
+                                                                                                    dialog2.setCancelable(false);
+
+                                                                                                    final TextView t1 = dialog2.findViewById(R.id.txvType);
+                                                                                                    final TextView t2 = dialog2.findViewById(R.id.txvColor);
+                                                                                                    final TextView t3 = dialog2.findViewById(R.id.txvNo);
+                                                                                                    final TextView t4 = dialog2.findViewById(R.id.textView11);
+                                                                                                    final TextView t5 = dialog2.findViewById(R.id.txvNo5);
+
+                                                                                                    BigDecimal TripDistance = new BigDecimal(OldDistance);
+                                                                                                    for (int i = 0; i < TripDistanceCalc.size() - 1; i++) {
+
+                                                                                                        TripDistance = TripDistance.add(new BigDecimal(GetDistanceFromLatLonInKm(
+                                                                                                                TripDistanceCalc.get(i).getLatitude(), TripDistanceCalc.get(i).getLongitude(),
+                                                                                                                TripDistanceCalc.get(i + 1).getLatitude(), TripDistanceCalc.get(i + 1).getLongitude())));
+
+                                                                                                    }
+
+                                                                                                    final BigDecimal FinalTripDistance = TripDistance;
+
+                                                                                                    double base_price = 0, below_4_km = 0, between_4n5_km = 0, between_5n8_km = 0,
+                                                                                                            more_8_km = 0, minute_price = 0, minimum_trip_cost = 0, driver_fee = 0;
+
+                                                                                                    try {
+                                                                                                        base_price = Double.parseDouble(documentSnapshot.getString("base_price"));
+                                                                                                        below_4_km = Double.parseDouble(documentSnapshot.getString("below_4_km"));
+                                                                                                        between_4n5_km = Double.parseDouble(documentSnapshot.getString("between_4n5_km"));
+                                                                                                        between_5n8_km = Double.parseDouble(documentSnapshot.getString("between_5n8_km"));
+                                                                                                        more_8_km = Double.parseDouble(documentSnapshot.getString("more_8_km"));
+                                                                                                        minute_price = Double.parseDouble(documentSnapshot.getString("minute_price"));
+                                                                                                        minimum_trip_cost = Double.parseDouble(documentSnapshot.getString("minimum_trip_cost"));
+                                                                                                        driver_fee = Double.parseDouble(documentSnapshot.getString("driver_fee"));
+                                                                                                    } catch (Exception ex) {
+                                                                                                    }
+
+                                                                                                    long time = ((System.currentTimeMillis() / 1000) - (StartedTripAt / 1000)) / 60;
+                                                                                                    StartedTripAt = 0;
+                                                                                                    BigDecimal TotalTripPrice = new BigDecimal("-1");
+
+                                                                                                    if (TripDistance.doubleValue() <= 4)
+                                                                                                        TotalTripPrice = new BigDecimal(base_price)
+                                                                                                                .add(new BigDecimal(below_4_km).multiply(TripDistance))
+                                                                                                                .add(new BigDecimal(minute_price).multiply(new BigDecimal(time)));
+                                                                                                    else if (TripDistance.doubleValue() > 4 && TripDistance.doubleValue() <= 5)
+                                                                                                        TotalTripPrice = new BigDecimal(base_price)
+                                                                                                                .add(new BigDecimal(between_4n5_km).multiply(TripDistance))
+                                                                                                                .add(new BigDecimal(minute_price).multiply(new BigDecimal(time)));
+                                                                                                    else if (TripDistance.doubleValue() > 5 && TripDistance.doubleValue() <= 8)
+                                                                                                        TotalTripPrice = new BigDecimal(base_price)
+                                                                                                                .add(new BigDecimal(between_5n8_km).multiply(TripDistance))
+                                                                                                                .add(new BigDecimal(minute_price).multiply(new BigDecimal(time)));
+                                                                                                    else if (TripDistance.doubleValue() > 8)
+                                                                                                        TotalTripPrice = new BigDecimal(base_price)
+                                                                                                                .add(new BigDecimal(more_8_km).multiply(TripDistance))
+                                                                                                                .add(new BigDecimal(minute_price).multiply(new BigDecimal(time)));
+
+                                                                                                    if (TotalTripPrice.doubleValue() < minimum_trip_cost)
+                                                                                                        TotalTripPrice = new BigDecimal(minimum_trip_cost);
+
+                                                                                                    final BigDecimal PriceWithoutDisc = TotalTripPrice;
+                                                                                                    final BigDecimal disc = new BigDecimal(Snap_data.get("discount").toString()).divide(new BigDecimal("100"));
+                                                                                                    final BigDecimal disc2 = new BigDecimal(driver_fee);
+                                                                                                    final BigDecimal CompanyShare = TotalTripPrice.multiply(disc2);
+                                                                                                    final BigDecimal DiscountablePrice = TotalTripPrice.subtract(new BigDecimal(minimum_trip_cost));
+                                                                                                    final BigDecimal CustomerPrice = DiscountablePrice.subtract(DiscountablePrice.multiply(disc));
+                                                                                                    final BigDecimal AddBalancePrice = CompanyShare.subtract(DiscountablePrice.multiply(disc));
+                                                                                                    final BigDecimal AddSubBalance = new BigDecimal("0").subtract(AddBalancePrice);
+                                                                                                    final BigDecimal FinalCustomerPrice = CustomerPrice.add(new BigDecimal(minimum_trip_cost));
+
+                                                                                                    FirebaseFirestore.getInstance()
+                                                                                                            .collection("Users")
+                                                                                                            .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                                                                                            .update("balance", FieldValue.increment(AddSubBalance.doubleValue()))
+                                                                                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                                                @Override
+                                                                                                                public void onComplete(@NonNull Task<Void> task) {
+//                                                                                                                Toast.makeText(MapsActivity.this, "تم إضافة مبلغ " + String.format(Locale.ENGLISH, "%.2f", AddSubBalance.doubleValue()), Toast.LENGTH_SHORT).show();
+
+                                                                                                                    final double km = Double.parseDouble(String.format(Locale.ENGLISH, "%.3f", FinalTripDistance.doubleValue()));
+                                                                                                                    final double totalPrice = Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", PriceWithoutDisc.doubleValue()));
+
+                                                                                                                    Map<String, Object> ups = new HashMap<>();
+                                                                                                                    Map<String, Object> mini_locs = new HashMap<>();
+                                                                                                                    mini_locs.put("addressTo", "");
+                                                                                                                    mini_locs.put("lat", loc.getLatitude());
+                                                                                                                    mini_locs.put("lng", loc.getLongitude());
+                                                                                                                    ups.put("accessPoint", mini_locs);
+                                                                                                                    ups.put("km", km);
+                                                                                                                    ups.put("hours", time);
+                                                                                                                    ups.put("totalPrice", totalPrice);
+                                                                                                                    FirebaseFirestore.getInstance()
+                                                                                                                            .collection("Trips")
+                                                                                                                            .document(map.get("tripsid").toString())
+                                                                                                                            .update(ups).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                                                        @Override
+                                                                                                                        public void onComplete(@NonNull Task<Void> task) {
+
+                                                                                                                            BigDecimal Balance = new BigDecimal("0");
+                                                                                                                            BigDecimal Change = new BigDecimal("0");
+                                                                                                                            BigDecimal Recieve = new BigDecimal("0");
+
+                                                                                                                            if (CustomerBalance.subtract(FinalCustomerPrice).doubleValue() >= 0) {
+                                                                                                                                Balance = CustomerBalance.subtract(FinalCustomerPrice);
+                                                                                                                                Change = new BigDecimal("0");
+                                                                                                                                Recieve = FinalCustomerPrice;
+                                                                                                                            } else {
+                                                                                                                                Balance = new BigDecimal("0");
+                                                                                                                                Change = FinalCustomerPrice.subtract(CustomerBalance);
+                                                                                                                                Recieve = CustomerBalance;
+                                                                                                                            }
+
+                                                                                                                            t1.setText(Snap_data.getString("nameCustomer"));
+                                                                                                                            t2.setText("المسافة المقطوعة: " + String.format("%.2f", FinalTripDistance.doubleValue()) + " Km \n" + "وقت الرحلة: " + time + " min");
+                                                                                                                            t3.setText("عداد الرحلة: " + String.format("%.2f", PriceWithoutDisc) + " دينار بخصم " + Snap_data.get("discount") + "%");
+                                                                                                                            t5.setText("القيمة المطلوبة كاش: " + String.format("%.2f", Change.doubleValue()) + " دينار");
+
+                                                                                                                            CustomerBalance = Balance;
+                                                                                                                            final BigDecimal AddBalance = Recieve;
+                                                                                                                            progressDialog.dismiss();
+
+                                                                                                                            t4.setOnClickListener(new View.OnClickListener() {
+                                                                                                                                @Override
+                                                                                                                                public void onClick(View view) {
+                                                                                                                                    progressDialog.show();
+
+                                                                                                                                    Map<String, Object> dada = new HashMap<>();
+                                                                                                                                    dada.put("balance", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", CustomerBalance)));
+                                                                                                                                    FirebaseFirestore.getInstance()
+                                                                                                                                            .collection("Users")
+                                                                                                                                            .document(Snap_data.getString("idCustomer"))
+                                                                                                                                            .update(dada).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                                                                        @Override
+                                                                                                                                        public void onComplete(@NonNull Task<Void> task) {
+
+                                                                                                                                            RatingBar rate = dialog2.findViewById(R.id.rating);
+                                                                                                                                            double rating = rate.getRating();
+
+                                                                                                                                            Map<String, Object> ra = new HashMap<>();
+                                                                                                                                            ra.put("rating", FieldValue.increment(rating));
+                                                                                                                                            ra.put("countRating", FieldValue.increment(1));
+                                                                                                                                            FirebaseFirestore.getInstance()
+                                                                                                                                                    .collection("Users")
+                                                                                                                                                    .document(Snap_data.getString("idCustomer"))
+                                                                                                                                                    .update(ra).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                                                                                @Override
+                                                                                                                                                public void onComplete(@NonNull Task<Void> task) {
+
+                                                                                                                                                    FirebaseFirestore.getInstance()
+                                                                                                                                                            .collection("Users")
+                                                                                                                                                            .document(Snap_data.getString("idCustomer"))
+                                                                                                                                                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                                                                                                                        @Override
+                                                                                                                                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                                                                                                                            SendNoti("عميلنا العزيز شكرا لاستخدامكم تطبيق رويال رايد, نتمنى لك يوما سعيدا", documentSnapshot.getString("token"));
+                                                                                                                                                            toggleButton.setChecked(true);
+                                                                                                                                                            OldDistance = "0";
+                                                                                                                                                        }
+                                                                                                                                                    });
+
+                                                                                                                                                    FirebaseFirestore.getInstance()
+                                                                                                                                                            .collection("Users")
+                                                                                                                                                            .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                                                                                                                                            .update("balance", FieldValue.increment(AddBalance.doubleValue()));
+
+                                                                                                                                                    FirebaseFirestore.getInstance()
+                                                                                                                                                            .collection("Trips")
+                                                                                                                                                            .document(map.get("tripsid").toString())
+                                                                                                                                                            .update("state", "StateTrip.needRatingByCustomer")
+                                                                                                                                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                                                                                                @Override
+                                                                                                                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                                                                                                                                    progressDialog.dismiss();
+                                                                                                                                                                    arrive.setText("لقد وصلت");
+                                                                                                                                                                    canc.setText("إلغاء");
+                                                                                                                                                                    dialog_count = 0;
+                                                                                                                                                                    InTrip = false;
+                                                                                                                                                                    isConnected = true;
+                                                                                                                                                                    SharedPreferences.Editor editor = MapsActivity.this.getSharedPreferences("User", Context.MODE_PRIVATE).edit();
+                                                                                                                                                                    editor.putBoolean("isConnected", isConnected);
+                                                                                                                                                                    editor.putBoolean("InTrip", InTrip);
+                                                                                                                                                                    editor.apply();
+                                                                                                                                                                    editor.commit();
+                                                                                                                                                                    findViewById(R.id.card_default).setVisibility(View.VISIBLE);
+                                                                                                                                                                    findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
+                                                                                                                                                                    dialog2.dismiss();
+                                                                                                                                                                }
+                                                                                                                                                            });
+                                                                                                                                                }
+                                                                                                                                            });
+                                                                                                                                        }
+                                                                                                                                    });
+
+                                                                                                                                }
+                                                                                                                            });
+
+                                                                                                                        }
+                                                                                                                    });
+                                                                                                                }
+                                                                                                            });
+                                                                                                }
+                                                                                            });
+                                                                                        }
+                                                                                    });
                                                                         }
-                                                                    }).setNegativeButton("لا", new DialogInterface.OnClickListener() {
-                                                                @Override
-                                                                public void onClick(DialogInterface dialogInterface, int i) {
-                                                                    dialog.dismiss();
-                                                                }
-                                                            }).setCancelable(false).create().show();
-                                                        } else {
+                                                                    }
+                                                                });
+                                                                d.setNegativeButton("الغاء", new DialogInterface.OnClickListener() {
+                                                                    @Override
+                                                                    public void onClick(DialogInterface dialogInterface, int i) {
 
-                                                            AlertDialog.Builder d = new AlertDialog.Builder(MapsActivity.this);
-                                                            d.setCancelable(false);
-                                                            d.setTitle("النظام...");
-                                                            d.setMessage("هل تريد تأكيد الإلغاء؟");
-                                                            d.setPositiveButton("تأكيد", new DialogInterface.OnClickListener() {
-                                                                @Override
-                                                                public void onClick(DialogInterface dialogInterface, int i) {
-
-                                                                    FirebaseFirestore.getInstance()
-                                                                            .collection("Trips")
-                                                                            .document(map.get("tripsid") + "")
-                                                                            .addSnapshotListener(event2).remove();
-
-                                                                    findViewById(R.id.card_default).setVisibility(View.VISIBLE);
-                                                                    findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
-
-                                                                    dialog_count = 0;
-                                                                    InTrip = false;
-                                                                    isConnected = true;
-                                                                    SharedPreferences.Editor editor = MapsActivity.this.getSharedPreferences("User", Context.MODE_PRIVATE).edit();
-                                                                    editor.putBoolean("isConnected", isConnected);
-                                                                    editor.putBoolean("InTrip", InTrip);
-                                                                    editor.apply();
-                                                                    editor.commit();
-                                                                    findViewById(R.id.card_default).setVisibility(View.VISIBLE);
-                                                                    findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
-
-                                                                    progressDialogLoad.show();
-
-                                                                    FirebaseFirestore.getInstance()
-                                                                            .collection("driverRequests")
-                                                                            .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                                                                            .delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                        @Override
-                                                                        public void onComplete(@NonNull Task<Void> task) {
-                                                                            progressDialogLoad.dismiss();
-                                                                        }
-                                                                    });
-
-                                                                    FirebaseFirestore.getInstance()
-                                                                            .collection("Trips")
-                                                                            .document(map.get("tripsid").toString())
-                                                                            .update("state", "StateTrip.rejected");
-                                                                }
-                                                            });
-                                                            d.setNegativeButton("الغاء", new DialogInterface.OnClickListener() {
-                                                                @Override
-                                                                public void onClick(DialogInterface dialogInterface, int i) {
-                                                                    dialogInterface.dismiss();
-                                                                }
-                                                            });
-                                                            d.show();
-
+                                                                    }
+                                                                });
+                                                                d.setCancelable(false);
+                                                                d.show();
+                                                            }
                                                         }
-                                                    }
-                                                });
-                                            }
-                                        });
-                            }
-                        });
+                                                    });
 
-                        try {
-                            t1.setText("الراكب : " + value.getString("nameCustomer"));
-                            t3.setText("خصم الرحلة : " + value.get("discount").toString() + "%");
-//                            t4.setText("مرجع الخريطة : "+value.getString("currentAddress"));
+                                                    canc.setOnClickListener(new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View view) {
 
-                            FirebaseFirestore.getInstance()
-                                    .collection("Users")
-                                    .document(value.getString("idCustomer"))
-                                    .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                @Override
-                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                            if (!canc.getText().toString().equals("إلغاء")) {
+                                                                new AlertDialog.Builder(MapsActivity.this)
+                                                                        .setMessage("سيتم خصم مبلغ بقيمة 0.5 دينار عند قيامك بإلغاء رحلة مقبولة هل ترغب بذلك ؟")
+                                                                        .setPositiveButton("نعم", new DialogInterface.OnClickListener() {
+                                                                            @Override
+                                                                            public void onClick(DialogInterface dialogInterface, int i) {
 
-                                    double flng = Double.parseDouble(value.get("lng").toString());
-                                    double flat = Double.parseDouble(value.get("lat").toString());
+                                                                                FirebaseFirestore.getInstance()
+                                                                                        .collection("Trips")
+                                                                                        .document(map.get("tripsid") + "")
+                                                                                        .addSnapshotListener(event2).remove();
 
-                                    try {
-                                        double rate1 = Double.parseDouble(documentSnapshot.get("rating").toString());
-                                        double rate2 = Double.parseDouble(documentSnapshot.get("countRating").toString());
-                                        double fdista = GetDistanceFromLatLonInKm(loc.getLatitude(), loc.getLongitude(), flat, flng);
-                                        t7.setText("تقييم الراكب: " + String.format("%.3f", (rate1 / rate2)));
-                                        t8.setText("يبعد الراكب عنك: " + String.format("%.3f", fdista) + " Km");
-                                    } catch (Exception ex) {
-                                        Toast.makeText(MapsActivity.this, "", Toast.LENGTH_SHORT).show();
-                                    }
+                                                                                findViewById(R.id.card_default).setVisibility(View.VISIBLE);
+                                                                                findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
+                                                                                progressDialogLoad.show();
+                                                                                dialog_count = 0;
+                                                                                InTrip = false;
+                                                                                isConnected = true;
+                                                                                SharedPreferences.Editor editor = MapsActivity.this.getSharedPreferences("User", Context.MODE_PRIVATE).edit();
+                                                                                editor.putBoolean("isConnected", isConnected);
+                                                                                editor.putBoolean("InTrip", InTrip);
+                                                                                editor.apply();
+                                                                                editor.commit();
+                                                                                findViewById(R.id.card_default).setVisibility(View.VISIBLE);
+                                                                                findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
+
+                                                                                FirebaseFirestore.getInstance()
+                                                                                        .collection("driverRequests")
+                                                                                        .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                                                                        .delete();
+
+                                                                                FirebaseFirestore.getInstance()
+                                                                                        .collection("Trips")
+                                                                                        .document(map.get("tripsid").toString())
+                                                                                        .update("state", "StateTrip.cancelByDriver");
+
+                                                                                BigDecimal bal = new BigDecimal(UserInfo_sharedPreference.getUser(MapsActivity.this).balance)
+                                                                                        .subtract(new BigDecimal("0.5"));
+                                                                                FirebaseFirestore.getInstance()
+                                                                                        .collection("Users")
+                                                                                        .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                                                                        .update("balance", bal.doubleValue());
+                                                                                progressDialogLoad.dismiss();
+                                                                            }
+                                                                        }).setNegativeButton("لا", new DialogInterface.OnClickListener() {
+                                                                    @Override
+                                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                                        dialog.dismiss();
+                                                                    }
+                                                                }).setCancelable(false).create().show();
+                                                            } else {
+
+                                                                AlertDialog.Builder d = new AlertDialog.Builder(MapsActivity.this);
+                                                                d.setCancelable(false);
+                                                                d.setTitle("النظام...");
+                                                                d.setMessage("هل تريد تأكيد الإلغاء؟");
+                                                                d.setPositiveButton("تأكيد", new DialogInterface.OnClickListener() {
+                                                                    @Override
+                                                                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                                                                        FirebaseFirestore.getInstance()
+                                                                                .collection("Trips")
+                                                                                .document(map.get("tripsid") + "")
+                                                                                .addSnapshotListener(event2).remove();
+
+                                                                        findViewById(R.id.card_default).setVisibility(View.VISIBLE);
+                                                                        findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
+
+                                                                        dialog_count = 0;
+                                                                        InTrip = false;
+                                                                        isConnected = true;
+                                                                        SharedPreferences.Editor editor = MapsActivity.this.getSharedPreferences("User", Context.MODE_PRIVATE).edit();
+                                                                        editor.putBoolean("isConnected", isConnected);
+                                                                        editor.putBoolean("InTrip", InTrip);
+                                                                        editor.apply();
+                                                                        editor.commit();
+                                                                        findViewById(R.id.card_default).setVisibility(View.VISIBLE);
+                                                                        findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
+
+                                                                        progressDialogLoad.show();
+
+                                                                        FirebaseFirestore.getInstance()
+                                                                                .collection("driverRequests")
+                                                                                .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                                                                .delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                            @Override
+                                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                                progressDialogLoad.dismiss();
+                                                                            }
+                                                                        });
+
+                                                                        FirebaseFirestore.getInstance()
+                                                                                .collection("Trips")
+                                                                                .document(map.get("tripsid").toString())
+                                                                                .update("state", "StateTrip.rejected");
+                                                                    }
+                                                                });
+                                                                d.setNegativeButton("الغاء", new DialogInterface.OnClickListener() {
+                                                                    @Override
+                                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                                        dialogInterface.dismiss();
+                                                                    }
+                                                                });
+                                                                d.show();
+
+                                                            }
+                                                        }
+                                                    });
+                                                }
+                                            });
                                 }
                             });
 
-                        } catch (Exception ex) {
-                        }
-
-                    }
-                } else {
-                    FirebaseFirestore.getInstance()
-                            .collection("driverRequests")
-                            .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                            .delete();
-                    if (dialog_count == 1) {
-                        isConnected = true;
-                        SharedPreferences.Editor editor = MapsActivity.this.getSharedPreferences("User", Context.MODE_PRIVATE).edit();
-                        editor.putBoolean("isConnected", isConnected);
-                        editor.apply();
-                        editor.commit();
-                        dialog_count = 0;
-                        try {
-                            mp.pause();
-                            mp.seekTo(0);
-                        } catch (Exception ex) {
-                        }
-                        try {
-                            cd2.cancel();
-                        } catch (Exception ex) {
-                        }
-                        dialog.dismiss();
-                    }
-                }
-            }
-        };
-
-        event2 = new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                String tsta = "";
-                try {
-                    tsta = value.getString("state");
-                } catch (Exception ex) {
-                }
-                if (tsta.contains("StateTrip.cancel")) {
-                    InTrip = false;
-                    isConnected = true;
-                    SharedPreferences.Editor editor = MapsActivity.this.getSharedPreferences("User", Context.MODE_PRIVATE).edit();
-                    editor.putBoolean("isConnected", isConnected);
-                    editor.putBoolean("InTrip", InTrip);
-                    editor.apply();
-                    editor.commit();
-                    findViewById(R.id.card_default).setVisibility(View.VISIBLE);
-                    findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
-                }
-            }
-        };
-
-        event3 = new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                String AID = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
-                if (!AID.equals(value.getString("AID")) && !value.getString("AID").equals("")) {
-
-                    try {
-                        FirebaseFirestore.getInstance()
-                                .collection("Users")
-                                .document(getSharedPreferences("User", Context.MODE_PRIVATE).getString("uid", ""))
-                                .update("token", "");
-                    } catch (Exception ex) {
-                    }
-
-                    try {
-                        FirebaseFirestore.getInstance()
-                                .collection("locations")
-                                .document(getSharedPreferences("User", Context.MODE_PRIVATE).getString("uid", ""))
-                                .delete();
-                    } catch (Exception ex) {
-                    }
-
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
                             try {
+                                t1.setText("الراكب : " + value.getString("nameCustomer"));
+                                t3.setText("خصم الرحلة : " + value.get("discount").toString() + "%");
+//                            t4.setText("مرجع الخريطة : "+value.getString("currentAddress"));
+
                                 FirebaseFirestore.getInstance()
                                         .collection("Users")
-                                        .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                                        .addSnapshotListener(event3).remove();
+                                        .document(value.getString("idCustomer"))
+                                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                                try {
-                                    Toast.makeText(MapsActivity.this, "تم تسجيل الدخول من جهاز جديد..", Toast.LENGTH_SHORT).show();
-                                    startActivity(new Intent(MapsActivity.this, MainActivity.class).putExtra("exit", "1"));
-                                    finish();
-                                } catch (Exception ex) {
-                                }
+                                        double flng = Double.parseDouble(value.get("lng").toString());
+                                        double flat = Double.parseDouble(value.get("lat").toString());
+
+                                        try {
+                                            double rate1 = Double.parseDouble(documentSnapshot.get("rating").toString());
+                                            double rate2 = Double.parseDouble(documentSnapshot.get("countRating").toString());
+                                            double fdista = GetDistanceFromLatLonInKm(loc.getLatitude(), loc.getLongitude(), flat, flng);
+                                            t7.setText("تقييم الراكب: " + String.format("%.2f", (rate1 / rate2)));
+                                            t8.setText("يبعد الراكب عنك: " + String.format("%.3f", fdista) + " Km");
+                                        } catch (Exception ex) {
+                                            Toast.makeText(MapsActivity.this, "", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
 
                             } catch (Exception ex) {
                             }
+
                         }
-                    }, 2000);
-                }
-            }
-        };
-
-        if (!UserInfo_sharedPreference.getUser(MapsActivity.this).uid.equals("")
-                && UserInfo_sharedPreference.getUser(MapsActivity.this).uid != null) {
-            try {
-                FirebaseFirestore.getInstance()
-                        .collection("Users")
-                        .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                        .addSnapshotListener(event3);
-            } catch (Exception ex) {
-            }
-        }
-
-        if (UserInfo_sharedPreference.getUser(MapsActivity.this).uid != null && !UserInfo_sharedPreference.getUser(MapsActivity.this).uid.equals("")) {
-            FirebaseFirestore.getInstance()
-                    .collection("locations")
-                    .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                    .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    String iduser = "";
-                    try {
-                        iduser = documentSnapshot.getString("idUser");
-                    } catch (Exception ex) {
+                    } else {
+                        FirebaseFirestore.getInstance()
+                                .collection("driverRequests")
+                                .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                .delete();
+                        if (dialog_count == 1) {
+                            isConnected = true;
+                            SharedPreferences.Editor editor = MapsActivity.this.getSharedPreferences("User", Context.MODE_PRIVATE).edit();
+                            editor.putBoolean("isConnected", isConnected);
+                            editor.apply();
+                            editor.commit();
+                            dialog_count = 0;
+                            try {
+                                mp.pause();
+                                mp.seekTo(0);
+                            } catch (Exception ex) {
+                            }
+                            try {
+                                cd2.cancel();
+                            } catch (Exception ex) {
+                            }
+                            dialog.dismiss();
+                        }
                     }
+                }
+            };
 
-                    if (iduser != null && !iduser.equals("")) {
-                        toggleButton.setChecked(true);
+            event2 = new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                    String tsta = "";
+                    try { tsta = value.getString("state"); }
+                    catch (Exception ex) {}
+                    if (tsta != null && tsta.contains("StateTrip.cancel")) {
                         InTrip = false;
                         isConnected = true;
                         SharedPreferences.Editor editor = MapsActivity.this.getSharedPreferences("User", Context.MODE_PRIVATE).edit();
@@ -1321,29 +1236,126 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         editor.putBoolean("InTrip", InTrip);
                         editor.apply();
                         editor.commit();
+                        findViewById(R.id.card_default).setVisibility(View.VISIBLE);
+                        findViewById(R.id.card_default2).setVisibility(View.INVISIBLE);
                     }
-
                 }
-            });
-        }
+            };
 
-        event4 = new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                try{ WallateBalance = Double.parseDouble(value.get("balance").toString()); }
-                catch (Exception ex){ WallateBalance = 0;}
+            event3 = new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                    String AID = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+                    if (!AID.equals(value.getString("AID")) && !value.getString("AID").equals("")) {
+
+                        try {
+                            FirebaseFirestore.getInstance()
+                                    .collection("Users")
+                                    .document(getSharedPreferences("User", Context.MODE_PRIVATE).getString("uid", ""))
+                                    .update("token", "");
+                        } catch (Exception ex) {
+                        }
+
+                        try {
+                            FirebaseFirestore.getInstance()
+                                    .collection("locations")
+                                    .document(getSharedPreferences("User", Context.MODE_PRIVATE).getString("uid", ""))
+                                    .delete();
+                        } catch (Exception ex) {
+                        }
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    FirebaseFirestore.getInstance()
+                                            .collection("Users")
+                                            .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                                            .addSnapshotListener(event3).remove();
+
+                                    try {
+                                        Toast.makeText(MapsActivity.this, "تم تسجيل الدخول من جهاز جديد..", Toast.LENGTH_SHORT).show();
+                                        startActivity(new Intent(MapsActivity.this, MainActivity.class).putExtra("exit", "1"));
+                                        finish();
+                                    } catch (Exception ex) {
+                                    }
+
+                                } catch (Exception ex) {
+                                }
+                            }
+                        }, 2000);
+                    }
+                }
+            };
+
+            if (!UserInfo_sharedPreference.getUser(MapsActivity.this).uid.equals("")
+                    && UserInfo_sharedPreference.getUser(MapsActivity.this).uid != null) {
+                try {
+                    FirebaseFirestore.getInstance()
+                            .collection("Users")
+                            .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                            .addSnapshotListener(event3);
+                } catch (Exception ex) {
+                }
             }
-        };
 
-        try{
-            if(UserInfo_sharedPreference.getUser(MapsActivity.this).uid != null && !UserInfo_sharedPreference.getUser(MapsActivity.this).uid.equals("")){
+            if (UserInfo_sharedPreference.getUser(MapsActivity.this).uid != null && !UserInfo_sharedPreference.getUser(MapsActivity.this).uid.equals("")) {
                 FirebaseFirestore.getInstance()
-                        .collection("Users")
+                        .collection("locations")
                         .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                        .addSnapshotListener(event4);
+                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        String iduser = "";
+                        try {
+                            iduser = documentSnapshot.getString("idUser");
+                        } catch (Exception ex) {
+                        }
+
+                        if (iduser != null && !iduser.equals("")) {
+                            toggleButton.setChecked(true);
+                            InTrip = false;
+                            isConnected = true;
+                            SharedPreferences.Editor editor = MapsActivity.this.getSharedPreferences("User", Context.MODE_PRIVATE).edit();
+                            editor.putBoolean("isConnected", isConnected);
+                            editor.putBoolean("InTrip", InTrip);
+                            editor.apply();
+                            editor.commit();
+                        }
+
+                    }
+                });
             }
+
+            event4 = new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                    try{ WallateBalance = Double.parseDouble(value.get("balance").toString()); }
+                    catch (Exception ex){ WallateBalance = 0;}
+                }
+            };
+
+            try{
+                if(UserInfo_sharedPreference.getUser(MapsActivity.this).uid != null && !UserInfo_sharedPreference.getUser(MapsActivity.this).uid.equals("")){
+                    FirebaseFirestore.getInstance()
+                            .collection("Users")
+                            .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+                            .addSnapshotListener(event4);
+                }
+            }
+            catch (Exception ex){}
         }
-        catch (Exception ex){}
+        else
+            new AlertDialog.Builder(MapsActivity.this)
+                .setMessage("يرجى تفعيل الموقع GPS و المحاولة مجددا..")
+                .setPositiveButton("حسنا", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        MapsActivity.this.finishAffinity();
+                    }
+                }).setCancelable(false).create().show();
+
+
 
     }
 
@@ -3666,6 +3678,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
         return false;
+    }
+
+    public boolean isLocationEnabled(Context context) {
+        int locationMode = 0;
+        String locationProviders;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+            try {
+                locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
+
+            } catch (Settings.SettingNotFoundException e) {
+                e.printStackTrace();
+                return false;
+            }
+
+            return locationMode != Settings.Secure.LOCATION_MODE_OFF;
+
+        }else{
+            locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+            return !TextUtils.isEmpty(locationProviders);
+        }
     }
 
 }
