@@ -219,7 +219,7 @@
         android:layout_marginRight="25dp"
         android:isIndicator="false"
         android:numStars="5"
-        android:progress="60"
+        android:progress="100"
         android:progressBackgroundTint="@color/white"
         android:progressTint="@color/colorPrimaryDark"
         android:stepSize="0.1" />

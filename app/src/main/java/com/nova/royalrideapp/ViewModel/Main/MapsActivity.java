@@ -306,10 +306,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     startActivity(homeIntent);
 
                     String val = "";
-                    try {
-                        val = value.getString("idCustomer");
-                    } catch (Exception ex) {
-                    }
+                    try { val = value.getString("idCustomer"); } catch (Exception ex) {}
 
                     if (val != null && isConnected) {
                         if (dialog_count == 0 && !InTrip) {
@@ -687,7 +684,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                         }
                                                                     });
                                                                 } else
-                                                                    Toast.makeText(MapsActivity.this, "لا يمكن الوصول على بعد أكبر من 50 مترا", Toast.LENGTH_LONG).show();
+                                                                    Toast.makeText(MapsActivity.this, "لا يمكن الوصول على بعد أكبر من 100 مترا", Toast.LENGTH_LONG).show();
                                                             } else if (arrive.getText().toString().equals("بدء الرحلة")) {
                                                                 FirebaseFirestore.getInstance()
                                                                         .collection("Users")
@@ -2142,7 +2139,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                 });
                                                             }
                                                             else
-                                                                Toast.makeText(MapsActivity.this, "لا يمكن الوصول على بعد أكبر من 50 مترا", Toast.LENGTH_LONG).show();
+                                                                Toast.makeText(MapsActivity.this, "لا يمكن الوصول على بعد أكبر من 100 مترا", Toast.LENGTH_LONG).show();
                                                         }
                                                         else if(arrive.getText().toString().equals("بدء الرحلة")){
                                                             FirebaseFirestore.getInstance()
