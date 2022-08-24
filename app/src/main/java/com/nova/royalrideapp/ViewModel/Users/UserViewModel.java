@@ -200,28 +200,7 @@ public class UserViewModel extends ViewModel {
         }
     }
 
-    public void UpdateVID(Activity c , String VID){
 
-        Map<String,Object> map = new HashMap<>();
-        map.put("VID", VID );
-
-        if(!(UserInfo_sharedPreference.getUser(c).uid+"").equals("")
-                && UserInfo_sharedPreference.getUser(c).uid != null){
-
-            FirebaseFirestore.getInstance().collection(userCollection)
-                    .document(UserInfo_sharedPreference.getUser(c).uid)
-                    .update(map)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            SharedPreferences.Editor editor = c.getSharedPreferences("User", Context.MODE_PRIVATE).edit();
-                            editor.putString("VID" , VID);
-                            editor.apply();
-                            editor.commit();
-                        }
-                    });
-        }
-    }
 
     public void forgotPassword(Activity c , UserModel user){
 
@@ -395,17 +374,6 @@ public class UserViewModel extends ViewModel {
                     String AID = Settings.Secure.getString(c.getContentResolver(), Settings.Secure.ANDROID_ID);
 
                     UserInfo_sharedPreference.setInfo(c,a);
-                    String VID = "0";
-                    try{VID = c.getPackageManager().getPackageInfo(c.getPackageName(), 0).versionName; }
-                    catch (Exception ex){ VID = "-1"; }
-
-                    if(VID == null)
-                        VID = "-2";
-                    else
-                        if(VID.equals(""))
-                            VID = "-3";
-
-                    UpdateVID(c, VID);
 
                     if (a.AID.isEmpty()){
                         UpdateAID(c,AID);

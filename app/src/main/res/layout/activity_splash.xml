@@ -41,7 +41,7 @@
         android:layout_marginBottom="5dp"
         android:fontFamily="serif"
         android:gravity="center"
-        android:text="إصدار رقم : 3.5.2"
+        android:text="إصدار رقم : 3.5.3"
         android:textColor="#cd951a"
         android:textSize="14dp"
         android:textStyle="bold" />

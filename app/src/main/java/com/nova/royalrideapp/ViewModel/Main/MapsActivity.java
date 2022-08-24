@@ -60,6 +60,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.common.collect.Maps;
 import com.nova.royalrideapp.Data.Users.MyTripsModel;
 import com.nova.royalrideapp.FloatingService;
 import com.nova.royalrideapp.MainActivity;
@@ -886,7 +887,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                                                                                                     final BigDecimal PriceWithoutDisc = TotalTripPrice;
                                                                                                     final BigDecimal disc = new BigDecimal(Snap_data.get("discount").toString()).divide(new BigDecimal("100"));
-                                                                                                    final BigDecimal disc2 = new BigDecimal(driver_fee);
+                                                                                                    final BigDecimal disc2 = new BigDecimal(driver_fee).divide(new BigDecimal("100"));
                                                                                                     final BigDecimal CompanyShare = TotalTripPrice.multiply(disc2);
                                                                                                     final BigDecimal DiscountablePrice = TotalTripPrice.subtract(new BigDecimal(minimum_trip_cost));
                                                                                                     final BigDecimal CustomerPrice = DiscountablePrice.subtract(DiscountablePrice.multiply(disc));
@@ -1341,6 +1342,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
             catch (Exception ex){}
+
+            String VID = "0";
+            try{VID = getPackageManager().getPackageInfo(getPackageName(), 0).versionName; }
+            catch (Exception ex){ VID = "-1"; }
+
+            if(VID == null)
+                VID = "-2";
+            else
+            if(VID.equals(""))
+                VID = "-3";
+
+            UpdateVID(MapsActivity.this, VID);
+
         }
         else
             new AlertDialog.Builder(MapsActivity.this)
@@ -1351,8 +1365,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         MapsActivity.this.finishAffinity();
                     }
                 }).setCancelable(false).create().show();
-
-
 
     }
 
@@ -1578,7 +1590,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
                 catch (Exception ex){}
             }
-        }, 5000);
+        }, 3000);
     }
 
     void setNavView(){
@@ -2328,7 +2340,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                                                                                                 final BigDecimal PriceWithoutDisc = TotalTripPrice;
                                                                                                 final BigDecimal disc = new BigDecimal(obj.discount+"").divide(new BigDecimal("100"));
-                                                                                                final BigDecimal disc2 = new BigDecimal(driver_fee);
+                                                                                                final BigDecimal disc2 = new BigDecimal(driver_fee).divide(new BigDecimal("100"));
                                                                                                 final BigDecimal CompanyShare = TotalTripPrice.multiply(disc2);
                                                                                                 final BigDecimal DiscountablePrice = TotalTripPrice.subtract(new BigDecimal(minimum_trip_cost));
                                                                                                 final BigDecimal CustomerPrice = DiscountablePrice.subtract(DiscountablePrice.multiply(disc));
@@ -2853,7 +2865,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                                                                                 final BigDecimal PriceWithoutDisc = TotalTripPrice;
                                                                                 final BigDecimal disc = new BigDecimal(obj.discount+"").divide(new BigDecimal("100"));
-                                                                                final BigDecimal disc2 = new BigDecimal(driver_fee);
+                                                                                final BigDecimal disc2 = new BigDecimal(driver_fee).divide(new BigDecimal("100"));
                                                                                 final BigDecimal CompanyShare = TotalTripPrice.multiply(disc2);
                                                                                 final BigDecimal DiscountablePrice = TotalTripPrice.subtract(new BigDecimal(minimum_trip_cost));
                                                                                 final BigDecimal CustomerPrice = DiscountablePrice.subtract(DiscountablePrice.multiply(disc));
@@ -3272,7 +3284,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                                         final BigDecimal PriceWithoutDisc = TotalTripPrice;
                                         final BigDecimal disc = new BigDecimal(obj.discount+"").divide(new BigDecimal("100"));
-                                        final BigDecimal disc2 = new BigDecimal(driver_fee);
+                                        final BigDecimal disc2 = new BigDecimal(driver_fee).divide(new BigDecimal("100"));
                                         final BigDecimal CompanyShare = TotalTripPrice.multiply(disc2);
                                         final BigDecimal DiscountablePrice = TotalTripPrice.subtract(new BigDecimal(minimum_trip_cost));
                                         final BigDecimal CustomerPrice = DiscountablePrice.subtract(DiscountablePrice.multiply(disc));
@@ -3708,6 +3720,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    public void UpdateVID(Activity c , String VID){
 
+        Map<String,Object> map = new HashMap<>();
+        map.put("VID", VID );
+
+        if(!(UserInfo_sharedPreference.getUser(c).uid+"").equals("")
+                && UserInfo_sharedPreference.getUser(c).uid != null){
+
+            FirebaseFirestore.getInstance().collection("Users")
+                    .document(UserInfo_sharedPreference.getUser(c).uid)
+                    .update(map)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            SharedPreferences.Editor editor = c.getSharedPreferences("User", Context.MODE_PRIVATE).edit();
+                            editor.putString("VID" , VID);
+                            editor.apply();
+                            editor.commit();
+                        }
+                    });
+        }
+    }
 
 }
