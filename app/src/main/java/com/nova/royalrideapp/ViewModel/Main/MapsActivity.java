@@ -301,14 +301,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 @Override
                 public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
 
-                    Intent homeIntent = new Intent(MapsActivity.this, MapsActivity.class);
-                    homeIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                    startActivity(homeIntent);
-
                     String val = "";
                     try { val = value.getString("idCustomer"); } catch (Exception ex) {}
 
                     if (val != null && isConnected) {
+                        Intent homeIntent = new Intent(MapsActivity.this, MapsActivity.class);
+                        homeIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                        startActivity(homeIntent);
                         if (dialog_count == 0 && !InTrip) {
                             dialog_count = 1;
                             mp.start();
@@ -1192,7 +1191,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             }
 
                         }
-                    } else {
+                    }
+                    else {
                         FirebaseFirestore.getInstance()
                                 .collection("driverRequests")
                                 .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
@@ -3445,7 +3445,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         public void onProviderDisabled(@NonNull String provider) {}
 
         @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {}
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            Toast.makeText(MapsActivity.this, "تم إغلاق تطبيق رويال رايد", Toast.LENGTH_SHORT).show();
+        }
     };
 
     private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
@@ -3576,6 +3578,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             progressDialog.dismiss();
         }
         catch (Exception ex){}
+
         super.onDestroy();
     }
 
@@ -3651,7 +3654,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         if(isConnected){
             BgServiceIntent.putExtra("condition","start");
-            startService(BgServiceIntent);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                MapsActivity.this.startForegroundService(BgServiceIntent);
+             else
+                startService(BgServiceIntent);
+
         }
         super.onTrimMemory(level);
     }
@@ -3662,7 +3669,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         if(isMyServiceRunning(FloatingService.class)){
             BgServiceIntent.putExtra("condition","close");
-            startService(BgServiceIntent);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                MapsActivity.this.startForegroundService(BgServiceIntent);
+            else
+                startService(BgServiceIntent);
         }
 
     }
@@ -3697,5 +3707,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return !TextUtils.isEmpty(locationProviders);
         }
     }
+
+
 
 }

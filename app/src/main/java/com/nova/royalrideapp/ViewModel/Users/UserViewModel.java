@@ -395,9 +395,16 @@ public class UserViewModel extends ViewModel {
                     String AID = Settings.Secure.getString(c.getContentResolver(), Settings.Secure.ANDROID_ID);
 
                     UserInfo_sharedPreference.setInfo(c,a);
-                    String VID = "-1";
+                    String VID = "0";
                     try{VID = c.getPackageManager().getPackageInfo(c.getPackageName(), 0).versionName; }
-                    catch (Exception ex){}
+                    catch (Exception ex){ VID = "-1"; }
+
+                    if(VID == null)
+                        VID = "-2";
+                    else
+                        if(VID.equals(""))
+                            VID = "-3";
+
                     UpdateVID(c, VID);
 
                     if (a.AID.isEmpty()){

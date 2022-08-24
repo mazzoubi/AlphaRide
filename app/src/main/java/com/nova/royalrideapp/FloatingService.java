@@ -1,6 +1,7 @@
 package com.nova.royalrideapp;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -19,6 +20,7 @@ import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -61,20 +63,21 @@ public class FloatingService extends FloatingBubbleService {
     @Override
     protected FloatingBubbleConfig getConfig() {
         View convertView = LayoutInflater.from(MapsActivity.main).inflate(R.layout.buub, null, false);
-        ImageView key = convertView.findViewById(R.id.key);
 
-
-        ViewTreeObserver vto = convertView.getViewTreeObserver();
-        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                if(counter++ == 1){
-                    Intent homeIntent = new Intent(MapsActivity.main, MapsActivity.class);
-                    homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(homeIntent);
+        try{
+            ViewTreeObserver vto = convertView.getViewTreeObserver();
+            vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    if(counter++ == 3){
+                        Intent homeIntent = new Intent(MapsActivity.main, MapsActivity.class);
+                        homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(homeIntent);
+                    }
                 }
-            }
-        });
+            });
+        }
+        catch (Exception ex){}
 
         return new FloatingBubbleConfig.Builder()
                 .bubbleIcon(getDrawable(R.drawable.logo7))
@@ -95,6 +98,7 @@ public class FloatingService extends FloatingBubbleService {
     protected boolean onGetIntent(@NonNull Intent intent) {
 
         act = intent;
+        counter = 0;
         try{ flag = act.getStringExtra("condition"); }
         catch (Exception ex) { flag = ""; }
 
@@ -105,6 +109,7 @@ public class FloatingService extends FloatingBubbleService {
         return super.onGetIntent(intent);
     }
 
+    @SuppressLint("MissingPermission")
     private void StartWorkingMF() {
         WithIntent = 0;
         InitLsnr();
@@ -115,7 +120,7 @@ public class FloatingService extends FloatingBubbleService {
         locationCritera.setAltitudeRequired(false);
         locationCritera.setCostAllowed(true);
         locationCritera.setPowerRequirement(Criteria.NO_REQUIREMENT);
-        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        mLocationManager = (LocationManager) MapsActivity.main.getSystemService(LOCATION_SERVICE);
         providerName = mLocationManager.getBestProvider(locationCritera, true);
 
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, lsn);
@@ -129,11 +134,18 @@ public class FloatingService extends FloatingBubbleService {
         lsn = new LocationListener() {
             @Override
             public void onLocationChanged(@NonNull Location location) {
-
-                if(MapsActivity.main.getSharedPreferences("User", Context.MODE_PRIVATE).getBoolean("isConnected", false)){
+                if(MapsActivity.main.getSharedPreferences("User", Context.MODE_PRIVATE).getBoolean("isConnected", false))
                     UploadLocationData(location);
-                }
+            }
 
+            @Override
+            public void onProviderEnabled(@NonNull String provider) {}
+            @Override
+            public void onProviderDisabled(@NonNull String provider) {}
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+                Toast.makeText(MapsActivity.main, "تم إغلاق تطبيق رويال رايد", Toast.LENGTH_SHORT).show();
             }
         };
 
@@ -151,7 +163,7 @@ public class FloatingService extends FloatingBubbleService {
 
         if(!MapsActivity.main.getSharedPreferences("User", Context.MODE_PRIVATE).getBoolean("InTrip", false)) map.put("available",true);
         else map.put("available",false);
-        map.put("idUser", UserInfo_sharedPreference.getUser(MapsActivity.main).uid);
+        map.put("idUser", MapsActivity.main.getSharedPreferences("User", Context.MODE_PRIVATE).getString("uid",""));
         map.put("position", mini_map);
         map.put("timems", System.currentTimeMillis());
 
@@ -167,7 +179,7 @@ public class FloatingService extends FloatingBubbleService {
 
     public void showNotification2(String heading, String description){
 
-        String CHANNEL_ID="1234";
+        String CHANNEL_ID="12534";
 
         NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 1,
@@ -187,7 +199,6 @@ public class FloatingService extends FloatingBubbleService {
 
         NotificationCompat.Builder status = new NotificationCompat.Builder(getApplicationContext(),CHANNEL_ID);
         status.setAutoCancel(true)
-                .setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.drawable.logo7)
                 .setContentTitle(heading)
                 .setContentText(description)
@@ -197,7 +208,7 @@ public class FloatingService extends FloatingBubbleService {
                 .setDefaults(Notification.DEFAULT_LIGHTS)
                 .setContentIntent(pendingIntent);
 
-        startForeground(1234, status.build());
+        startForeground(12534, status.build());
 
     }
 
@@ -215,15 +226,22 @@ public class FloatingService extends FloatingBubbleService {
 
         if(WithIntent == 0){
             try{
+                try{mLocationManager.removeUpdates(lsn);}
+                catch (Exception ex){}
+
+                String va = MapsActivity.main.getSharedPreferences("User", Context.MODE_PRIVATE).getString("uid","");
                 FirebaseFirestore.getInstance()
                         .collection("locations")
-                        .document(UserInfo_sharedPreference.getUser(MapsActivity.main).uid)
+                        .document(va)
                         .delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        FloatingService.super.onDestroy();
-                        try{MapsActivity.main.finishAffinity();}
-                        catch (Exception ex){}
+
+                        if(task.isSuccessful()){
+                            try{MapsActivity.main.finishAffinity();}
+                            catch (Exception ex){}
+                            FloatingService.super.onDestroy();
+                        }
                     }
                 });
             }
