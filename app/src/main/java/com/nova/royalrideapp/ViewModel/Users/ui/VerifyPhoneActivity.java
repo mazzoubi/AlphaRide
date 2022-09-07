@@ -71,7 +71,11 @@ public class VerifyPhoneActivity extends AppCompatActivity {
         } catch (Exception ex){
             Toast.makeText(VerifyPhoneActivity.this, "لم يتم العثور على رقم هاتف صحيح", Toast.LENGTH_SHORT).show();
         }
-        sendVerificationCode(phoneNumber);
+
+        if(!phoneNumber.equals(""))
+            sendVerificationCode(phoneNumber);
+        else
+            Toast.makeText(VerifyPhoneActivity.this, "رقم الهاتف المدخل خاطئ", Toast.LENGTH_SHORT).show();
 
         // save phone number
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("User",

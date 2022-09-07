@@ -15,10 +15,71 @@
       },
       "oauth_client": [
         {
+          "client_id": "867383388531-dfil2du6lrjnsmvnpnqh9sh564u21phj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.alpha_ride",
+            "certificate_hash": "a4de099821e62eb3ab80d84f4e53510853b308b3"
+          }
+        },
+        {
           "client_id": "867383388531-fb635nvjckkl0qi9v19a72e2psr769f4.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.app.alpha_ride",
+            "certificate_hash": "d25e924197dfbfd00ab44889c2d7064587cbb3a0"
+          }
+        },
+        {
+          "client_id": "867383388531-m99a754khubcg146bfuv3f788009phn3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.alpha_ride",
+            "certificate_hash": "3d8f9bf25a2c3a595fec1d38371ffeb4ddecac87"
+          }
+        },
+        {
+          "client_id": "867383388531-nfn7u0cqnnkjbrhon20b1i810tmdmcmh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBA0KGXNpwNknAaDTf8VvYTiPN5Fxu0e3A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "867383388531-nfn7u0cqnnkjbrhon20b1i810tmdmcmh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "867383388531-itf1keu38mkt886och6vqnt46c8vig2s.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.app.alpharide",
+                "app_store_id": "1563551370"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:867383388531:android:e57fd9a3b384d26021bd06",
+        "android_client_info": {
+          "package_name": "com.nova.royalgis"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "867383388531-4usoadvt7p8d440p55c3dmmrb0ufupkv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nova.royalgis",
             "certificate_hash": "d25e924197dfbfd00ab44889c2d7064587cbb3a0"
           }
         },
@@ -60,55 +121,26 @@
       },
       "oauth_client": [
         {
+          "client_id": "867383388531-c7flskr9fin4at5tsdcr1nf56bjfb0gl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nova.royalrideapp",
+            "certificate_hash": "a4de099821e62eb3ab80d84f4e53510853b308b3"
+          }
+        },
+        {
+          "client_id": "867383388531-jl0k44rotr4jhqeen3f2ce1quq5qgm29.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nova.royalrideapp",
+            "certificate_hash": "3d8f9bf25a2c3a595fec1d38371ffeb4ddecac87"
+          }
+        },
+        {
           "client_id": "867383388531-sl5vuhup7iajahh2rqdq79rune8bd6t0.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.nova.royalrideapp",
-            "certificate_hash": "d25e924197dfbfd00ab44889c2d7064587cbb3a0"
-          }
-        },
-        {
-          "client_id": "867383388531-nfn7u0cqnnkjbrhon20b1i810tmdmcmh.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBA0KGXNpwNknAaDTf8VvYTiPN5Fxu0e3A"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "867383388531-nfn7u0cqnnkjbrhon20b1i810tmdmcmh.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "867383388531-itf1keu38mkt886och6vqnt46c8vig2s.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.app.alpharide",
-                "app_store_id": "1563551370"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:867383388531:android:975336ca4375a8a021bd06",
-        "android_client_info": {
-          "package_name": "com.royalride.scratch"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "867383388531-0hvli06o8ljuvb13n849aod61efbtt4k.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.royalride.scratch",
             "certificate_hash": "d25e924197dfbfd00ab44889c2d7064587cbb3a0"
           }
         },
