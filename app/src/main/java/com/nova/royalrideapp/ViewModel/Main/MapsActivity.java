@@ -213,11 +213,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             progressDialog.setTitle("النظام...");
             progressDialog.setMessage("الرجاء الإنتظار...");
             progressDialog.setCancelable(false);
-            try {
-                if (!progressDialog.isShowing())
-                    progressDialog.show();
-            } catch (Exception ex) {
-            }
+//            try {
+//                if (!progressDialog.isShowing())
+//                    progressDialog.show();
+//            } catch (Exception ex) {
+//            }
 
             FirebaseFirestore.getInstance().collection("BlockUsers")
                     .whereEqualTo("idUser", UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
@@ -1399,10 +1399,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             double lng = Double.parseDouble(Snap_data.get("lng").toString());
             double lat = Double.parseDouble(Snap_data.get("lat").toString());
 
-//            PolylineOptions polylineOptions = new PolylineOptions()
-//                .add(new LatLng(lat, lng))
-//                .add(new LatLng(loc.getLatitude(), loc.getLongitude()));
-//            polyline = mMap.addPolyline(polylineOptions);
+            PolylineOptions polylineOptions = new PolylineOptions()
+                .add(new LatLng(lat, lng))
+                .add(new LatLng(loc.getLatitude(), loc.getLongitude()));
+            polyline = mMap.addPolyline(polylineOptions);
 
             Drawable circleDrawable = getResources().getDrawable(R.drawable.mark);
             BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
@@ -1410,8 +1410,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             mMap.addMarker(new MarkerOptions().position(l).icon(markerIcon));
 
-            new FetchURL(MapsActivity.this).execute(getUrl(new LatLng(loc.getLatitude(), loc.getLongitude()),
-                    new LatLng(lat, lng), "driving"), "driving");
+//            new FetchURL(MapsActivity.this).execute(getUrl(new LatLng(loc.getLatitude(), loc.getLongitude()),
+//                    new LatLng(lat, lng), "driving"), "driving");
 
         } catch (Exception ex) {
         }
@@ -1578,19 +1578,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setNavView();
         getUserInfo();
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                try{
-                    if(loc != null || location != null){
-                        progressDialog.dismiss();
-                    }
-                    else
-                        onMapReady(mMap);
-                }
-                catch (Exception ex){}
-            }
-        }, 3000);
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                try{
+//                    if(loc != null || location != null){
+//                        progressDialog.dismiss();
+//                    }
+//                    else
+//                        onMapReady(mMap);
+//                }
+//                catch (Exception ex){}
+//            }
+//        }, 3000);
     }
 
     void setNavView(){

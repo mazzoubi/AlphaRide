@@ -13,7 +13,9 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -358,6 +360,7 @@ public class UserViewModel extends ViewModel {
         progressDialog.setCancelable(false);
         progressDialog.setTitle("الرجاء الإنتظار...");
         progressDialog.show();
+
         FirebaseFirestore.getInstance()
                 .collection(userCollection)
                 .whereEqualTo("phoneNumber",phone)
@@ -393,7 +396,17 @@ public class UserViewModel extends ViewModel {
 
                 }
             }
-        });
+        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(c, "", Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnCanceledListener(new OnCanceledListener() {
+                    @Override
+                    public void onCanceled() {
+                        Toast.makeText(c, "", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     public void login2(Activity c , String phone,String password){
