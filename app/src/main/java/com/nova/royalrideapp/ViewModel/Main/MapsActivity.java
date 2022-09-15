@@ -132,7 +132,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     GoogleApiClient mGoogleApiClient;
 
-    int LOCATION_REFRESH_TIME = 0; // 15 seconds to update
+    int LOCATION_REFRESH_TIME = 5000; // 15 seconds to update
     int LOCATION_REFRESH_DISTANCE = 0; // 500 meters to update
     LocationManager mLocationManager;
 
@@ -629,7 +629,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                         public void onClick(View view) {
 
                                                             if (arrive.getText().toString().equals("لقد وصلت")) {
-                                                                if (GetDistanceFromLatLonInKm(loc.getLatitude(), loc.getLongitude(), clat, clng) <= 0.10) {
+                                                               // if (GetDistanceFromLatLonInKm(loc.getLatitude(), loc.getLongitude(), clat, clng) <= 0.10) {
+                                                                if (true) {
                                                                     progressDialogLoad.show();
                                                                     TripState = "";
 
@@ -1208,6 +1209,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             try {
                                 mp.pause();
                                 mp.seekTo(0);
+                            } catch (Exception ex) {
+                            }
+                            try {
+                                cd.cancel();
                             } catch (Exception ex) {
                             }
                             try {
@@ -2094,7 +2099,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                     public void onClick(View view) {
 
                                                         if(arrive.getText().toString().equals("لقد وصلت")){
-                                                            if(GetDistanceFromLatLonInKm(loc.getLatitude(),loc.getLongitude(), clat, clng) <= 0.10){
+//                                                            if(GetDistanceFromLatLonInKm(loc.getLatitude(),loc.getLongitude(), clat, clng) <= 0.10){
+                                                            if(true){
                                                                 progressDialogLoad.show();
                                                                 FirebaseFirestore.getInstance()
                                                                         .collection("Users")

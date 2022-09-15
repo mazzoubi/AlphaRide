@@ -123,7 +123,7 @@ public class FloatingService extends FloatingBubbleService {
         mLocationManager = (LocationManager) MapsActivity.main.getSystemService(LOCATION_SERVICE);
         providerName = mLocationManager.getBestProvider(locationCritera, true);
 
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, lsn);
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 15000, 0, lsn);
 
         //GetData();
 
