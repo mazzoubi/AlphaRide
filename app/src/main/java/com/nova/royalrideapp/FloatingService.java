@@ -145,7 +145,6 @@ public class FloatingService extends FloatingBubbleService {
 
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {
-                Toast.makeText(MapsActivity.main, "تم إغلاق تطبيق رويال رايد", Toast.LENGTH_SHORT).show();
             }
         };
 

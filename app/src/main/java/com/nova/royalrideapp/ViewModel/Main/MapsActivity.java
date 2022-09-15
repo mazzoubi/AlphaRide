@@ -213,11 +213,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             progressDialog.setTitle("النظام...");
             progressDialog.setMessage("الرجاء الإنتظار...");
             progressDialog.setCancelable(false);
-//            try {
-//                if (!progressDialog.isShowing())
-//                    progressDialog.show();
-//            } catch (Exception ex) {
-//            }
+            try {
+                if (!progressDialog.isShowing())
+                    progressDialog.show();
+            } catch (Exception ex) {
+            }
 
             FirebaseFirestore.getInstance().collection("BlockUsers")
                     .whereEqualTo("idUser", UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
@@ -1578,19 +1578,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setNavView();
         getUserInfo();
 
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                try{
-//                    if(loc != null || location != null){
-//                        progressDialog.dismiss();
-//                    }
-//                    else
-//                        onMapReady(mMap);
-//                }
-//                catch (Exception ex){}
-//            }
-//        }, 3000);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    if(loc != null || location != null){
+                        progressDialog.dismiss();
+                    }
+                    else
+                        onMapReady(mMap);
+                }
+                catch (Exception ex){}
+            }
+        }, 3000);
     }
 
     void setNavView(){
@@ -3458,7 +3458,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
-            Toast.makeText(MapsActivity.this, "تم إغلاق تطبيق رويال رايد", Toast.LENGTH_SHORT).show();
         }
     };
 
