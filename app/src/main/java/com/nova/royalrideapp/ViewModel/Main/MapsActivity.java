@@ -169,6 +169,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Intent BgServiceIntent;
     public static Activity main;
     double WallateBalance = 0;
+    boolean location_buffer = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -1590,12 +1591,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     if(loc != null || location != null){
                         progressDialog.dismiss();
                     }
-                    else
-                        onMapReady(mMap);
+                    else{
+                        if(location_buffer)
+                            onMapReady(mMap);
+                        else{
+                            location_buffer = false;
+                            try{
+                                progressDialog.dismiss();
+                            }
+                            catch (Exception ex){}
+                        }
+
+                    }
+
                 }
                 catch (Exception ex){}
             }
-        }, 3000);
+        }, 5000);
     }
 
     void setNavView(){
