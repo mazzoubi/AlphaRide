@@ -125,6 +125,14 @@
             </intent-filter>
         </activity>
 
+        <service android:name=".ConnectionChangeReceiver"
+            android:label="NetworkConnection"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+        </service>
+
         <service
             android:name=".MyFirebaseMessagingService"
             android:directBootAware="true"

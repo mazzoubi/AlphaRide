@@ -10,6 +10,8 @@ import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,6 +26,8 @@ import com.nova.royalrideapp.ViewModel.Users.UserViewModel;
 
 import com.nova.royalrideapp.R;
 
+import java.lang.reflect.Method;
+
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -34,17 +38,27 @@ public class SplashActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_splash);
 
-        if(isLocationEnabled(SplashActivity.this))
-            logTo();
-        else
+        if(!isLocationEnabled(SplashActivity.this))
             new AlertDialog.Builder(SplashActivity.this)
                     .setMessage("يرجى تفعيل الموقع GPS و المحاولة مجددا..")
-            .setPositiveButton("حسنا", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    SplashActivity.this.finishAffinity();
-                }
-            }).setCancelable(false).create().show();
+                    .setPositiveButton("حسنا", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            SplashActivity.this.finishAffinity();
+                        }
+                    }).setCancelable(false).create().show();
+
+        else if(!IWifiEnabled() && !IDataEnabled())
+            new AlertDialog.Builder(SplashActivity.this)
+                    .setMessage("يرجى الإتصال بالإنترنت و المحاولة مجددا..")
+                    .setPositiveButton("حسنا", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            SplashActivity.this.finishAffinity();
+                        }
+                    }).setCancelable(false).create().show();
+        else
+            logTo();
 
     }
 
@@ -67,6 +81,30 @@ public class SplashActivity extends AppCompatActivity {
             }
         }catch (Exception e){}
 
+    }
+
+    private boolean IWifiEnabled(){
+        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+        return mWifi.isConnected();
+    }
+
+    private boolean IDataEnabled(){
+        boolean mobileDataEnabled = false; // Assume disabled
+        ConnectivityManager cm = (ConnectivityManager) SplashActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        try {
+            Class cmClass = Class.forName(cm.getClass().getName());
+            Method method = cmClass.getDeclaredMethod("getMobileDataEnabled");
+            method.setAccessible(true); // Make the method callable
+            // get the setting for "mobile data"
+            mobileDataEnabled = (Boolean)method.invoke(cm);
+
+            return mobileDataEnabled;
+
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public boolean isLocationEnabled(Context context) {

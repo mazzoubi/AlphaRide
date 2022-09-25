@@ -61,6 +61,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.common.collect.Maps;
+import com.nova.royalrideapp.ConnectionChangeReceiver;
 import com.nova.royalrideapp.Data.Users.MyTripsModel;
 import com.nova.royalrideapp.FloatingService;
 import com.nova.royalrideapp.MainActivity;
@@ -133,7 +134,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     GoogleApiClient mGoogleApiClient;
 
     int LOCATION_REFRESH_TIME = 5000; // 15 seconds to update
-    int LOCATION_REFRESH_DISTANCE = 0; // 500 meters to update
+    int LOCATION_REFRESH_DISTANCE = 3; // 500 meters to update
     LocationManager mLocationManager;
 
     ToggleButton toggleButton;
@@ -184,7 +185,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             BgServiceIntent = new Intent(MapsActivity.this, FloatingService.class);
             FloatingBubblePermissions.startPermissionRequest(this);
 
-
             toggleButton = findViewById(R.id.toggleButton);
 
             locationCritera = new Criteria();
@@ -213,7 +213,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             progressDialog = new ProgressDialog(MapsActivity.this);
             progressDialog.setTitle("النظام...");
             progressDialog.setMessage("الرجاء الإنتظار...");
-            progressDialog.setCancelable(false);
+//            progressDialog.setCancelable(false);
             try {
                 if (!progressDialog.isShowing())
                     progressDialog.show();
@@ -1196,10 +1196,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         }
                     }
                     else {
-                        FirebaseFirestore.getInstance()
-                                .collection("driverRequests")
-                                .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
-                                .delete();
+//                        FirebaseFirestore.getInstance()
+//                                .collection("driverRequests")
+//                                .document(UserInfo_sharedPreference.getUser(MapsActivity.this).uid)
+//                                .delete();
                         if (dialog_count == 1) {
                             isConnected = true;
                             SharedPreferences.Editor editor = MapsActivity.this.getSharedPreferences("User", Context.MODE_PRIVATE).edit();
@@ -1371,6 +1371,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         MapsActivity.this.finishAffinity();
                     }
                 }).setCancelable(false).create().show();
+
+        startService(new Intent(MapsActivity.this, ConnectionChangeReceiver.class));
 
     }
 
