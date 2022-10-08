@@ -45,70 +45,74 @@ public class UserViewModel extends ViewModel {
     public void addUser(Activity c , UserModel user, DriverRequestAccountModel dd,
                         Intent intent, ArrayList<Activity> activities){
 
-        dd.idUser=user.uid;
-        dd.fullName=user.fullName;
-        dd.colorCar = user.carColor;
-        dd.modelCar = user.carModel;
-        dd.typeCar = user.carType;
-        dd.numberCar = user.numberCar;
-        dd.email = user.email;
-        dd.phoneNumber = user.phoneNumber;
-        addDriverRequest(c,dd);
-
-
-        UserInfo_sharedPreference.setInfo(c,user);
-        Map<String,Object> map = new HashMap<>();
-        map.put("emailVerified" , user.emailVerified );
-        map.put("usePassword" , user.usePassword );
-        map.put("rating" , (float) user.rating);
-
-        map.put("uid", user.uid );
-        map.put("carColor", user.carColor );
-        map.put("carModel", user.carModel );
-        map.put("carType", user.carType );
-        map.put("email", user.email );
-        map.put("fullName", user.fullName );
-        map.put("imageProfile", user.imageProfile );
-        map.put("emailFacebook", user.emailFacebook );
-        map.put("numberCar", user.numberCar );
-        map.put("phoneNumber", user.phoneNumber );
-        map.put("stateAccount", user.stateAccount );
-        map.put("typeUser", "TypeAccount.driver" );
-        map.put("password", user.password );
-        map.put("AID", user.AID );
-//        map.put("tripid", tams );
-
-        map.put("balance",user.balance );
-        map.put("countRating",user.countRating );
-        map.put("countTrips",user.countTrips );
-        map.put("points",user.points );
-
-        //////////////////////////////////////////////////      new detail added
-        map.put("driverLicense",dd.driverLicense );
-        map.put("drivingLicense",dd.drivingLicense );
-        map.put("yourPhoto","");
-        map.put("endCar","");
-        map.put("insideCar","");
-        map.put("frontCar",dd.frontCar );
-
-        ProgressDialog progressDialog = new ProgressDialog(c);
-        progressDialog.setCancelable(false);
-        progressDialog.setTitle("الرجاء الإنتظار...");
-        progressDialog.show();
-        FirebaseFirestore.getInstance().collection(userCollection)
-                .document(user.uid).set(map)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
+        FirebaseFirestore.getInstance()
+                .collection("AdminDataConfig")
+                .document("Data")
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        progressDialog.dismiss();
-                        Toast.makeText(c, "تمت اضافة المستخدم بنجاح", Toast.LENGTH_SHORT).show();
-                        c.startActivity(intent);
-                        for (Activity d:activities){
-                            d.finish();
-                        }
-                        c.finish();
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        dd.idUser=user.uid;
+                        dd.fullName=user.fullName;
+                        dd.colorCar = user.carColor;
+                        dd.modelCar = user.carModel;
+                        dd.typeCar = user.carType;
+                        dd.numberCar = user.numberCar;
+                        dd.email = user.email;
+                        dd.phoneNumber = user.phoneNumber;
+                        addDriverRequest(c,dd);
+
+                        UserInfo_sharedPreference.setInfo(c,user);
+                        Map<String,Object> map = new HashMap<>();
+                        map.put("emailVerified" , user.emailVerified );
+                        map.put("usePassword" , user.usePassword );
+                        map.put("rating" , (float) user.rating);
+                        map.put("uid", user.uid );
+                        map.put("create_date", ClassDate.date() );
+                        map.put("carColor", user.carColor );
+                        map.put("carModel", user.carModel );
+                        map.put("carType", user.carType );
+                        map.put("email", user.email );
+                        map.put("fullName", user.fullName );
+                        map.put("imageProfile", user.imageProfile );
+                        map.put("emailFacebook", user.emailFacebook );
+                        map.put("numberCar", user.numberCar );
+                        map.put("phoneNumber", user.phoneNumber );
+                        map.put("stateAccount", user.stateAccount );
+                        map.put("typeUser", "TypeAccount.driver" );
+                        map.put("password", user.password );
+                        map.put("AID", user.AID );
+                        map.put("balance", Double.parseDouble(documentSnapshot.get("DriverDefBalance").toString()) );
+                        map.put("countRating",user.countRating );
+                        map.put("countTrips",user.countTrips );
+                        map.put("points",user.points );
+                        map.put("driverLicense",dd.driverLicense );
+                        map.put("drivingLicense",dd.drivingLicense );
+                        map.put("yourPhoto","");
+                        map.put("endCar","");
+                        map.put("insideCar","");
+                        map.put("frontCar",dd.frontCar );
+
+                        ProgressDialog progressDialog = new ProgressDialog(c);
+                        progressDialog.setCancelable(false);
+                        progressDialog.setTitle("الرجاء الإنتظار...");
+                        progressDialog.show();
+                        FirebaseFirestore.getInstance().collection(userCollection)
+                                .document(user.uid).set(map)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        progressDialog.dismiss();
+                                        Toast.makeText(c, "تمت اضافة المستخدم بنجاح", Toast.LENGTH_SHORT).show();
+                                        c.startActivity(intent);
+                                        for (Activity d:activities){
+                                            d.finish();
+                                        }
+                                        c.finish();
+                                    }
+                                });
                     }
                 });
+
     }
 
     public void getUserInfo(Activity c, String uid){

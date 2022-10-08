@@ -47,6 +47,7 @@ import com.siddharthks.bubbles.FloatingBubbleService;
 import com.siddharthks.bubbles.FloatingBubbleTouchListener;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class FloatingService extends FloatingBubbleService {
@@ -59,6 +60,7 @@ public class FloatingService extends FloatingBubbleService {
     Intent act;
     int counter = 0;
     int WithIntent = 0;
+    Location locationnn;
 
     @Override
     protected FloatingBubbleConfig getConfig() {
@@ -69,7 +71,7 @@ public class FloatingService extends FloatingBubbleService {
             vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
-                    if(counter++ == 3){
+                    if(counter++ == 2){
                         Intent homeIntent = new Intent(MapsActivity.main, MapsActivity.class);
                         homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(homeIntent);
@@ -122,11 +124,42 @@ public class FloatingService extends FloatingBubbleService {
         locationCritera.setPowerRequirement(Criteria.NO_REQUIREMENT);
         mLocationManager = (LocationManager) MapsActivity.main.getSystemService(LOCATION_SERVICE);
         providerName = mLocationManager.getBestProvider(locationCritera, true);
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, lsn);
 
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 0, lsn);
+        GetLoc(0);
 
-        //GetData();
 
+    }
+
+    private void GetLoc(int i) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                locationnn = getLastKnownLocation();
+                if(MapsActivity.main.getSharedPreferences("User", Context.MODE_PRIVATE).getBoolean("isConnected", false))
+                    if(locationnn != null)
+                    UploadLocationData(locationnn);
+
+                GetLoc(i+1);
+            }
+        }, 15000);
+    }
+
+    private Location getLastKnownLocation() {
+        mLocationManager = (LocationManager)getApplicationContext().getSystemService(LOCATION_SERVICE);
+        List<String> providers = mLocationManager.getProviders(true);
+        Location bestLocation = null;
+        for (String provider : providers) {
+            Location l = mLocationManager.getLastKnownLocation(provider);
+            if (l == null) {
+                continue;
+            }
+            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                // Found best last known location: %s", l);
+                bestLocation = l;
+            }
+        }
+        return bestLocation;
     }
 
     private void InitLsnr() {
@@ -134,8 +167,7 @@ public class FloatingService extends FloatingBubbleService {
         lsn = new LocationListener() {
             @Override
             public void onLocationChanged(@NonNull Location location) {
-                if(MapsActivity.main.getSharedPreferences("User", Context.MODE_PRIVATE).getBoolean("isConnected", false))
-                    UploadLocationData(location);
+                locationnn = location;
             }
 
             @Override

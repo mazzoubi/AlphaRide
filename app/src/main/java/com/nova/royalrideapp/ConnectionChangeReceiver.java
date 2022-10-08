@@ -32,16 +32,12 @@ public class ConnectionChangeReceiver extends Service
         ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback() {
             @Override
             public void onAvailable(Network network) {
-                Toast.makeText(ConnectionChangeReceiver.this, "تم الإتصال بخوادم التطبيق 1 من 3", Toast.LENGTH_LONG).show();
-                Toast.makeText(ConnectionChangeReceiver.this, "تم الإتصال بخوادم التطبيق 2 من 3", Toast.LENGTH_LONG).show();
-                Toast.makeText(ConnectionChangeReceiver.this, "تم الإتصال بخوادم التطبيق 3 من 3", Toast.LENGTH_LONG).show();
+                Toast.makeText(ConnectionChangeReceiver.this, "تم الإتصال بخوادم التطبيق", Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onLost(Network network) {
-                Toast.makeText(ConnectionChangeReceiver.this, "الشبكة ضعيفة, تم فقدان الإتصال بالإنترنت... يرجى التأكد من شبكة الإنترنت و إعادة تشغيل البرنامج.. شكرا لتفهمك 1 من 3", Toast.LENGTH_LONG).show();
-                Toast.makeText(ConnectionChangeReceiver.this, "الشبكة ضعيفة, تم فقدان الإتصال بالإنترنت... يرجى التأكد من شبكة الإنترنت و إعادة تشغيل البرنامج.. شكرا لتفهمك 2 من 3", Toast.LENGTH_LONG).show();
-                Toast.makeText(ConnectionChangeReceiver.this, "الشبكة ضعيفة, تم فقدان الإتصال بالإنترنت... يرجى التأكد من شبكة الإنترنت و إعادة تشغيل البرنامج.. شكرا لتفهمك 3 من 3", Toast.LENGTH_LONG).show();
+                Toast.makeText(ConnectionChangeReceiver.this, "الشبكة ضعيفة, تم فقدان الإتصال بالإنترنت... يرجى التأكد من شبكة الإنترنت و إعادة تشغيل البرنامج.. شكرا لتفهمك", Toast.LENGTH_LONG).show();
             }
         };
 

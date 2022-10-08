@@ -133,8 +133,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     GoogleApiClient mGoogleApiClient;
 
-    int LOCATION_REFRESH_TIME = 5000; // 15 seconds to update
-    int LOCATION_REFRESH_DISTANCE = 3; // 500 meters to update
+    int LOCATION_REFRESH_TIME = 0; // 15 seconds to update
+    int LOCATION_REFRESH_DISTANCE = 0; // 500 meters to update
     LocationManager mLocationManager;
 
     ToggleButton toggleButton;
@@ -1617,7 +1617,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         navigationView = findViewById(R.id.navView);
 
         TextView nav_myProfile , nav_wallet , nav_carMg , nav_myTrips
-                , nav_notifications , nav_sittings , nav_contactUs , nav_logout;
+                , nav_notifications , nav_sittings , nav_contactUs ,
+                nav_logout, nav_share;
         ImageView nav_imageView;
 //        LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
 //        View view= inflater.inflate(R.layout.menu_nav,navigationView);
@@ -1629,7 +1630,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         nav_sittings = findViewById(R.id.textView23);
         nav_contactUs = findViewById(R.id.textView24);
         nav_logout = findViewById(R.id.textView25);
+        nav_share = findViewById(R.id.textViewa24);
         nav_imageView = findViewById(R.id.imageView);
+
+        nav_share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                FirebaseFirestore.getInstance()
+                        .collection("AdminDataConfig")
+                        .document("Data")
+                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+                                String shareBody = documentSnapshot.getString("DriverShareBody");
+                                intent.setType("text/plain");
+                                intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Royal Ride");
+                                intent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                                startActivity(Intent.createChooser(intent, "Pick An App"));
+                            }
+                        });
+            }
+        });
 
         FirebaseFirestore.getInstance().collection("AdminDataConfig")
                 .document("Data")
