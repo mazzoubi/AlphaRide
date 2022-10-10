@@ -947,7 +947,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                                             t3.setText("وقت الرحلة: " + time + " min");
                                                                                                                             t4.setText("عداد الرحلة: " + String.format("%.2f", PriceWithoutDisc) + " دينار");
                                                                                                                             t5.setText("خصم الرحلة: " + Snap_data.get("discount") + " %");
-                                                                                                                            t6.setText("خصم المحفظة: " + Recieve + " دينار");
+                                                                                                                            t6.setText("خصم المحفظة: " + String.format("%.2f", Recieve) + " دينار");
                                                                                                                             t7.setText("القيمة المطلوبة كاش: " + String.format("%.2f", Change.doubleValue()) + " دينار");
 
                                                                                                                             CustomerBalance = Balance;
@@ -2448,7 +2448,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                                         t3.setText("وقت الرحلة: " + time + " min");
                                                                                                                         t4.setText("عداد الرحلة: " + String.format("%.2f", PriceWithoutDisc) + " دينار");
                                                                                                                         t5.setText("خصم الرحلة: " + obj.discount + " %");
-                                                                                                                        t6.setText("خصم المحفظة: " + Recieve + " دينار");
+                                                                                                                        t6.setText("خصم المحفظة: " + String.format("%.2f", Recieve) + " دينار");
                                                                                                                         t7.setText("القيمة المطلوبة كاش: " + String.format("%.2f", Change.doubleValue()) + " دينار");
 
                                                                                                                         CustomerBalance = Balance;
@@ -2979,7 +2979,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                         t3.setText("وقت الرحلة: " + time + " min");
                                                                                                         t4.setText("عداد الرحلة: " + String.format("%.2f", PriceWithoutDisc) + " دينار");
                                                                                                         t5.setText("خصم الرحلة: " + obj.discount + " %");
-                                                                                                        t6.setText("خصم المحفظة: " + Recieve + " دينار");
+                                                                                                        t6.setText("خصم المحفظة: " + String.format("%.2f", Recieve) + " دينار");
                                                                                                         t7.setText("القيمة المطلوبة كاش: " + String.format("%.2f", Change.doubleValue()) + " دينار");
 
                                                                                                         CustomerBalance = Balance;
@@ -3395,7 +3395,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                 t3.setText("وقت الرحلة: " + time + " min");
                                                 t4.setText("عداد الرحلة: " + String.format("%.2f", PriceWithoutDisc) + " دينار");
                                                 t5.setText("خصم الرحلة: " + obj.discount + " %");
-                                                t6.setText("خصم المحفظة: " + Recieve + " دينار");
+                                                t6.setText("خصم المحفظة: " + String.format("%.2f", Recieve) + " دينار");
                                                 t7.setText("القيمة المطلوبة كاش: " + String.format("%.2f", Change.doubleValue()) + " دينار");
 
                                                 CustomerBalance = Balance;
