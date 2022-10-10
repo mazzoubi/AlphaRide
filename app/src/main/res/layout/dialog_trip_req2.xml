@@ -17,7 +17,7 @@
         android:gravity="center"
         android:text="تم إنهاء الرحلة"
         android:textColor="@color/colorPrimary"
-        android:textSize="24dp"
+        android:textSize="28dp"
         android:textStyle="bold" />
 
     <ImageView
@@ -32,137 +32,117 @@
         android:src="@drawable/close"
         app:tint="@color/colorPrimaryDark" />
 
-    <androidx.cardview.widget.CardView
+    <TextView
+        android:id="@+id/txvType"
         android:layout_width="match_parent"
-        android:id="@+id/card1"
-        app:cardCornerRadius="10dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/close"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="12dp"
+        android:fontFamily="serif"
+        android:gravity="right"
+        android:text="إسم الراكب : جاري الإحتساب..."
+        android:textColor="@color/colorPrimary"
+        android:textSize="18dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/txvColor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txvType"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="12dp"
+        android:fontFamily="serif"
+        android:gravity="right"
+        android:text="المسافة المقطوعة : جاري الإحتساب..."
+        android:textColor="@color/colorPrimary"
+        android:textSize="18dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/txvNo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txvColor"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="12dp"
+        android:fontFamily="serif"
+        android:gravity="right"
+        android:text="وقت الرحلة : جاري الإحتساب..."
+        android:textColor="@color/colorPrimary"
+        android:textSize="18dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/txvNo5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txvNo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="12dp"
+        android:fontFamily="serif"
+        android:gravity="right"
+        android:text="عداد الرحلة : جاري الإحتساب..."
+        android:textColor="@color/colorPrimary"
+        android:textSize="18dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/txvNo6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txvNo5"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="12dp"
+        android:fontFamily="serif"
+        android:gravity="right"
+        android:text="خصم الرحلة : جاري الإحتساب..."
+        android:textColor="@color/colorPrimary"
+        android:textSize="18dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/txvNo7"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txvNo6"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="12dp"
+        android:fontFamily="serif"
+        android:gravity="right"
+        android:text="خصم من المحفظة : جاري الإحتساب..."
+        android:textColor="@color/colorPrimary"
+        android:textSize="18dp"
+        android:textStyle="bold" />
+
+    <RatingBar
+        android:id="@+id/rating"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_below="@+id/txvNo7"
+        android:layout_centerHorizontal="true"
         android:layout_marginLeft="25dp"
-        android:elevation="15dp"
         android:layout_marginTop="15dp"
         android:layout_marginRight="25dp"
-        android:layout_below="@+id/welcome4"
-        android:layout_height="60dp">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:background="@color/colorPrimaryDark"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:id="@+id/person"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="5dp"
-                android:src="@drawable/ic_baseline_person_24"
-                app:tint="@color/black" />
-
-            <TextView
-                android:id="@+id/txvType"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:text="جاري الإحتساب.."
-                android:layout_toLeftOf="@+id/person"
-                android:fontFamily="serif"
-                android:gravity="center"
-                android:textColor="@color/black"
-                android:textSize="18dp"
-                android:textStyle="bold" />
-
-        </RelativeLayout>
-
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:id="@+id/card3"
-        app:cardCornerRadius="10dp"
-        android:layout_marginLeft="25dp"
-        android:elevation="15dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginRight="25dp"
-        android:layout_below="@+id/card1"
-        android:layout_height="60dp">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:background="@color/colorPrimaryDark"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:id="@+id/loc"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_centerVertical="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="5dp"
-                android:src="@drawable/path"
-                app:tint="@color/black" />
-
-            <TextView
-                android:id="@+id/txvColor"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="5dp"
-                android:text="جاري الإحتساب.."
-                android:layout_marginRight="5dp"
-                android:layout_toLeftOf="@+id/loc"
-                android:fontFamily="serif"
-                android:gravity="center"
-                android:textColor="@color/black"
-                android:textSize="18dp"
-                android:textStyle="bold" />
-
-        </RelativeLayout>
-
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:id="@+id/card4"
-        app:cardCornerRadius="10dp"
-        android:layout_marginLeft="25dp"
-        android:elevation="15dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginRight="25dp"
-        android:layout_below="@+id/card3"
-        android:layout_height="60dp">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:background="@color/colorPrimaryDark"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:id="@+id/disc"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="5dp"
-                android:src="@drawable/disc2"
-                app:tint="@color/black" />
-
-            <TextView
-                android:id="@+id/txvNo"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:text="جاري الإحتساب.."
-                android:layout_toLeftOf="@+id/disc"
-                android:fontFamily="serif"
-                android:gravity="center"
-                android:textColor="@color/black"
-                android:textSize="18dp"
-                android:textStyle="bold" />
-
-        </RelativeLayout>
-
-    </androidx.cardview.widget.CardView>
+        android:isIndicator="false"
+        android:numStars="5"
+        android:progress="100"
+        android:progressBackgroundTint="@color/white"
+        android:progressTint="@color/colorPrimaryDark"
+        android:stepSize="0.1" />
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -170,7 +150,7 @@
         app:cardCornerRadius="10dp"
         android:layout_marginLeft="25dp"
         android:elevation="15dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="15dp"
         android:layout_marginRight="25dp"
         android:layout_below="@+id/rating"
         android:layout_height="60dp">
@@ -191,15 +171,15 @@
                 android:backgroundTint="@color/black" />
 
             <TextView
-                android:id="@+id/txvNo5"
+                android:id="@+id/txvNo55"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:layout_toLeftOf="@+id/im"
-                android:text="جاري الإحتساب.."
                 android:fontFamily="serif"
                 android:gravity="center"
+                android:text="جاري الإحتساب.."
                 android:textColor="@color/black"
                 android:textSize="18dp"
                 android:textStyle="bold" />
@@ -207,22 +187,6 @@
         </RelativeLayout>
 
     </androidx.cardview.widget.CardView>
-
-    <RatingBar
-        android:id="@+id/rating"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_below="@+id/card4"
-        android:layout_centerHorizontal="true"
-        android:layout_marginLeft="25dp"
-        android:layout_marginTop="25dp"
-        android:layout_marginRight="25dp"
-        android:isIndicator="false"
-        android:numStars="5"
-        android:progress="100"
-        android:progressBackgroundTint="@color/white"
-        android:progressTint="@color/colorPrimaryDark"
-        android:stepSize="0.1" />
 
     <TextView
         android:id="@+id/textView11"

@@ -834,8 +834,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                     final TextView t1 = dialog2.findViewById(R.id.txvType);
                                                                                                     final TextView t2 = dialog2.findViewById(R.id.txvColor);
                                                                                                     final TextView t3 = dialog2.findViewById(R.id.txvNo);
-                                                                                                    final TextView t4 = dialog2.findViewById(R.id.textView11);
-                                                                                                    final TextView t5 = dialog2.findViewById(R.id.txvNo5);
+                                                                                                    final TextView t4 = dialog2.findViewById(R.id.txvNo5);
+                                                                                                    final TextView t5 = dialog2.findViewById(R.id.txvNo6);
+                                                                                                    final TextView t6 = dialog2.findViewById(R.id.txvNo7);
+                                                                                                    final TextView t7 = dialog2.findViewById(R.id.txvNo55);
+                                                                                                    final TextView t8 = dialog2.findViewById(R.id.textView11);
 
                                                                                                     BigDecimal TripDistance = new BigDecimal(OldDistance);
                                                                                                     for (int i = 0; i < TripDistanceCalc.size() - 1; i++) {
@@ -939,16 +942,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                                                 Recieve = CustomerBalance;
                                                                                                                             }
 
-                                                                                                                            t1.setText(Snap_data.getString("nameCustomer"));
-                                                                                                                            t2.setText("المسافة المقطوعة: " + String.format("%.2f", FinalTripDistance.doubleValue()) + " Km \n" + "وقت الرحلة: " + time + " min");
-                                                                                                                            t3.setText("عداد الرحلة: " + String.format("%.2f", PriceWithoutDisc) + " دينار بخصم " + Snap_data.get("discount") + "%");
-                                                                                                                            t5.setText("القيمة المطلوبة كاش: " + String.format("%.2f", Change.doubleValue()) + " دينار");
+                                                                                                                            t1.setText("إسم الراكب: "+Snap_data.getString("nameCustomer"));
+                                                                                                                            t2.setText("المسافة المقطوعة: " + String.format("%.2f", FinalTripDistance.doubleValue()) + " Km");
+                                                                                                                            t3.setText("وقت الرحلة: " + time + " min");
+                                                                                                                            t4.setText("عداد الرحلة: " + String.format("%.2f", PriceWithoutDisc) + " دينار");
+                                                                                                                            t5.setText("خصم الرحلة: " + Snap_data.get("discount") + " %");
+                                                                                                                            t6.setText("خصم المحفظة: " + Recieve + " دينار");
+                                                                                                                            t7.setText("القيمة المطلوبة كاش: " + String.format("%.2f", Change.doubleValue()) + " دينار");
 
                                                                                                                             CustomerBalance = Balance;
                                                                                                                             final BigDecimal AddBalance = Recieve;
                                                                                                                             progressDialog.dismiss();
 
-                                                                                                                            t4.setOnClickListener(new View.OnClickListener() {
+                                                                                                                            t8.setOnClickListener(new View.OnClickListener() {
                                                                                                                                 @Override
                                                                                                                                 public void onClick(View view) {
                                                                                                                                     progressDialog.show();
@@ -2329,8 +2335,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                 final TextView t1 = dialog2.findViewById(R.id.txvType);
                                                                                                 final TextView t2 = dialog2.findViewById(R.id.txvColor);
                                                                                                 final TextView t3 = dialog2.findViewById(R.id.txvNo);
-                                                                                                final TextView t4 = dialog2.findViewById(R.id.textView11);
-                                                                                                final TextView t5 = dialog2.findViewById(R.id.txvNo5);
+                                                                                                final TextView t4 = dialog2.findViewById(R.id.txvNo5);
+                                                                                                final TextView t5 = dialog2.findViewById(R.id.txvNo6);
+                                                                                                final TextView t6 = dialog2.findViewById(R.id.txvNo7);
+                                                                                                final TextView t7 = dialog2.findViewById(R.id.txvNo55);
+                                                                                                final TextView t8 = dialog2.findViewById(R.id.textView11);
 
                                                                                                 BigDecimal TripDistance = new BigDecimal(OldDistance);
                                                                                                 for(int i=0; i<TripDistanceCalc.size()-1; i++){
@@ -2434,16 +2443,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                                             Recieve = CustomerBalance;
                                                                                                                         }
 
-                                                                                                                        t1.setText(obj.nameCustomer);
-                                                                                                                        t2.setText("المسافة المقطوعة: "+String.format("%.2f", FinalTripDistance.doubleValue())+" Km \n"+"وقت الرحلة: "+time+" min");
-                                                                                                                        t3.setText("عداد الرحلة: "+String.format("%.2f", PriceWithoutDisc)+" دينار بخصم "+obj.discount+"%");
-                                                                                                                        t5.setText("القيمة المطلوبة كاش: "+String.format("%.2f", Change.doubleValue())+" دينار");
+                                                                                                                        t1.setText("إسم الراكب: "+obj.nameCustomer);
+                                                                                                                        t2.setText("المسافة المقطوعة: " + String.format("%.2f", FinalTripDistance.doubleValue()) + " Km");
+                                                                                                                        t3.setText("وقت الرحلة: " + time + " min");
+                                                                                                                        t4.setText("عداد الرحلة: " + String.format("%.2f", PriceWithoutDisc) + " دينار");
+                                                                                                                        t5.setText("خصم الرحلة: " + obj.discount + " %");
+                                                                                                                        t6.setText("خصم المحفظة: " + Recieve + " دينار");
+                                                                                                                        t7.setText("القيمة المطلوبة كاش: " + String.format("%.2f", Change.doubleValue()) + " دينار");
 
                                                                                                                         CustomerBalance = Balance;
                                                                                                                         final BigDecimal AddBalance = Recieve;
                                                                                                                         progressDialog.dismiss();
 
-                                                                                                                        t4.setOnClickListener(new View.OnClickListener() {
+                                                                                                                        t8.setOnClickListener(new View.OnClickListener() {
                                                                                                                             @Override
                                                                                                                             public void onClick(View view) {
                                                                                                                                 progressDialog.show();
@@ -2854,8 +2866,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                 final TextView t1 = dialog2.findViewById(R.id.txvType);
                                                                                 final TextView t2 = dialog2.findViewById(R.id.txvColor);
                                                                                 final TextView t3 = dialog2.findViewById(R.id.txvNo);
-                                                                                final TextView t4 = dialog2.findViewById(R.id.textView11);
-                                                                                final TextView t5 = dialog2.findViewById(R.id.txvNo5);
+                                                                                final TextView t4 = dialog2.findViewById(R.id.txvNo5);
+                                                                                final TextView t5 = dialog2.findViewById(R.id.txvNo6);
+                                                                                final TextView t6 = dialog2.findViewById(R.id.txvNo7);
+                                                                                final TextView t7 = dialog2.findViewById(R.id.txvNo55);
+                                                                                final TextView t8 = dialog2.findViewById(R.id.textView11);
 
                                                                                 BigDecimal TripDistance = new BigDecimal(OldDistance);
                                                                                 for(int i=0; i<TripDistanceCalc.size()-1; i++){
@@ -2959,16 +2974,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                                                             Recieve = CustomerBalance;
                                                                                                         }
 
-                                                                                                        t1.setText(obj.nameCustomer);
-                                                                                                        t2.setText("المسافة المقطوعة: "+String.format("%.2f", FinalTripDistance.doubleValue())+" Km \n"+"وقت الرحلة: "+time+" min");
-                                                                                                        t3.setText("عداد الرحلة: "+String.format("%.2f", PriceWithoutDisc)+" دينار بخصم "+obj.discount+"%");
-                                                                                                        t5.setText("القيمة المطلوبة كاش: "+String.format("%.2f", Change.doubleValue())+" دينار");
+                                                                                                        t1.setText("إسم الراكب: "+obj.nameCustomer);
+                                                                                                        t2.setText("المسافة المقطوعة: " + String.format("%.2f", FinalTripDistance.doubleValue()) + " Km");
+                                                                                                        t3.setText("وقت الرحلة: " + time + " min");
+                                                                                                        t4.setText("عداد الرحلة: " + String.format("%.2f", PriceWithoutDisc) + " دينار");
+                                                                                                        t5.setText("خصم الرحلة: " + obj.discount + " %");
+                                                                                                        t6.setText("خصم المحفظة: " + Recieve + " دينار");
+                                                                                                        t7.setText("القيمة المطلوبة كاش: " + String.format("%.2f", Change.doubleValue()) + " دينار");
 
                                                                                                         CustomerBalance = Balance;
                                                                                                         final BigDecimal AddBalance = Recieve;
                                                                                                         progressDialog.dismiss();
 
-                                                                                                        t4.setOnClickListener(new View.OnClickListener() {
+                                                                                                        t8.setOnClickListener(new View.OnClickListener() {
                                                                                                             @Override
                                                                                                             public void onClick(View view) {
 
@@ -3274,8 +3292,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         final TextView t1 = dialog2.findViewById(R.id.txvType);
                                         final TextView t2 = dialog2.findViewById(R.id.txvColor);
                                         final TextView t3 = dialog2.findViewById(R.id.txvNo);
-                                        final TextView t4 = dialog2.findViewById(R.id.textView11);
-                                        final TextView t5 = dialog2.findViewById(R.id.txvNo5);
+                                        final TextView t4 = dialog2.findViewById(R.id.txvNo5);
+                                        final TextView t5 = dialog2.findViewById(R.id.txvNo6);
+                                        final TextView t6 = dialog2.findViewById(R.id.txvNo7);
+                                        final TextView t7 = dialog2.findViewById(R.id.txvNo55);
+                                        final TextView t8 = dialog2.findViewById(R.id.textView11);
 
                                         StartedTripAt= obj.tripsid;
 
@@ -3369,16 +3390,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                     Recieve = CustomerBalance;
                                                 }
 
-                                                t1.setText(obj.nameCustomer);
-                                                t2.setText("المسافة المقطوعة: "+String.format("%.2f", FinalTripDistance.doubleValue())+" Km \n"+"وقت الرحلة: "+time+" min");
-                                                t3.setText("عداد الرحلة: "+String.format("%.2f", PriceWithoutDisc)+" دينار بخصم "+obj.discount+"%");
-                                                t5.setText("القيمة المطلوبة كاش: "+String.format("%.2f", Change.doubleValue())+" دينار");
+                                                t1.setText("إسم الراكب: "+obj.nameCustomer);
+                                                t2.setText("المسافة المقطوعة: " + String.format("%.2f", FinalTripDistance.doubleValue()) + " Km");
+                                                t3.setText("وقت الرحلة: " + time + " min");
+                                                t4.setText("عداد الرحلة: " + String.format("%.2f", PriceWithoutDisc) + " دينار");
+                                                t5.setText("خصم الرحلة: " + obj.discount + " %");
+                                                t6.setText("خصم المحفظة: " + Recieve + " دينار");
+                                                t7.setText("القيمة المطلوبة كاش: " + String.format("%.2f", Change.doubleValue()) + " دينار");
 
                                                 CustomerBalance = Balance;
                                                 final BigDecimal AddBalance = Recieve;
                                                 progressDialog.dismiss();
 
-                                                t4.setOnClickListener(new View.OnClickListener() {
+                                                t8.setOnClickListener(new View.OnClickListener() {
                                                     @Override
                                                     public void onClick(View view) {
                                                         progressDialog.show();
